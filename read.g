@@ -5,6 +5,17 @@
 # Reading the implementation part of the package.
 #
 ReadPackage( "gapslp", "gap/gapslp.gi");
+##Il semble qu'il manque une method "ObjByExtRep" que je n'aurai pas implémentée, il faut donc que je trouve à quel endroit
+## se situe sont implémentation pour les 2 autres représentation Letter et Syllable pour pouvoir l'en inspirer.
+## Il faudrait trouver le doc où sont implémentée toutes les méthodes utiles. 
+InstallMethod(ObjByExtRep
+
+##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
+
+
+
+
+
 
 ##Il faut réécrire l'initialisation de la fonction FreeGroup pour qu'elle prenne en compte les SLP, soit modifié le code déjà implémenter 
 ## en rajoutant la zone qui conserne les SLP, pour l'instant j'essaie de comprendre et de modifier un peu le code :
@@ -74,7 +85,7 @@ InstallGlobalFunction( FreeGroup, function ( arg )
                                               and IsElementOfFreeGroup,
   			  CanEasilySortElements, # the free group can.
   			  CanEasilySortElements # the free group can.
-  			  and lesy);
+  			  and lesy); ##SLP 
 
     # Install the data (names, no. of bits available for exponents, types).
     StoreInfoFreeMagma( F, names, IsAssocWordWithInverse
