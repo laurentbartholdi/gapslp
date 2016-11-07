@@ -1,20 +1,25 @@
 
 #
 # gapslp: SLP for free groups
-#
-# Reading the implementation part of the package.
-#
+
 ReadPackage( "gapslp", "gap/gapslp.gi");
 ##Il semble qu'il manque une method "ObjByExtRep" que je n'aurai pas implémentée, 
-## ExtRepOfObj returns the external representation of its argument
+## "ExtRepOfObj returns the external representation of its argument"
+##Note that if one defines a new representation of objects for which an external representation does already exist
+##then one must install a method to compute this external representation for the objects in the new representation.
 
-InstallMethod(ObjByExtRep,[IsSLPWordsFamily]
+InstallMethod(ObjByExtRep,
+    [IsSLPWordsFamily and AssocWordBySLPRep],0]
+    function( F, 1, 1, [ i, 1 ] )
+    
+    Je ne trouve pas l'exemple qui correspond pour la version de Letter ou syllable
+    
+    )
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
-
-InstallMethod( \*, 
-InstallMethod( \^,
-InstallMethod( InverseOp
+#InstallMethod( \*, 
+#InstallMethod( \^,
+#InstallMethod( InverseOp
 
 
 ##Il faut réécrire l'initialisation de la fonction FreeGroup pour qu'elle prenne en compte les SLP, soit modifié le code déjà implémenter 
@@ -115,3 +120,7 @@ InstallGlobalFunction( FreeGroup, function ( arg )
     # Return the free group.
     return G;
 end );
+
+#
+# Reading the implementation part of the package.
+#
