@@ -9,10 +9,11 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 ##then one must install a method to compute this external representation for the objects in the new representation.
 
 InstallMethod(ObjByExtRep,
-    [IsSLPWordsFamily and AssocWordBySLPRep],0]
-    function( F, 1, 1, [ i, 1 ] )
+    [IsSLPWordsFamily and AssocWordBySLPRep],
+    0,
+    function( F, 1, 1, [ i, 1 ] ),
     
-    Je ne trouve pas l'exemple qui correspond pour la version de Letter ou syllable
+    ##Je ne trouve pas l'exemple qui correspond pour la version de Letter ou syllable
     
     )
 
