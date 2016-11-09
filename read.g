@@ -9,13 +9,13 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 ##then one must install a method to compute this external representation for the objects in the new representation.
 
 InstallMethod(ObjByExtRep,
-    [IsSLPWordsFamily and AssocWordBySLPRep],
+    [IsSLPWordsFamily],
     0,
-    function( F, 1, 1, [ i, 1 ] ),
-    
-    ##Je ne trouve pas l'exemple qui correspond pour la version de Letter ou syllable
-    
-    )
+    function( F, 1, nb, liste )
+       
+#Je ne trouve pas où est implémentée cette fonction       
+ 
+        end);
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
 #InstallMethod( \*, 
