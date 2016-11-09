@@ -13,7 +13,7 @@ InstallMethod(ObjByExtRep,
     0,
     function( F, 1, nb, liste )
        
-#Je ne trouve pas où est implémentée cette fonction       
+#Je ne comprends pas http://www.gap-system.org/Manuals/pkg/quagroup/doc/chap3.html#X7E3D93D47AFDE8D4       
  
         end);
 
