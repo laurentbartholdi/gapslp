@@ -12,10 +12,28 @@ InstallMethod(ObjByExtRep,
     [IsSLPWordsFamily],
     0,
     function( F, 1, nb, liste )
-       
+       prg:=StraightLineProgram( b,2);
+t:=ResultOfStraightLineProgram(prg,gens);
 #Je ne comprends pas http://www.gap-system.org/Manuals/pkg/quagroup/doc/chap3.html#X7E3D93D47AFDE8D4       
- 
-        end);
+         end);
+         
+InstallMethod( ObjByExtRep,
+    "for a family of SLP words, and an integer",
+    true,
+    [ IsSLPWordFamily], 0,
+    function( F, pos )
+    return Objectify( F!.defaultType, [ pos ] );
+    end );
+
+InstallMethod( ObjByExtRep,
+    "for a family of SLP words, and a list",
+    true,
+    [ IsSLPWordFamily, IsList ], 0,
+    function( F, list )
+    return Objectify( F!.defaultType, [ list ] );
+    end );
+         
+         
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
 #InstallMethod( \*, 
