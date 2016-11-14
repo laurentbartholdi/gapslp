@@ -8,8 +8,8 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
-InstallMethod( ObjByExtRep, "letter rep family", true,
-    [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
+ InstallMethod( ObjByExtRep, "letter rep family", true,
+     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
     function( F, e )
     
 # Cela reviendrai à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
@@ -18,11 +18,44 @@ InstallMethod( ObjByExtRep, "letter rep family", true,
     end);
 
 #Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
-
-InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
-  [IsAssocWord and IsLetterAssocWordRep],0,
+e
+ InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
+  [IsAssocWord and IsLetterAssocWordRep],0,function(w)
+  #si j'ai acces au nb de générateur, et il faudrait interdire la réécriture
+  local n,l,r ;
+  n:= nb de gens; #je ne sais pas encore comment je vais y acceder
+  for i in lenght(w)-1 do
+    if IsList(w[i][1]) then
+        l:=w[i][1];
+    fi;
+    else
+        l:=w[i];
+    fi;
+        while j in lenght(l) do
+            if j mod 2 = 1 and l[j]>n then
+                r:=w[l[j]];
+                for k in lenght(r) do 
+                    if k mod 2 = 0 then
+                        r[k]:=r[k]*l[j+1]; #on actualise les exposants
+                    fi;    
+                od;
+                remove(l,j);
+                remove(l,j);
+                add(l,r,j);
+             fi;
+        j=j+lenght(r)-1;
+        od;
+    w[i]:=l;
+    fi; 
+    od;         
+  od;
   
-#Il me semble que cette fonction correspond à l'algorithme 1 page 56 d Lohrey 
+  if IsList(w[lenght(w)]) then
+    l:=w[lenght(w)];
+    if IsList(l[lenght(l)]) then
+#Je         
+  
+
 
   end);
 
