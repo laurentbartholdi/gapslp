@@ -22,7 +22,8 @@ InstallMethod( ObjByExtRep, "letter rep family", true,
 InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
   [IsAssocWord and IsLetterAssocWordRep],0,
   
-    
+#Il me semble que cette fonction correspond à l'algorithme 1 page 56 d Lohrey 
+
   end);
 
 
