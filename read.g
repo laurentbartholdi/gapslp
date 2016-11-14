@@ -7,32 +7,20 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 ## "ExtRepOfObj returns the external representation of its argument"
 ##Note that if one defines a new representation of objects for which an external representation does already exist
 ##then one must install a method to compute this external representation for the objects in the new representation.
-
-InstallMethod(ObjByExtRep,
-    [IsSLPWordsFamily],
-    0,
-    function( F, 1, nb, liste )
-       prg:=StraightLineProgram( b,2);
-t:=ResultOfStraightLineProgram(prg,gens);
 #Je ne comprends pas http://www.gap-system.org/Manuals/pkg/quagroup/doc/chap3.html#X7E3D93D47AFDE8D4       
-         end);
-         
-InstallMethod( ObjByExtRep,
-    "for a family of SLP words, and an integer",
-    true,
-    [ IsSLPWordFamily], 0,
-    function( F, pos )
-    return Objectify( F!.defaultType, [ pos ] );
-    end );
+        
+        
+InstallMethod( ObjByExtRep, "SLP rep family", true,
+    [ IsAssocWordFamily and IsSLPWordsFamily, IsHomogeneousList ], 0,
+function( F, e )
+#a adapté 
+end);
 
-InstallMethod( ObjByExtRep,
-    "for a family of SLP words, and a list",
-    true,
-    [ IsSLPWordFamily, IsList ], 0,
-    function( F, list )
-    return Objectify( F!.defaultType, [ list ] );
-    end );
-         
+InstallOtherMethod( ObjByExtRep, "letter rep family,integers (ignored)", true,
+  [IsAssocWordFamily and IsLetterWordsFamily,IsInt,IsInt,IsHomogeneousList],0,
+function( F, a,b,e )
+  return ObjByExtRep(F,e);
+end);
          
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
