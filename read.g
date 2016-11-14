@@ -3,25 +3,45 @@
 # gapslp: SLP for free groups
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
-##Il semble qu'il manque une method "ObjByExtRep" que je n'aurai pas implémentée, 
-## "ExtRepOfObj returns the external representation of its argument"
-##Note that if one defines a new representation of objects for which an external representation does already exist
-##then one must install a method to compute this external representation for the objects in the new representation.
-#Je ne comprends pas http://www.gap-system.org/Manuals/pkg/quagroup/doc/chap3.html#X7E3D93D47AFDE8D4       
-        
-        
-InstallMethod( ObjByExtRep, "SLP rep family", true,
-    [ IsAssocWordFamily and IsSLPWordsFamily, IsHomogeneousList ], 0,
-function( F, e )
-#a adapté 
-end);
 
-InstallOtherMethod( ObjByExtRep, "letter rep family,integers (ignored)", true,
-  [IsAssocWordFamily and IsLetterWordsFamily,IsInt,IsInt,IsHomogeneousList],0,
-function( F, a,b,e )
-  return ObjByExtRep(F,e);
-end);
-         
+#Pour créer la nouvelle représentation il faut implémenter :
+
+
+# Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
+InstallMethod( ObjByExtRep, "letter rep family", true,
+    [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
+    function( F, e )
+    
+# Cela reviendrai à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
+
+    return Objectify(F!.SLPWordType,[Immutable(l)]); #pour ça il faudrait implémenter SLPWordType
+    end);
+
+#Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
+
+InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
+  [IsAssocWord and IsLetterAssocWordRep],0,
+  
+    
+  end);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
 #InstallMethod( \*, 
