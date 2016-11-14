@@ -1,30 +1,29 @@
 
-#
 # gapslp: SLP for free groups
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
 
 #Pour créer la nouvelle représentation il faut implémenter :
 
-
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
  InstallMethod( ObjByExtRep, "letter rep family", true,
      [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
     function( F, e )
     
-# Cela reviendrai à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
+# Cela ressemble à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
 
     return Objectify(F!.SLPWordType,[Immutable(l)]); #pour ça il faudrait implémenter SLPWordType
     end);
-
+    
 #Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
-e
  InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
   [IsAssocWord and IsLetterAssocWordRep],0,function(w)
   #si j'ai acces au nb de générateur, et il faudrait interdire la réécriture
   local n,l,r ;
   n:= nb de gens; #je ne sais pas encore comment je vais y acceder
-  for i in lenght(w)-1 do
+
+##On modifie petit à petit toutes les sous liste en injectant les générateurs 
+ for i in lenght(w)-1 do
     if IsList(w[i][1]) then
         l:=w[i][1];
     fi;
@@ -49,11 +48,13 @@ e
     fi; 
     od;         
   od;
-  
+ 
+## Ici le programme regarde le dernier élément de la liste qui peut être une liste de liste 
   if IsList(w[lenght(w)]) then
     l:=w[lenght(w)];
     if IsList(l[lenght(l)]) then
-#Je         
+
+##Je n'ai pas fini de coder cette fonction et je n'ai pas eu le temps de la coder         
   
 
 
