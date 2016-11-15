@@ -1,4 +1,4 @@
-
+1
 # gapslp: SLP for free groups
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
@@ -7,7 +7,7 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
  InstallMethod( ObjByExtRep, "letter rep family", true,
-     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
+     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 10000,
     function( F, e )
     
 # Cela ressemble à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
