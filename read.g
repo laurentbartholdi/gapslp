@@ -1,14 +1,13 @@
-1
 # gapslp: SLP for free groups
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
 
-#Pour créer la nouvelle représentation il faut implémenter :
+Pour créer la nouvelle représentation il faut implémenter :
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
  InstallMethod( ObjByExtRep, "letter rep family", true,
      [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 10000,
-    function( F, e )
+   function( F, e )
     
 # Cela ressemble à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
 
@@ -18,25 +17,27 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 #Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
 #J'ai fait des test mais il reste des erreurs
  InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
-  [IsAssocWord and IsLetterAssocWordRep],0,function(w)
-  #je ne sais pas encore comment accéder au nb de générateur pour l'instant il est en entrée , et il faudrait interdire la réécriture
-  local l,r,k,lg;
+ [IsAssocWord and IsLetterAssocWordRep],0,function(v)
+  #il faudrait interdire la réécriture
+  local n,w,l,r,k,lg;
   r:=[];
   l:=[];
   k:=[];
   j:=0;
+  w:=LinesOfStraightLineProgram(v);
+  n:=NrInputsOfStraightLineProgram(v);
   lg:=Length(w)-1;
- ##On modifie petit à petit toutes les sous liste en injectant les générateurs 
- for i in lg do
+##On modifie petit à petit toutes les sous liste en injectant les générateurs 
+ for i in [1..lg] do
     if IsList(w[i][1]) then
         l:=w[i][1];
     else
         l:=w[i];
     fi;
-        while j in Length(l) do
-            if j mod 2 = 1 and l[j]>n then
+        while j in [1..Length(l)] do
+            if (j mod 2 = 1) and (l[j]>n) then
                 r:=w[l[j]];
-                for k in Length(r) do 
+                for k in [1..Length(r)] do 
                     if k mod 2 = 0 then
                         r[k]:=r[k]*l[j+1]; #on actualise les exposants
                     fi;    
@@ -58,10 +59,10 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
    elif IsList(k[Length(k)]) then 
          l:=w[Length(w)];
    fi;
-   while j in Length(l) do
-            if j mod 2 = 1 and l[j]>n then
+   while j in [1..Length(l)] do
+            if (j mod 2 = 1) and (l[j]>n) then
                 r:=w[l[j]];
-                for k in Length(r) do 
+                for k in [1..Length(r)] do 
                     if k mod 2 = 0 then
                         r[k]:=r[k]*l[j+1]; #on actualise les exposants
                     fi;    
@@ -74,19 +75,6 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
     od;
   return l;
   end);
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
