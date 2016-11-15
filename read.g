@@ -16,24 +16,27 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
     end);
     
 #Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
+#J'ai fait des test mais il reste des erreurs
  InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
   [IsAssocWord and IsLetterAssocWordRep],0,function(w)
-  #si j'ai acces au nb de générateur, et il faudrait interdire la réécriture
-  local n,l,r ;
-  n:= nb de gens; #je ne sais pas encore comment je vais y acceder
-
-##On modifie petit à petit toutes les sous liste en injectant les générateurs 
- for i in lenght(w)-1 do
+  #je ne sais pas encore comment accéder au nb de générateur pour l'instant il est en entrée , et il faudrait interdire la réécriture
+  local l,r,k,lg;
+  r:=[];
+  l:=[];
+  k:=[];
+  j:=0;
+  lg:=Length(w)-1;
+ ##On modifie petit à petit toutes les sous liste en injectant les générateurs 
+ for i in lg do
     if IsList(w[i][1]) then
         l:=w[i][1];
-    fi;
     else
         l:=w[i];
     fi;
-        while j in lenght(l) do
+        while j in Length(l) do
             if j mod 2 = 1 and l[j]>n then
                 r:=w[l[j]];
-                for k in lenght(r) do 
+                for k in Length(r) do 
                     if k mod 2 = 0 then
                         r[k]:=r[k]*l[j+1]; #on actualise les exposants
                     fi;    
@@ -41,27 +44,36 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
                 remove(l,j);
                 remove(l,j);
                 add(l,r,j);
-             fi;
-        j=j+lenght(r)-1;
+            fi;
+			j:=j+Length(r)-1;
         od;
-    w[i]:=l;
-    fi; 
-    od;         
-  od;
+    w[i]:=l; 
+            
+ od;
  
 ## Ici le programme regarde le dernier élément de la liste qui peut être une liste de liste 
-  if IsList(w[lenght(w)]) then
-    l:=w[lenght(w)];
-    if IsList(l[lenght(l)]) then
-
-##Je n'ai pas fini de coder cette fonction et je n'ai pas eu le temps de la coder         
-  
-
-
+   k:=w[Length(w)];
+   if IsList(k[1]) then 
+        l:=k[1]; 
+   elif IsList(k[Length(k)]) then 
+         l:=w[Length(w)];
+   fi;
+   while j in Length(l) do
+            if j mod 2 = 1 and l[j]>n then
+                r:=w[l[j]];
+                for k in Length(r) do 
+                    if k mod 2 = 0 then
+                        r[k]:=r[k]*l[j+1]; #on actualise les exposants
+                    fi;    
+                od;
+                remove(l,j);
+                remove(l,j);
+                add(l,r,j);
+            fi;
+        j:=j+Length(r)-1;
+    od;
+  return l;
   end);
-
-
-
 
 
 
