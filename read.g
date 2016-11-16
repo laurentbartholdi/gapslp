@@ -4,8 +4,10 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 
 #
 NewFilter( "IsSLPWord"); 
-InstallTrueMethod( IsSLPWord, IsAssocWord );
+#POur l'instant cela ne marche pas j'ai du mal comprendre quelque chose
+InstallTrueMethod( IsSLPWord, IsAssocWord and IsSLPAssocWordRep );
 NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
+
 ##Est ce que cela suffit pour pouvoir utiliser Objectify ?
 
 
