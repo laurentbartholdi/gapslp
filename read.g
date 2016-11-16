@@ -21,7 +21,9 @@ NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
 # Cela ressemble à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
 
     return Objectify(F!.SLPWordType,[Immutable(l)]); #pour ça il faudrait implémenter SLPWordType
-    end);#Boite est une fonction qui mets dans la liste la plus courte le nouvel éléments,
+    end);
+
+#Boite est une fonction qui mets dans la liste la plus courte le nouvel éléments,
 
 Boite := function(ld,lg,L)
 	if Length(ld)>Length(lg) then 
