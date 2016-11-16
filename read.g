@@ -1,7 +1,7 @@
 # gapslp: SLP for free groups
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
-
+#
 #
 NewFilter( "IsSLPWord"); 
 #POur l'instant cela ne marche pas j'ai du mal comprendre quelque chose
@@ -11,7 +11,7 @@ NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
 ##Est ce que cela suffit pour pouvoir utiliser Objectify ?
 
 
-Pour créer la nouvelle représentation il faut implémenter :
+#Pour créer la nouvelle représentation il faut implémenter :
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
  InstallMethod( ObjByExtRep, "letter rep family", true,
@@ -21,8 +21,7 @@ Pour créer la nouvelle représentation il faut implémenter :
 # Cela ressemble à coder l'algorithm 4 : CompressPairs page 61 de Lohrey
 
     return Objectify(F!.SLPWordType,[Immutable(l)]); #pour ça il faudrait implémenter SLPWordType
-    end);
-#Boite est une fonction qui mets dans la liste la plus courte le nouvel éléments,
+    end);#Boite est une fonction qui mets dans la liste la plus courte le nouvel éléments,
 
 Boite := function(ld,lg,L)
 	if Length(ld)>Length(lg) then 
@@ -33,7 +32,6 @@ Boite := function(ld,lg,L)
 	
 	return [ld,lg];
 	end;
-
 #Dans une représentation en lettre (sans exposant), transforme en partie en SLP
 #Il faudrait le répéter plusieur fois pour avoir une vrai liste pour SLP
 
@@ -68,6 +66,61 @@ PaireSimple := function(ld,lg,lt,lp)
 	od;
 	return ld;
 	end;
+	
+## Cette fonction ne permets de réunir les éléments 2 part 2, en prenant en compte qu'ils peuvent avoir des exposants 
+## différents de 1
+
+PaireExp2 := function(ld,lg,lt,lp)
+	local k, ind;
+	k:=[];
+	for i in [1..Length(lt)-2] do
+		if ([lt[i],lt[i+1]] in lg) and ([lt[i+2],lt[i+3]] in ld) and i mod 2 =1 then   
+			ind :=0;
+			for j in [1..Length(lp)] do 
+				if lp[j] = [lt[i],1,lt[i+2],1] then #Le code plante à cause de cette ligne...
+					Add(lt,j,i+2);
+					Add(lt,1,i+3);
+					if lt[i+5]=1 then
+						Remove(lt,i+5);
+						Remove(lt,i+4);
+					else
+						l[i+5]:=lt[i+5]-1;
+					fi;
+					if lt[i+1]=1 then
+						Remove(lt,i+1);
+						Remove(lt,i+1);
+					else
+						l[i+1]:=lt[i+1]-1;
+					fi;
+					ind:=1;
+				fi;
+			od;
+			if ind=0 then
+				L:=[lt[i],1,lt[i+2],1];
+				Add(lp,L);
+				k:=Boite(ld,lg,L); ## J'ai fait une fonction, car peut-être qu'il faudra faire évoluer Boite, on aura pas besoin de changer tout le code comme ça
+				ld:=k[1];
+				lg:=k[2];
+				Add(lt,j,i+2);
+				Add(lt,1,i+3);
+				if lt[i+5]=1 then
+					Remove(lt,i+5);
+					Remove(lt,i+4);
+				else
+					l[i+5]:=lt[i+5]-1;
+				fi;
+				if lt[i+1]=1 then
+					Remove(lt,i+1);
+					Remove(lt,i+1);
+				else
+					l[i+1]:=lt[i+1]-1;
+				fi;
+			fi;	
+		fi;
+	od;
+	return lt;
+	end;	
+	
  ##Cette fonction doit permettre de regrouper les éléments égaux entre eux sous forme de puissance
  RacPuis := function(lt)
 	local e;
