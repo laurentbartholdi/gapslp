@@ -2,6 +2,12 @@
 
 ReadPackage( "gapslp", "gap/gapslp.gi");
 
+#
+NewFilter( "IsSLPWord"); 
+NewType( IsSLPWordsFamily, IsSLPWord);
+##Est ce que cela suffit pour pouvoir utiliser Objectify ?
+
+
 Pour créer la nouvelle représentation il faut implémenter :
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
