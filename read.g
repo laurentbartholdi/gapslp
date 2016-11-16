@@ -94,7 +94,7 @@ PaireSimple := function(ld,lg,lt,lp)
 		i:=i+1;
 		n:=Length(lt);
 	od;
-	return lt;
+	return [ld,lg,lt,lp];
 	end;
 	
 ## Cette fonction ne permets de réunir les éléments 2 part 2, en prenant en compte qu'ils peuvent avoir des exposants 
