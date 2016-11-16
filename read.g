@@ -88,7 +88,7 @@ PaireSimple := function(ld,lg,lt,lp)
 				lg:=k[2];
 				Remove(lt,i);
 				Remove(lt,i);
-				Add(lt,Length(lp),i);
+			Add(lt,Length(lp),i);
 			fi;
 		fi;
 		i:=i+1;
@@ -99,12 +99,14 @@ PaireSimple := function(ld,lg,lt,lp)
 	
 ## Cette fonction ne permets de réunir les éléments 2 part 2, en prenant en compte qu'ils peuvent avoir des exposants 
 ## différents de 1
-
-PaireExp2 := function(ld,lg,lt,lp)
+# Cet Algorithm fonctionne 
+PaireExp3 := function(ld,lg,lt,lp)
 	local k, ind;
 	k:=[];
-	for i in [1..Length(lt)-2] do
-		if ([lt[i],lt[i+1]] in lg) and ([lt[i+2],lt[i+3]] in ld) and i mod 2 =1 then   
+	n:=Length(lt)-3;
+	i:=1;
+	while i<=n do
+		if (i mod 2 =1) and ([lt[i],lt[i+1]] in lg) and ([lt[i+2],lt[i+3]] in ld) then   
 			ind :=0;
 			for j in [1..Length(lp)] do 
 				if lp[j] = [lt[i],1,lt[i+2],1] then #Le code plante à cause de cette ligne...
@@ -114,13 +116,13 @@ PaireExp2 := function(ld,lg,lt,lp)
 						Remove(lt,i+5);
 						Remove(lt,i+4);
 					else
-						l[i+5]:=lt[i+5]-1;
+						lt[i+5]:=lt[i+5]-1;
 					fi;
 					if lt[i+1]=1 then
 						Remove(lt,i+1);
 						Remove(lt,i+1);
 					else
-						l[i+1]:=lt[i+1]-1;
+						lt[i+1]:=lt[i+1]-1;
 					fi;
 					ind:=1;
 				fi;
@@ -131,26 +133,28 @@ PaireExp2 := function(ld,lg,lt,lp)
 				k:=Boite(ld,lg,L); ## J'ai fait une fonction, car peut-être qu'il faudra faire évoluer Boite, on aura pas besoin de changer tout le code comme ça
 				ld:=k[1];
 				lg:=k[2];
-				Add(lt,j,i+2);
+				Add(lt,Length(lp),i+2);
 				Add(lt,1,i+3);
 				if lt[i+5]=1 then
 					Remove(lt,i+5);
 					Remove(lt,i+4);
 				else
-					l[i+5]:=lt[i+5]-1;
+					lt[i+5]:=lt[i+5]-1;
 				fi;
 				if lt[i+1]=1 then
 					Remove(lt,i+1);
 					Remove(lt,i+1);
 				else
-					l[i+1]:=lt[i+1]-1;
+					lt[i+1]:=lt[i+1]-1;
 				fi;
 			fi;	
 		fi;
+		i:=i+1;
+		n:=Length(lt);
 	od;
 	return lt;
 	end;	
-	
+		
  ##Cette fonction doit permettre de regrouper les éléments égaux entre eux sous forme de puissance
  RacPuis := function(lt)
 	local e;
