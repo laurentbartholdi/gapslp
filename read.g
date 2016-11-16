@@ -158,13 +158,17 @@ PaireExp3 := function(ld,lg,lt,lp)
  ##Cette fonction doit permettre de regrouper les éléments égaux entre eux sous forme de puissance
  RacPuis := function(lt)
 	local e;
-	for i in [1..Length(lt)-2] do
+	n:=Length(lt)-3;
+	i:=1;
+	while i<=n do
 		if i mod 2 = 1 and lt[i]=lt[i+2] then #j'ai le même problème que plus haut
 			e:=lt[i+1]+lt[i+3];
 			Remove(lt,i+3);
 			Remove(lt,i+2);
 			lt[i+1]:=e;
 		fi;
+	i:=i+1;
+	n:=Length(lt);
 	od;
 	return lt;
 	end;
