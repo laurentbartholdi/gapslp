@@ -62,17 +62,18 @@ Boite := function(ld,lg,L)
 	end;
 #Dans une représentation en lettre (sans exposant), transforme en partie en SLP
 #Il faudrait le répéter plusieur fois pour avoir une vrai liste pour SLP
-
+#Cet algorithme fonctionne
 PaireSimple := function(ld,lg,lt,lp)
-	local k, ind;
+	local k,n, ind;
 	k:=[];
-	for i in [1..Length(lt)-1] do
+	Print("OKA");
+	n:=Length(lt);
+	i:=1;
+	while i<n do
 		if (lt[i] in lg) and (lt[i+1] in ld) then
 			ind :=0;
-			Print("OK1");
 			for j in [1..Length(lp)] do 
-				Print("OK2");
-				if lp[j] = [lt[i],lt[i+1]] then #Le code plante à cause de cette ligne...
+				if lp[j] = [lt[i],lt[i+1]] then 
 					Remove(lt,i);
 					Remove(lt,i);
 					Add(lt,j,i);
@@ -83,16 +84,17 @@ PaireSimple := function(ld,lg,lt,lp)
 				L:=[lt[i],lt[i+1]];
 				Add(lp,L);
 				k:=Boite(ld,lg,L); ## J'ai fait une fonction, car peut-être qu'il faudra faire évoluer Boite, on aura pas besoin de changer tout le code comme ça
-				
 				ld:=k[1];
 				lg:=k[2];
 				Remove(lt,i);
 				Remove(lt,i);
-				Add(lt,Length(lp),i);	
+				Add(lt,Length(lp),i);
 			fi;
 		fi;
+		i:=i+1;
+		n:=Length(lt);
 	od;
-	return ld;
+	return lt;
 	end;
 	
 ## Cette fonction ne permets de réunir les éléments 2 part 2, en prenant en compte qu'ils peuvent avoir des exposants 
