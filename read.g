@@ -99,7 +99,7 @@ PaireSimple := function(ld,lg,lt,lp)
 	
 ## Cette fonction ne permets de réunir les éléments 2 part 2, en prenant en compte qu'ils peuvent avoir des exposants 
 ## différents de 1
-# Cet Algorithm fonctionne 
+# Cet Algorithme fonctionne 
 PaireExp3 := function(ld,lg,lt,lp)
 	local k, ind;
 	k:=[];
@@ -109,7 +109,7 @@ PaireExp3 := function(ld,lg,lt,lp)
 		if (i mod 2 =1) and ([lt[i],lt[i+1]] in lg) and ([lt[i+2],lt[i+3]] in ld) then   
 			ind :=0;
 			for j in [1..Length(lp)] do 
-				if lp[j] = [lt[i],1,lt[i+2],1] then #Le code plante à cause de cette ligne...
+				if lp[j] = [lt[i],1,lt[i+2],1] then 
 					Add(lt,j,i+2);
 					Add(lt,1,i+3);
 					if lt[i+5]=1 then
