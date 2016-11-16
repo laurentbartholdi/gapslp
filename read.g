@@ -15,11 +15,10 @@ NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
  InstallMethod( ObjByExtRep, "letter rep family", true,
-     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 10000,
+     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
    function( F, e )
-	Local lt, ld,lg,lp,n,K;
-    
-	lt:=ShallowCopy(LinesOfStraightLineProgram(e));
+	local lt,ld,lg,lp,n,K;
+    lt:=ShallowCopy(LinesOfStraightLineProgram(e));
 	ld:=[];
 	lg:=[];
 	lp:=[];
@@ -29,18 +28,20 @@ NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
 	#On "range" les générateurs dans ld et lt 
 	for i in [1..n] do 
 		Boite(ld,lg,[i,1]);
+		Add(lp,[i,1]);
 	od;
 	
 	#On créer un SLP à partir de lt
 	While Length(lt)>5 do #le choix de 5 est arbitraire
-		K:= PaireExp2(ld,lg,lt,lp);
+		K:= PaireExp3(ld,lg,lt,lp);
 		ld:=K[1];
 		lg:=K[2];
 		lt:=K[3];
 		lp:=K[4];
 		lt := RacPuis(lt);
 	od;
-  	Add(lp,lt);
+    Add(lp,lt);
+	return lp;
 	
 	#J'ai l'impression que c'est ce que doit renvoyer la fonction, mais ne comprenant
 	#pas le fonctionnement de type et Objectify, et ne pouvant pas tester la fonction 
