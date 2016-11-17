@@ -15,4 +15,6 @@ DeclareRepresentation( "IsSLPAssocWordRep", IsAssocWord, [] );
 #On déclare une fonction qui convertit en SLP :
 DeclareOperation( "AssocWordBySLPRep",[IsAssocWord] );
 
+DeclareGlobalFunction("SLPObj");
+
 ReadPackage( "gapslp", "gap/gapslp.gd");

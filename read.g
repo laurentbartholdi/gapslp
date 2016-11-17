@@ -4,25 +4,37 @@ ReadPackage( "gapslp", "gap/gapslp.gi");
 #
 #
 InstallGlobalFunction(SLPObj, function(F,e)
- 	return Objectify(NewType(F, IsSLPWordsFamil and yIsSLPAssocWordRep),[e mod F.!?]);
+Error("test");
+ 	return Objectify(NewType(F, IsSLPWordsFamily and IsSLPAssocWordRep),[e]);
 	end);
 
 #Pour créer la nouvelle représentation il faut implémenter :
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
- InstallMethod( ObjByExtRep, "letter rep family", true,
-     [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
-   function( F, e )
-	#Il faudrait que je trouve un moyen d'accéder au nombre de générateur à partir de la famille
-	n:=???;
-	TestOBER := function(e,n)
-	
-	#J'ai l'impression que c'est ce que doit renvoyer la fonction, mais ne comprenant
-	#pas le fonctionnement de type et Objectify, et ne pouvant pas tester la fonction 
-	#Etant donné que le reste ne fonctionne pas ...
-	return Objectify(F!.SLPWordType,[Immutable(lt)]); #pour ça il faudrait implémenter SLPWordType
+InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
+    [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
+    function( F, exp, maxcand, elt )
+	return Objectify(F!.SLPtype,[Immutable([elt])]);
+    end
+);
 
-    end);
+# Prendre le controle de StoreInfoFreeMagma
+CallFuncList(function()
+    local sifm;
+    sifm := StoreInfoFreeMagma;
+    MakeReadWriteGlobal("StoreInfoFreeMagma");
+    Unbind(StoreInfoFreeMagma);
+    StoreInfoFreeMagma := function(F,names,req)
+	sifm(F,names,req);
+        if IsSLPWordsFamily(F) then
+	# ajouter un type pour les SLP
+	    F!.SLPtype := NewType(F,IsSLPAssocWordRep and req);
+	fi;
+    end;
+    MakeReadOnlyGlobal("StoreInfoFreeMagma");
+end,[]);
+
+if false then # j'enleve tout ca, je n'ai pas pu le lire
     
 #Je n'arrivais pas à utiliser, ni à comprendre objectify, j'ai donc coder une fonction intermédiaire qui fait
 #presque la totalité du travail.Normalement, cette fonction réalise bien ce qu'il faut. 
@@ -245,8 +257,8 @@ PaireExp3 := function(ld,lg,lt,lp)
    while j in [1..Length(l)] do
             if (j mod 2 = 1) and (l[j]>n) then
                 r:=w[l[j]];
-                for k in [1..Length(r)] do 
-                    if k mod 2 = 0 then
+	for k in [1..Length(r)] do 
+	    if k mod 2 = 0 then
                         r[k]:=r[k]*l[j+1]; #on actualise les exposants
                     fi;    
                 od;
@@ -260,19 +272,18 @@ PaireExp3 := function(ld,lg,lt,lp)
   end);
 
 
+fi;
 
-##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
 InstallMethod( PrintObj,
->    "for element in SLP",
->    [ IsSLPWordsFamil and yIsSLPAssocWordRep ],
->    function( w )
->    Print( ResultOfStraightLineProgram(w,gens) );
->    end );
+    "for element in SLP",
+    [ IsSLPAssocWordRep ],
+    function( w )
+    Print( "<SLP ",w![1],">");
+    end );
 
 #InstallMethod( \*, 
 #InstallMethod( \^,
 #InstallMethod( InverseOp
-
 
 #
 # Reading the implementation part of the package.
