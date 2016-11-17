@@ -13,31 +13,9 @@ InstallGlobalFunction(SLPObj, function(F,e)
  InstallMethod( ObjByExtRep, "letter rep family", true,
      [ IsAssocWordFamily and IsLetterWordsFamily, IsHomogeneousList ], 0,
    function( F, e )
-	local lt,ld,lg,lp,n,K;
-    lt:=ShallowCopy(LinesOfStraightLineProgram(e));
-	ld:=[];
-	lg:=[];
-	lp:=[];
-	K:=[];
-	n:=NrInputsOfStraightLineProgram(e);
-	
-	#On "range" les générateurs dans ld et lt 
-	for i in [1..n] do 
-		Boite(ld,lg,[i,1]);
-		Add(lp,[i,1]);
-	od;
-	
-	#On créer un SLP à partir de lt
-	While Length(lt)>5 do #le choix de 5 est arbitraire
-		K:= PaireExp3(ld,lg,lt,lp);
-		ld:=K[1];
-		lg:=K[2];
-		lt:=K[3];
-		lp:=K[4];
-		lt := RacPuis(lt);
-	od;
-    Add(lp,lt);
-	return lp;
+	#Il faudrait que je trouve un moyen d'accéder au nombre de générateur à partir de la famille
+	n:=???;
+	TestOBER := function(e,n)
 	
 	#J'ai l'impression que c'est ce que doit renvoyer la fonction, mais ne comprenant
 	#pas le fonctionnement de type et Objectify, et ne pouvant pas tester la fonction 
@@ -45,7 +23,40 @@ InstallGlobalFunction(SLPObj, function(F,e)
 	return Objectify(F!.SLPWordType,[Immutable(lt)]); #pour ça il faudrait implémenter SLPWordType
 
     end);
+    
+#Je n'arrivais pas à utiliser, ni à comprendre objectify, j'ai donc coder une fonction intermédiaire qui fait
+#presque la totalité du travail.Normalement, cette fonction réalise bien ce qu'il faut. 
 
+TestOBER := function(e,n)
+local lt,ld,lg,lp, m,K, lv;
+    lt:=ShallowCopy(e);
+	ld:=[];
+	lg:=[];
+	lp:=[];
+	K:=[];
+	lv:=[];
+	
+	#On "range" les générateurs dans ld et lt 
+	for i in [1..n] do 
+		K:=Boite(ld,lg,[i,1]);
+		ld:=K[1];
+		lg:=K[2];
+		Add(lp,[i,1]);
+	od;
+	#On créer un SLP à partir de lt
+	while lt <> lv do #le choix de 5 est arbitraire
+		lv:=ShallowCopy(lt);
+		K:= PaireExp3(ld,lg,lt,lp);
+		ld:=K[1];
+		lg:=K[2];
+		lt:=K[3];
+		lp:=K[4];
+		lt := RacPuis(lt);
+		Print(K);
+	od;
+    Add(lp,lt);
+	return lp;
+	end;
 #Boite est une fonction qui mets dans la liste la plus courte le nouvel éléments,
 
 Boite := function(ld,lg,L)
@@ -98,60 +109,75 @@ PaireSimple := function(ld,lg,lt,lp)
 ## différents de 1
 # Cet Algorithme fonctionne 
 PaireExp3 := function(ld,lg,lt,lp)
-	local k, ind;
+	local k, ind,t1,t2;
 	k:=[];
 	n:=Length(lt)-3;
 	i:=1;
 	while i<=n do
-		if (i mod 2 =1) and ([lt[i],lt[i+1]] in lg) and ([lt[i+2],lt[i+3]] in ld) then   
-			ind :=0;
-			for j in [1..Length(lp)] do 
-				if lp[j] = [lt[i],1,lt[i+2],1] then 
-					Add(lt,j,i+2);
+		if (i mod 2 =1) then
+			t1:=[lt[i],1];
+			t2:=[lt[i+2],1];
+			if (t1 in lg) and (t2 in ld) then   
+				ind :=0;
+				for j in [1..Length(lp)] do 
+					if lp[j] = [lt[i],1,lt[i+2],1] then 
+						Add(lt,j,i+2);
+						Add(lt,1,i+3);
+						Print(lt[i+5]);
+						Print(lt[i+4]);
+						if lt[i+5]=1 then
+							Remove(lt,i+5);
+							Remove(lt,i+4);
+						else
+							lt[i+5]:=lt[i+5]-1;
+						fi;
+						Print(lt[i+1]);
+						Print(lt[i+2]);
+						if lt[i+1]=1 then
+							Remove(lt,i);
+							Remove(lt,i);
+						else
+							lt[i+1]:=lt[i+1]-1;
+						fi;
+						ind:=1;
+					fi;
+				od;
+				if ind=0 then
+					L:=[lt[i],1,lt[i+2],1];
+					Add(lp,L);
+					L:=[Length(lp),1];
+					k:=Boite(ld,lg,L); ## J'ai fait une fonction, car peut-être qu'il faudra faire évoluer Boite, on aura pas besoin de changer tout le code comme ça
+					ld:=k[1];
+					lg:=k[2];
+					Print(lt);
+					Add(lt,Length(lp),i+2);
+					
 					Add(lt,1,i+3);
+					Print(lt);
+					Print(lt[i+5]);
+					Print(lt[i+4]);
 					if lt[i+5]=1 then
 						Remove(lt,i+5);
 						Remove(lt,i+4);
 					else
 						lt[i+5]:=lt[i+5]-1;
 					fi;
+					Print(lt[i+1]);
+					Print(lt[i+2]);
 					if lt[i+1]=1 then
-						Remove(lt,i+1);
-						Remove(lt,i+1);
+						Remove(lt,i);
+						Remove(lt,i);
 					else
 						lt[i+1]:=lt[i+1]-1;
 					fi;
-					ind:=1;
-				fi;
-			od;
-			if ind=0 then
-				L:=[lt[i],1,lt[i+2],1];
-				Add(lp,L);
-				k:=Boite(ld,lg,L); ## J'ai fait une fonction, car peut-être qu'il faudra faire évoluer Boite, on aura pas besoin de changer tout le code comme ça
-				ld:=k[1];
-				lg:=k[2];
-				Add(lt,Length(lp),i+2);
-				Add(lt,1,i+3);
-				if lt[i+5]=1 then
-					Remove(lt,i+5);
-					Remove(lt,i+4);
-				else
-					lt[i+5]:=lt[i+5]-1;
-				fi;
-				if lt[i+1]=1 then
-					Remove(lt,i+1);
-					Remove(lt,i+1);
-				else
-					lt[i+1]:=lt[i+1]-1;
-				fi;
-			fi;	
+				fi;	
+			fi;
 		fi;
 		i:=i+1;
-		n:=Length(lt);
+		n:=Length(lt)-3;
 	od;
-	return lt;
+	return [ld,lg,lt,lp];
 	end;	
-		
  ##Cette fonction doit permettre de regrouper les éléments égaux entre eux sous forme de puissance
  ##Cet algorithme fonctionne 
  RacPuis := function(lt)
