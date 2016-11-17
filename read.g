@@ -3,13 +3,9 @@
 ReadPackage( "gapslp", "gap/gapslp.gi");
 #
 #
-NewFilter( "IsSLPWord"); 
-#POur l'instant cela ne marche pas j'ai du mal comprendre quelque chose
-InstallTrueMethod( IsSLPWord, IsAssocWord and IsSLPAssocWordRep );
-NewType( IsSLPWordsFamily, IsSLPWord and IsSLPAssocWordRep);
-
-##Est ce que cela suffit pour pouvoir utiliser Objectify ?
-
+InstallGlobalFunction(SLPObj, function(F,e)
+ 	return Objectify(NewType(F, IsSLPWordsFamil and yIsSLPAssocWordRep),[e mod F.!?]);
+	end);
 
 #Pour créer la nouvelle représentation il faut implémenter :
 
@@ -240,6 +236,13 @@ PaireExp3 := function(ld,lg,lt,lp)
 
 
 ##d'après la documentation de GAP pour créer une nouvelle représentation il faut aussi implémenter PrintObj et ViewObj, on verra ça dans un second temps.
+InstallMethod( PrintObj,
+>    "for element in SLP",
+>    [ IsSLPWordsFamil and yIsSLPAssocWordRep ],
+>    function( w )
+>    Print( ResultOfStraightLineProgram(w,gens) );
+>    end );
+
 #InstallMethod( \*, 
 #InstallMethod( \^,
 #InstallMethod( InverseOp
