@@ -210,8 +210,8 @@ PaireExp3 := function(ld,lg,lt,lp)
 	end;
     
 #Cette méthode va permettre de passer d'une représentation SLP à une représentation en syllabe
-#J'ai fait des test mais il reste des erreurs
- InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
+#J'ai fait des test mais il reste des erreurs, Je suis entrain de debugger avec une fonction intermédiaire
+InstallMethod(ExtRepOfObj,"assoc word in letter rep",true,
  [IsAssocWord and IsLetterAssocWordRep],0,function(v)
   #il faudrait interdire la réécriture
   local n,w,l,r,k,lg;
@@ -270,6 +270,46 @@ PaireExp3 := function(ld,lg,lt,lp)
     od;
   return l;
   end);
+##Je suis entrain d'essayer de debugger en travaillant sur la fonction intermédiaire ci-dessous
+TestEROO := function(v)
+ #si j'ai acces au nb de générateur, et il faudrait interdire la réécriture
+  local n,w,l,r,k,lg;
+  r:=[];
+  l:=[];
+  k:=[];
+  j:=1;
+  w:=ShallowCopy(LinesOfStraightLineProgram(v));
+  n:=NrInputsOfStraightLineProgram(v);
+  lg:=Length(w);
+for i in [1..lg] do
+	j:=1;
+	if IsList(w[i][1]) then
+        l:=w[i][1];
+    else
+        l:=w[i];
+    fi;
+	Print(l);
+		while j in [1..Length(l)] do
+		   if (j mod 2 = 1) and (l[j]>n) then
+				r:=ShallowCopy(w[l[j]-n]);
+                for k in [1..Length(r)] do 
+                    if k mod 2 = 0 then
+					Print(r[k]*l[j+1]);
+                        r[k]:=r[k]*l[j+1]; #on actualise les exposants
+                    fi;    
+                od;
+				Print(l);
+				Print(j);
+                Remove(l,j);
+                Remove(l,j);
+                Add(l,r,j);
+            fi;
+			j:=j+Length(r)-1;
+        od;
+    w[i]:=l;     
+ od;
+return l;
+end;
 
 
 fi;
