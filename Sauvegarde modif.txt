@@ -312,7 +312,6 @@ return l;
 end;
 
 
-fi;
 
 InstallMethod( PrintObj,
     "for element in SLP",
@@ -321,51 +320,6 @@ InstallMethod( PrintObj,
     Print( "<SLP ",w![1],">");
     end );
 
-## Implémentons le produit (Error : no method found)
-
-InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
-    [ IsAssocWord and IsSLPAssocWordRep, 
-      IsAssocWord and IsSLPAssocWordRep], 0, function(x,y)
-	 
-	 #On considère qu'un SLP est une liste entre crochet
-	 	 
-	 local  i, #indice qui parcours y[1],
-			r; #ce sera le résultat
-		      
-	 r:= ShallowCopy(x[1]);
-	 
-	 for i in [1..Length(y[1])] do 
-		Add(r,y[1][i]);
-	 od;
-	 
-	 r:=[r];
-	 
-	 return r;
-	 
-	 end );
-#Créons une fonction qui permettra de tester malgré tout
-TestProd := function(x,y)
-	local  i, #indice qui parcours y[1],
-			r; #ce sera le résultat
-		      
-	 r:= ShallowCopy(x[1]);
-	 
-	 for i in [1..Length(y[1])] do 
-		Add(r,y[1][i]);
-	 od;
-	 
-	 r:=[r];
-	 
-	 return r;
-	 
-	 end;
-
-#Test
-b:=[[1,2,3,4,3,2,]];
-c:=[[1,2,1,2,1,3,3,2]];
-t:=TestProd(b,c); 
-
-	
 #InstallMethod( \*, 
 #InstallMethod( \^,
 #InstallMethod( InverseOp
