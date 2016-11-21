@@ -34,6 +34,37 @@ CallFuncList(function()
     MakeReadOnlyGlobal("StoreInfoFreeMagma");
 end,[]);
 
+## Implémenter les méthodes PrintString et PrintObj
+
+InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	local s, #String résultat
+		  x; #Liste de travail
+	s:=""; 
+	x:=w![1];
+	#Tester si la liste est vide 
+	
+	if x<>[] and x<>[[]] then 
+	#Commençons avec la méthode simple
+	if Length(x)=1 then 
+		x:=x[1];
+		for i in [1,3..Length(x)-1] do
+			s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
+			s:=Concatenation(s,"^");
+			s:=Concatenation(s,String(x[i+1]));
+		od;
+	
+	fi;
+	fi;
+	return (s);
+	end);
+	
+InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	Print(PrintString(w));
+	end);
 	
 ##Test 
 f:=FreeGroup(IsSLPWordsFamily,2);
@@ -237,34 +268,6 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 	
 	end);
 
-## Implémenter les méthodes PrintString et PrintObj
-
-InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
-    [ IsAssocWord and IsSLPAssocWordRep], 0,
-	function( w )
-	local s, #String résultat
-		  x; #Liste de travail
-	s:=""; 
-	x:=w![1];
-	#Tester si la liste est vide 
-	
-	#Commençons avec la méthode simple
-	if Length(x)=1 then 
-		x:=x[1];
-		for i in [1,3..Length(x)-1] do
-			s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
-			s:=Concatenation(s,"^");
-			s:=Concatenation(s,String(x[i+1]));
-		od;
-	return (s);
-	fi;
-	end);
-	
-InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
-    [ IsAssocWord and IsSLPAssocWordRep], 0,
-	function( w )
-	Print(PrintString(w));
-	end);
 
 ##Implémenter les méthodes ViewString et ViewObj
 	
@@ -305,16 +308,19 @@ InstallOtherMethod( Subword,"for SLP associative word and two positions",
     true, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ], 0,
 	function( w, from, to )
 	local r, #liste résultat
-		  x; #liste associée au SLP
-	
+		  x, #liste associée au SLP
+		  c; #compteur
+	c:=0;
 	r:=[];
 	x:=w![1]; 
 	
 	if x<>[] and x<>[[]] then
 		x:=x[1];
-		if from>=1 and to<=Length(x[1]) then 
-			for i in [from...to] do 
-				r:=Add(r,x[i]);
+		if from>=1 and to<=Length(x)/2 then 
+			while c<to do 
+				Add(r,x[2*i-1]);
+				Add(r,x[2*i]);
+				c:=c+x[2*i];
 			od;
 		fi;
 	else
@@ -323,6 +329,37 @@ InstallOtherMethod( Subword,"for SLP associative word and two positions",
 	return (ObjByExtRep(FamilyObj(w),1,1,r));
 	end);
 	
+Subword(t,2,3);
+
+## On a ensuite 2 méthodes spécifiques aux Syllables : PositionWord et SubSyllables
+
+##Remplacer un générateur par un autre (ne fonctionne pas)
+
+InstallMethod( EliminatedWord,
+  "for three associative words, SLP rep.",IsFamFamFam,
+    [ IsAssocWord and IsSLPAssocWordRep, 
+	IsAssocWord and IsSLPAssocWordRep, 
+	IsAssocWord and IsSLPAssocWordRep ],0,
+	function( w, gen, by )
+	local x, #Liste SLP résultat
+		  g1,#Liste ancien générateur
+		  g2;#Liste nouveau générateur
+	
+	x:=ShallowCopy(![1][1]);
+	g1:=gen![1][1];
+	g2:=by![1][1];
+	
+	for i in [1,3..Length(x)-1] do
+		if x[i]=g1[1] then 
+			x[i]:=g2[1];
+			x[i+1]:=x[i+1]*g2[1];
+		fi;
+	od;
+	return (ObjByExtRep(FamilyObj(w),1,1,x));
+	end);
+
+EliminatedWord(t,f.1,f.2);
+
 #
 # Reading the implementation part of the package.
 #
