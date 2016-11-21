@@ -228,6 +228,37 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 	return(ObjByExtRep(FamilyObj(w),1,1,r));
 	
 	end);
+
+## Implémenter la méthode PrintString
+
+InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	local s, #String résultat
+		  x; #Liste de travail
+	s:="";
+	x:=w![1];
+	#Tester si la liste est vide 
+	
+	#Commençons avec la méthode simple
+	if Length(x)=1 then 
+		x:=x[1];
+		for i in [1,3..Length(x)-1] do
+			s:=Concatenation(s,FamilyObj(w)!.names[i]);
+			s:=Concatenation(s,"^");
+			s:=Concatenation(s,String(x[i+1]));
+		od;
+	return (s);
+	fi;
+	end);
+	
+InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	Print(PrintString(w));
+	end);
+	
+	
 #
 # Reading the implementation part of the package.
 #
