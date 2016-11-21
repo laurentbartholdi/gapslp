@@ -34,12 +34,6 @@ CallFuncList(function()
     MakeReadOnlyGlobal("StoreInfoFreeMagma");
 end,[]);
 
-InstallMethod( PrintObj,
-    "for element in SLP",
-    [ IsSLPAssocWordRep ],
-    function( w )
-    Print( "<SLP ",w![1],">");
-    end );
 	
 ##Test 
 f:=FreeGroup(IsSLPWordsFamily,2);
@@ -147,21 +141,23 @@ InstallMethod( \^,
     
 	 #On considère qu'un SLP est une liste entre crochet
 	
-	local  i, #indice qui parcours 
-		   r, #résultat
+	local  r, #résultat
 		   x, #SLP sous forme de liste
 		   l, #Longeur x[1]
 	 x:=w![1];
 	 r:=[];
-	 c :=[];
-	 d:=ShallowCopy(x[1]);
 	 #Test si la liste est vide 
 	 
 	 if x<>[] and x<>[[]] then 
-		l:=Length(x[1]);
+		x:=x[1]; 
+		l:=Length(x);
+		for i in [1..a] do
+			for j in [1..l] do 
+				r:=Add(r,x[j]);
+			od;
+		od;
 	 fi;
 	 x:=x[1];
-	
 	 return(ObjByExtRep(FamilyObj(w),1,1,r));
 	 
 	 end);
@@ -207,7 +203,19 @@ InstallMethod( \^,
 ##Longueur d'un mot (fonctionne)
 InstallMethod(Length,"assoc word in SLP rep",true,
   [IsAssocWord and IsSLPAssocWordRep],0,
-  e->Length(e![1]));
+  function(w)
+  local c, #compteur
+		x; #Liste SLP
+	c:=0;
+	x:=w![1];
+	if x<>[] and x<>[[]] then 
+		x:=x[1];
+		for i in [2,4..Length(x)] do
+			c:=c+x[i];
+		od;
+	fi;
+	return(c);
+    end);
 	
 ## Ecrire le mot à l'envers (fonctionne)
 
@@ -224,19 +232,19 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 		Add(r,x[1][i]);
 		Add(r,x[1][i+1]);
 	od;
-	
+	r:=r; 
 	return(ObjByExtRep(FamilyObj(w),1,1,r));
 	
 	end);
 
-## Implémenter la méthode PrintString
+## Implémenter les méthodes PrintString et PrintObj
 
 InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
 	function( w )
 	local s, #String résultat
 		  x; #Liste de travail
-	s:="";
+	s:=""; 
 	x:=w![1];
 	#Tester si la liste est vide 
 	
@@ -244,7 +252,7 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	if Length(x)=1 then 
 		x:=x[1];
 		for i in [1,3..Length(x)-1] do
-			s:=Concatenation(s,FamilyObj(w)!.names[i]);
+			s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
 			s:=Concatenation(s,"^");
 			s:=Concatenation(s,String(x[i+1]));
 		od;
@@ -257,7 +265,63 @@ InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
 	function( w )
 	Print(PrintString(w));
 	end);
+
+##Implémenter les méthodes ViewString et ViewObj
 	
+InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function(w)
+	return(PrintString(w));
+	end);
+	
+InstallOtherMethod( ViewObj, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	Print(ViewString(w));
+	end);
+	
+	
+## Implémenter DisplayString et Display
+InstallMethod( DisplayString,
+    "for element in SLP",
+    [ IsSLPAssocWordRep ],
+    function( w )
+	local s; #String résultat
+		s:= "<SLP ";
+		s:= Concatenation(s,String(w![1]));
+		s:=Concatenation(s, ">");
+    return(s);
+    end );
+
+InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	Print(DisplayString(w));
+	end);
+
+## Accéder à un sous mot
+
+InstallOtherMethod( Subword,"for SLP associative word and two positions",
+    true, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ], 0,
+	function( w, from, to )
+	local r, #liste résultat
+		  x; #liste associée au SLP
+	
+	r:=[];
+	x:=w![1]; 
+	
+	if x<>[] and x<>[[]] then
+		x:=x[1];
+		if from>=1 and to<=Length(x[1]) then 
+			for i in [from...to] do 
+				r:=Add(r,x[i]);
+			od;
+		fi;
+	else
+		r:=ShallowCopy(x);
+	fi;
+	return (ObjByExtRep(FamilyObj(w),1,1,r));
+	end);
 	
 #
 # Reading the implementation part of the package.
