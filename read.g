@@ -14,6 +14,7 @@ Error("test");
 InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
     [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
     function( F, exp, maxcand, elt )
+	Print(elt);
 	return Objectify(F!.SLPtype,[Immutable([elt])]);
     end
 );
@@ -187,7 +188,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	return ObjByExtRep(FamilyObj(w),1,1,r);
 	 
 	end);
-## ATTENTION : il n'y a pas de simplification
 
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
