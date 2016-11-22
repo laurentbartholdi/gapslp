@@ -43,19 +43,19 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 		  x; #Liste de travail
 	s:=""; 
 	x:=w![1];
-	#Tester si la liste est vide 
-	
+	#si la liste est non-vide 
 	if x<>[] and x<>[[]] then 
-	#Commençons avec la méthode simple
-	if Length(x)=1 then 
-		x:=x[1];
-		for i in [1,3..Length(x)-1] do
-			s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
-			s:=Concatenation(s,"^");
-			s:=Concatenation(s,String(x[i+1]));
-		od;
-	
-	fi;
+		if Length(x)=1 then 
+			x:=x[1];
+			for i in [1,3..Length(x)-1] do
+				s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
+				s:=Concatenation(s,"^");
+				s:=Concatenation(s,String(x[i+1]));
+			od;
+		fi;
+	#Si la liste est vide 
+	else 
+		s:="<identity...>";
 	fi;
 	return (s);
 	end);
@@ -69,6 +69,31 @@ InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
 ##Test 
 f:=FreeGroup(IsSLPWordsFamily,2);
 
+##Créer une méthode qui simplifie 
+
+RacPuis := function(lt)
+	local e, #Nouvel exposant
+		  n; #Longueur limite de la liste
+	n:=Length(lt)-3;
+	i:=1;
+	while i<=n do
+		if i mod 2 = 1 and lt[i]=lt[i+2] then 
+			e:=lt[i+1]+lt[i+3];
+			Remove(lt,i+3);
+			Remove(lt,i+2);
+			if e<>0 then 
+				lt[i+1]:=e;
+			else 
+			Remove(lt,i+1);
+			Remove(lt,i);
+			fi;
+		else
+			i:=i+1;
+		fi;
+		n:=Length(lt)-3;
+	od;
+	return lt;
+	end;
 
 ##La comparaison (fonctionne, j'ai réutilisé du code de Wordass.gi) 
 
@@ -158,7 +183,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	for i in [1..Length(y[1])] do 
 		Add(r,y[1][i]);
 	od;
-		 
+	r:=RacPuis(r); 	 
 	return ObjByExtRep(FamilyObj(w),1,1,r);
 	 
 	end);
@@ -174,21 +199,30 @@ InstallMethod( \^,
 	
 	local  r, #résultat
 		   x, #SLP sous forme de liste
-		   l, #Longeur x[1]
-	 x:=w![1];
+		   l; #Longeur x[1]
+	 x:=ShallowCopy(w![1]);
 	 r:=[];
 	 #Test si la liste est vide 
-	 
 	 if x<>[] and x<>[[]] then 
 		x:=x[1]; 
 		l:=Length(x);
-		for i in [1..a] do
-			for j in [1..l] do 
-				r:=Add(r,x[j]);
+		if a>0 then 
+			for i in [1..a] do
+				for j in [1..l] do 
+					Add(r,x[j]);
+				od;
 			od;
-		od;
+		fi;
+		if a<0 then 
+			for i in [1..-a] do
+				for j in [l-1,-3..1] do 
+					Add(r,x[j]);
+					Add(r,-x[j+1]);
+				od;
+			od;
+		fi;
 	 fi;
-	 x:=x[1];
+	 r:=RacPuis(r);
 	 return(ObjByExtRep(FamilyObj(w),1,1,r));
 	 
 	 end);
@@ -242,7 +276,7 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 	if x<>[] and x<>[[]] then 
 		x:=x[1];
 		for i in [2,4..Length(x)] do
-			c:=c+x[i];
+			c:=c+AbsInt(x[i]);
 		od;
 	fi;
 	return(c);
@@ -302,25 +336,48 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 	Print(DisplayString(w));
 	end);
 
-## Accéder à un sous mot
+## Accéder à un sous mot (fonctionne)
 
 InstallOtherMethod( Subword,"for SLP associative word and two positions",
     true, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ], 0,
 	function( w, from, to )
 	local r, #liste résultat
 		  x, #liste associée au SLP
-		  c; #compteur
+		  i, #élément qui parcours la liste
+		  c; #compteur d'éléments
+	#Initialisation 
+	i:=1;
 	c:=0;
 	r:=[];
 	x:=w![1]; 
 	
 	if x<>[] and x<>[[]] then
 		x:=x[1];
-		if from>=1 and to<=Length(x)/2 then 
-			while c<to do 
-				Add(r,x[2*i-1]);
-				Add(r,x[2*i]);
-				c:=c+x[2*i];
+		if from>=1 and to<=2*Length(w) then
+		
+		#On parcourt pour trouver le début
+			while c<from and i<Length(x) do
+				c:=c+AbsInt(i+1);
+				i:=i+2;
+			od;
+			Add(r,x[i-2]);
+			if x[i-1]<0 then 
+				Add(r,-(c-from+1));
+			else 
+				Add(r,(c-from+1));
+			fi;
+			
+		#On récupère les éléments
+			while c<to and i<Length(x) do 
+				Add(r,x[i]);
+				if c+AbsInt(x[i+1])>to then 
+					Add(r,to-c);
+					c:=to;
+				else
+					Add(r,x[i+1]);
+					c:=c+AbsInt(x[i+1]);
+				fi;
+				i:=i+2;
 			od;
 		fi;
 	else
