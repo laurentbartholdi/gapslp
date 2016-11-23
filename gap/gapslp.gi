@@ -5,13 +5,16 @@
 #
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
-InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
-    [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
-    function( F, exp, maxcand, elt )
-	return Objectify(F!.SLPtype,[Immutable([elt])]);
-    end
-);
+BindGlobal("NewSLP", function( F, elt )
+    return Objectify(F!.SLPtype,[Immutable(elt)]);
+end );
 
+InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
+        [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
+        function( F, exp, maxcand, elt )
+    return NewSLP(F,[elt]);
+end );
+    
 # Prendre le controle de StoreInfoFreeMagma
 CallFuncList(function()
     local sifm;
@@ -23,6 +26,7 @@ CallFuncList(function()
         if IsSLPWordsFamily(F) then
 	# ajouter un type pour les SLP
 	    F!.SLPtype := NewType(F,IsSLPAssocWordRep and req);
+            F!.SLPrank := Length(F!.names);
 	fi;
     end;
     MakeReadOnlyGlobal("StoreInfoFreeMagma");
@@ -72,8 +76,43 @@ InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
 	
 InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
-	function(w)
-	return(PrintString(w));
+	function( w )
+	local s, #String résultat
+		  n, #nb de générateurs 
+		  l, #liste de travail
+		  x; #Liste de SLP
+	
+	#Initialisation
+	s:=""; 
+	n:=Length(FamilyObj(w)!.names);
+	l:=[];
+	g:=[];
+	x:=w![1];
+	
+	#Tester si la liste est vide 
+	
+	#On s'occupe des premières listes 
+	for i in [1..Length(x)-1] do
+		l:=ShallowCopy(x[i]);
+		for j in [1,3..Length(l)-1] do
+			s:=Concatenation(s,"_");
+			s:=Concatenation(s,String(l[j]));
+			s:=Concatenation(s,":=");
+			if l[j]<=n then 
+				s:=Concatenation(s,FamilyObj(w)!.names[l[j]]);
+			else
+				s:=Concatenation(s,"_");
+				s:=Concatenation(s,String(l[j]));
+			fi;
+			s:=Concatenation(s,"^");
+			s:=Concatenation(s,String(l[j+1]));
+			s:=Concatenation(s,";");
+		od;
+	od;
+	
+	#Faire une boucle qui s'occupe de la dernière liste 
+	
+	return (s);
 	end);
 	
 InstallOtherMethod( ViewObj, "for an assoc. word in SLP rep", true,
@@ -220,7 +259,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	r:=RacPuis(r); 	 
 	return ObjByExtRep(FamilyObj(w),1,1,r);
 	 
-	end);
+    end);
+## ATTENTION : il n'y a pas de simplification
 
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
