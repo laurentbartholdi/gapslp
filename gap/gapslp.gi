@@ -31,12 +31,11 @@ end,[]);
 ################################################################
 # methodes d'impression
 
-## Implémenter les méthodes PrintString et PrintObj
-
 InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
 	function( w )
 	local s, #String résultat
+		  i, #Parcourt la liste 
 		  x; #Liste de travail
 	s:=""; 
 	x:=w![1];
@@ -46,8 +45,14 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 			x:=x[1];
 			for i in [1,3..Length(x)-1] do
 				s:=Concatenation(s,FamilyObj(w)!.names[x[i]]);
-				s:=Concatenation(s,"^");
-				s:=Concatenation(s,String(x[i+1]));
+				
+				if x[i+1]<>1 then 
+					s:=Concatenation(s,"^");
+					s:=Concatenation(s,String(x[i+1]));
+				fi;
+				if i<>Length(x)-1 then 
+					s:=Concatenation(s,"*");
+				fi;
 			od;
 		fi;
 	#Si la liste est vide 
@@ -61,8 +66,10 @@ InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
 	function( w )
 	Print(PrintString(w));
-end);
-
+	end);
+	
+##Implémenter les méthodes ViewString et ViewObj
+	
 InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
 	function(w)
@@ -96,8 +103,10 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 
 ################################################################
 # comparaisons et opérations
+
 RacPuis := function(lt)
 	local e, #Nouvel exposant
+		  i, #Parcourt la liste
 		  n; #Longueur limite de la liste
 	n:=Length(lt)-3;
 	i:=1;
@@ -119,6 +128,8 @@ RacPuis := function(lt)
 	od;
 	return lt;
 	end;
+
+##La comparaison (fonctionne, j'ai réutilisé du code de Wordass.gi) 
 
 InstallMethod(\<,"assoc. in SLP rep",IsIdenticalObj,
 	[ IsAssocWord and IsSLPAssocWordRep, 
@@ -210,7 +221,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	return ObjByExtRep(FamilyObj(w),1,1,r);
 	 
 	end);
-## ATTENTION : il n'y a pas de simplification
 
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
@@ -222,7 +232,11 @@ InstallMethod( \^,
 	
 	local  r, #résultat
 		   x, #SLP sous forme de liste
+		   i, #Permet de répéter a fois la liste 
+		   j, #Parcourt la liste 
 		   l; #Longeur x[1]
+		   
+		   
 	 x:=ShallowCopy(w![1]);
 	 r:=[];
 	 #Test si la liste est vide 
@@ -255,6 +269,8 @@ InstallMethod( \^,
 
 ##Puissance de chaque éléments un par un (fonctionne) lié à une erreur ...
 	if false then
+	
+PuisElt := function(w,a)	
 	local i, #indice qui parcours 
 		   r, #résultat
 		   x, #SLP sous forme de liste
@@ -285,7 +301,8 @@ InstallMethod( \^,
 	 r:=[r];
 	 return(ObjByExtRep(FamilyObj(w),1,1,r));
 	 
-	 end);
+	 end;
+	 
 	fi;
 	 
 ##Longueur d'un mot (fonctionne)
@@ -293,6 +310,7 @@ InstallMethod(Length,"assoc word in SLP rep",true,
   [IsAssocWord and IsSLPAssocWordRep],0,
   function(w)
   local c, #compteur
+		i, #Parcourt la liste 
 		x; #Liste SLP
 	c:=0;
 	x:=w![1];
@@ -312,7 +330,9 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 	function( w )
 	local r, #mot à l'envers
 		  x, #Liste SLP
+		  i, #Parcourt la liste 
 		  l; #Longueur de x[1]
+		  
 	x:=w![1];
 	r:=[];
 	l:=Length(x[1]);
@@ -374,8 +394,11 @@ InstallOtherMethod( Subword,"for SLP associative word and two positions",
 	fi;
 	return (ObjByExtRep(FamilyObj(w),1,1,r));
 	end);
-        
-        ##Remplacer un générateur par un autre (ne fonctionne pas)
+	
+
+## On a ensuite 2 méthodes spécifiques aux Syllables : PositionWord et SubSyllables
+
+##Remplacer un générateur par un autre (ne fonctionne pas)
 
 InstallMethod( EliminatedWord,
   "for three associative words, SLP rep.",IsFamFamFam,
@@ -384,17 +407,18 @@ InstallMethod( EliminatedWord,
 	IsAssocWord and IsSLPAssocWordRep ],0,
 	function( w, gen, by )
 	local x, #Liste SLP résultat
+		  i, # Parcourt la liste 
 		  g1,#Liste ancien générateur
 		  g2;#Liste nouveau générateur
 	
-	x:=ShallowCopy(![1][1]);
+	x:=ShallowCopy(w![1][1]);
 	g1:=gen![1][1];
 	g2:=by![1][1];
 	
 	for i in [1,3..Length(x)-1] do
 		if x[i]=g1[1] then 
 			x[i]:=g2[1];
-			x[i+1]:=x[i+1]*g2[1];
+			x[i+1]:=x[i+1]*g2[2];
 		fi;
 	od;
 	return (ObjByExtRep(FamilyObj(w),1,1,x));
