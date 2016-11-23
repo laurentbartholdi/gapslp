@@ -234,8 +234,13 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 				s:=Concatenation(s,"_");
 				s:=Concatenation(s,String(l[j]));
 			fi;
-			s:=Concatenation(s,"^");
-			s:=Concatenation(s,String(l[j+1]));
+			if l[j+1]<>1 then 
+					s:=Concatenation(s,"^");
+					s:=Concatenation(s,String(l[j+1]));
+			fi;
+			if j<>Length(l)-1 then 
+				s:=Concatenation(s,"*");
+			fi;
 		od;
 		s:=Concatenation(s,";");
 	od;
@@ -250,8 +255,13 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 				s:=Concatenation(s,"_");
 				s:=Concatenation(s,String(l[j]));
 			fi;
-			s:=Concatenation(s,"^");
-			s:=Concatenation(s,String(l[j+1]));
+			if l[j+1]<>1 then 
+					s:=Concatenation(s,"^");
+					s:=Concatenation(s,String(l[j+1]));
+			fi;
+			if j<>Length(l)-1 then 
+				s:=Concatenation(s,"*");
+			fi;
 		od;
 		
 	return (s);
