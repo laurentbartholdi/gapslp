@@ -80,40 +80,65 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	local s, #String résultat
 		  n, #nb de générateurs 
 		  l, #liste de travail
+		  j, #Parcourt l
+		  i, #Parcourt x
 		  x; #Liste de SLP
 	
 	#Initialisation
 	s:=""; 
 	n:=Length(FamilyObj(w)!.names);
 	l:=[];
-	g:=[];
 	x:=w![1];
-	
 	#Tester si la liste est vide 
 	
 	#On s'occupe des premières listes 
 	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
-		for j in [1,3..Length(l)-1] do
-			s:=Concatenation(s,"_");
-			s:=Concatenation(s,String(l[j]));
+		s:=Concatenation(s,"_");
+			s:=Concatenation(s,String(i));
 			s:=Concatenation(s,":=");
+		for j in [1,3..Length(l)-1] do
+			
 			if l[j]<=n then 
 				s:=Concatenation(s,FamilyObj(w)!.names[l[j]]);
 			else
 				s:=Concatenation(s,"_");
 				s:=Concatenation(s,String(l[j]));
 			fi;
-			s:=Concatenation(s,"^");
-			s:=Concatenation(s,String(l[j+1]));
-			s:=Concatenation(s,";");
+			if l[j+1]<>1 then 
+					s:=Concatenation(s,"^");
+					s:=Concatenation(s,String(l[j+1]));
+			fi;
+			if j<>Length(l)-1 then 
+				s:=Concatenation(s,"*");
+			fi;
 		od;
+		s:=Concatenation(s,";");
 	od;
 	
 	#Faire une boucle qui s'occupe de la dernière liste 
-	
+	l:=x[Length(x)];
+	for j in [1,3..Length(l)-1] do
+			
+			if l[j]<=n then 
+				s:=Concatenation(s,FamilyObj(w)!.names[l[j]]);
+			else
+				s:=Concatenation(s,"_");
+				s:=Concatenation(s,String(l[j]));
+			fi;
+			if l[j+1]<>1 then 
+					s:=Concatenation(s,"^");
+					s:=Concatenation(s,String(l[j+1]));
+			fi;
+			if j<>Length(l)-1 then 
+				s:=Concatenation(s,"*");
+			fi;
+		od;
+		
 	return (s);
 	end);
+	
+
 	
 InstallOtherMethod( ViewObj, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
@@ -143,29 +168,46 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ################################################################
 # comparaisons et opérations
 
-RacPuis := function(lt)
+##Fonction qui simplifie un mot
+
+RacPuis := function(w)
 	local e, #Nouvel exposant
-		  i, #Parcourt la liste
-		  n; #Longueur limite de la liste
-	n:=Length(lt)-3;
-	i:=1;
-	while i<=n do
-		if i mod 2 = 1 and lt[i]=lt[i+2] then 
-			e:=lt[i+1]+lt[i+3];
-			Remove(lt,i+3);
-			Remove(lt,i+2);
-			if e<>0 then 
-				lt[i+1]:=e;
-			else 
-			Remove(lt,i+1);
-			Remove(lt,i);
+		  i, #Parcourt la liste x
+		  j, #Parcourt la liste l
+		  nx, #Longueur limite de la liste
+		  l, # Liste de travail 
+		  n, #Longueur de travail sur l 
+		  r, #résultat
+		  x; #Liste de SLP
+	
+	#Initialisation
+	r:=[];
+	x:=w![1];
+	nx:=Length(x);
+	j:=1;
+	
+	for i in [1..nx] do 
+		l:=ShallowCopy(x[i]);
+		n:=Length(l)-3;
+		while j<=n do
+			if j mod 2 = 1 and l[j]=l[j+2] then 
+				e:=l[j+1]+l[j+3];
+				Remove(l,j+3);
+				Remove(l,j+2);
+				if e<>0 then 
+					l[j+1]:=e;
+				else 
+					Remove(l,j+1);
+					Remove(l,j);
+				fi;
+			else
+				j:=j+1;
 			fi;
-		else
-			i:=i+1;
-		fi;
-		n:=Length(lt)-3;
+			n:=Length(l)-3;
+		od;
+		Add(r,l);
 	od;
-	return lt;
+	return NewSLP(FamilyObj(w),r);
 	end;
 
 ##La comparaison (fonctionne, j'ai réutilisé du code de Wordass.gi) 
@@ -237,8 +279,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
       IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
 	 
 	 #On considère qu'un SLP est une liste entre crochet
-	 	 
-	local  i, #indice qui parcours y[1],
+
+	 local  i, #indice qui parcours y[1],
 		   x, #Liste de SLP
 		   y, #liste de SLP
 		   r; #ce sera le résultat
@@ -247,21 +289,180 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	if x=[] or x=[[]] then  	      
 		return(y);
 	fi;
-	
 	if y=[] or y=[[]] then
 		return (x);
 	fi;
-	 
+	
 	r:= ShallowCopy(x[1]);	
+	
 	for i in [1..Length(y[1])] do 
 		Add(r,y[1][i]);
 	od;
+	
+	r := NewSLP(FamilyObj(w),[r]);
 	r:=RacPuis(r); 	 
-	return ObjByExtRep(FamilyObj(w),1,1,r);
-	 
-    end);
-## ATTENTION : il n'y a pas de simplification
+	return r;
+	end);
 
+##Multiplier 2 mots 
+
+P := function(w,z)
+local  x, #Liste de SLP
+		   y, #liste de SLP
+		   nx,#longueur de la liste x
+		   ny,#longueur de la liste y
+		   ng,#nb de générateurs
+		   n, #cases rajoutées
+		   l, #liste de travail
+		   i,
+		   j,
+		   r; #ce sera le résultat
+	
+	#Initialisation
+	x:=w![1];
+	y:=z![1];
+	nx:=Length(x);
+	ny:=Length(y);
+	ng:=Length(FamilyObj(w)!.names);
+	n:=0;
+	l:=[];
+	r:=[];
+	
+	#On suppose ici que les 2 listes ne sont pas vide
+	#Et qu'elle commence par les générateurs 
+	r:= ShallowCopy(x);
+	
+	n:=nx;
+	for i in [ng+1..ny] do
+		l:=ShallowCopy(y[i]);
+		for j in [1,3..Length(l)-1] do
+			if l[j]>ng then 
+				l[j]:=l[j]+n;
+			fi;
+		od;
+		Add(r,l);
+	od;
+	
+	n:=n+ny-ng;
+	l:=[nx,1,n,1];
+	Add(r,l);
+
+	r:=NewSLP(FamilyObj(w),r);
+	r:=RacPuis(r);
+	return r;
+ 
+	end;
+
+
+##Multiplier à gauche par un générateur   
+PG :=function(w,z)
+	local  x, #Liste de SLP
+		   y, #liste de SLP
+		   ny,#longueur de la liste y
+		   ng,#nb de générateurs
+		   n, #cases rajoutées
+		   i, #Parcourt les listes
+		   j, #Parcourt les listes 
+		   l, #liste de travail
+		   k,
+		   r; #ce sera le résultat
+	
+	#Initialisation
+	x:=ShallowCopy(w![1]);
+	y:=ShallowCopy(z![1]);
+	ny:=Length(y);
+	ng:=Length(FamilyObj(w)!.names);
+	n:=0;
+	l:=[];
+	r:=[];
+			
+	#On ajoute les générateurs 
+	for i in [1..ng] do
+		Add(r,[i,1]);
+	od;
+	
+	n:=ng;
+	
+	#Comme x est un générateur 
+	k:=x[1][1];
+	
+	
+	for i in [1..ny] do
+	#a terme il faudra penser à enlever les ng premiers
+		l:=ShallowCopy(y[i]);
+		for j in [1,3..Length(l)-1] do
+			if l[j]>ng then 
+				l[j]:=l[j]+n;
+			fi;
+		od;
+		Add(r,l);
+	od;
+	
+	n:=Length(r);
+	Add(r[n],k,1);
+	Add(r[n],1,2);
+	r:=NewSLP(FamilyObj(w),r);
+	r:=RacPuis(r);
+	return r;
+ 
+    end;
+
+##Multiplier à droite par un générateur   
+PD :=function(w,z)
+	local  x, #Liste de SLP
+		   y, #liste de SLP
+		   ny,#longueur de la liste y
+		   ng,#nb de générateurs
+		   n, #cases rajoutées
+		   i, #Parcourt les listes
+		   j, #Parcourt les listes 
+		   l, #liste de travail
+		   	k,
+			r; #ce sera le résultat
+		   
+	#j'ai gardé le même code, j'ai juste échangé z et w et modifié l'insertion
+	
+	#Initialisation 
+	x:=ShallowCopy(z![1]);
+	y:=ShallowCopy(w![1]);
+	ny:=Length(y);
+	ng:=Length(FamilyObj(w)!.names);
+	n:=0;
+	l:=[];
+	r:=[];
+			
+	#On ajoute les générateurs 
+	for i in [1..ng] do
+		Add(r,[i,1]);
+	od;
+	
+	n:=ng;
+	
+	#Comme x est un générateur 
+	k:=x[1][1];
+	
+	
+	for i in [1..ny] do
+	#a terme il faudra penser à enlever les ng premiers
+		l:=ShallowCopy(y[i]);
+		for j in [1,3..Length(l)-1] do
+			if l[j]>ng then 
+				l[j]:=l[j]+n;
+			fi;
+		od;
+		Add(r,l);
+	od;
+	
+	n:=Length(r);
+	Add(r[n],k);
+	Add(r[n],1);
+	r:=NewSLP(FamilyObj(w),r);
+	r:=RacPuis(r);
+	return r;
+ 
+    end;
+
+	
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
     "for an assoc. word with inverse in syllable rep, and an integer",
@@ -299,12 +500,14 @@ InstallMethod( \^,
 			od;
 		fi;
 	 fi;
-	 r:=RacPuis(r);
-	 return(ObjByExtRep(FamilyObj(w),1,1,r));
+	
+	r:=NewSLP(FamilyObj(w),[r]);
+	r:=RacPuis(r);
+	return r;
+ 
+    end);
 	 
-	 end);
-	 
-	 #C'est une fonction très rudimentaire il faudrait simplifier les termes
+
 
 
 ##Puissance de chaque éléments un par un (fonctionne) lié à une erreur ...
