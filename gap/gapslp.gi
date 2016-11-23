@@ -272,38 +272,6 @@ InstallMethod(\<,"assoc. in SLP rep",IsIdenticalObj,
 	end );
 	
 	
-## Le produit (fonctionne)
-
-InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
-    [ IsAssocWord and IsSLPAssocWordRep, 
-      IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
-	 
-	 #On considère qu'un SLP est une liste entre crochet
-
-	 local  i, #indice qui parcours y[1],
-		   x, #Liste de SLP
-		   y, #liste de SLP
-		   r; #ce sera le résultat
-	x:=w![1];
-	y:=z![1];
-	if x=[] or x=[[]] then  	      
-		return(y);
-	fi;
-	if y=[] or y=[[]] then
-		return (x);
-	fi;
-	
-	r:= ShallowCopy(x[1]);	
-	
-	for i in [1..Length(y[1])] do 
-		Add(r,y[1][i]);
-	od;
-	
-	r := NewSLP(FamilyObj(w),[r]);
-	r:=RacPuis(r); 	 
-	return r;
-	end);
-
 ##Multiplier 2 mots 
 
 P := function(w,z)
@@ -387,7 +355,7 @@ PG :=function(w,z)
 	k:=x[1][1];
 	
 	
-	for i in [1..ny] do
+	for i in [ng+1..ny] do
 	#a terme il faudra penser à enlever les ng premiers
 		l:=ShallowCopy(y[i]);
 		for j in [1,3..Length(l)-1] do
@@ -415,9 +383,7 @@ PD :=function(w,z)
 		   ng,#nb de générateurs
 		   n, #cases rajoutées
 		   i, #Parcourt les listes
-		   j, #Parcourt les listes 
 		   l, #liste de travail
-		   	k,
 			r; #ce sera le résultat
 		   
 	#j'ai gardé le même code, j'ai juste échangé z et w et modifié l'insertion
@@ -431,37 +397,81 @@ PD :=function(w,z)
 	l:=[];
 	r:=[];
 			
-	#On ajoute les générateurs 
-	for i in [1..ng] do
-		Add(r,[i,1]);
-	od;
-	
-	n:=ng;
-	
-	#Comme x est un générateur 
-	k:=x[1][1];
-	
 	
 	for i in [1..ny] do
-	#a terme il faudra penser à enlever les ng premiers
 		l:=ShallowCopy(y[i]);
-		for j in [1,3..Length(l)-1] do
-			if l[j]>ng then 
-				l[j]:=l[j]+n;
-			fi;
-		od;
 		Add(r,l);
 	od;
 	
 	n:=Length(r);
-	Add(r[n],k);
+	Add(r[n],x[1][1]);
 	Add(r[n],1);
+	
 	r:=NewSLP(FamilyObj(w),r);
 	r:=RacPuis(r);
 	return r;
  
     end;
 
+PP := function(w,z)
+	local x,
+		  y,
+		  r,
+		  i,
+		  ng;
+		  
+	#Initialisation 
+	x:=w![1];
+	y:=z![1];
+	r:=[];
+	ng:=Length(FamilyObj(w)!.names);
+	
+	#On ajoute les générateurs 
+	for i in [1..ng] do
+		Add(r,[i,1]);
+	od;
+	
+	Add(r,[x[1][1],1,y[1][1],1]);
+	
+	r:=NewSLP(FamilyObj(w),r);
+	r:=RacPuis(r);
+	return r;
+ 
+    end;
+
+## Le produit (fonctionne)
+
+InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
+    [ IsAssocWord and IsSLPAssocWordRep, 
+      IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
+	 
+	 #On considère qu'un SLP est une liste entre crochet
+
+	 local x, #Liste SLP
+		  y, #Liste SLP
+		  r; #resultat
+	
+	#Initialisation 
+	x:=w![1];
+	y:=z![1];
+	
+	
+	#Pas de mots vide pour l'instant
+	
+	
+	if Length(x)=1 and Length(y)<>1 then 
+		r := PG(w,z);
+	elif Length(x)<>1 and Length(y)=1 then 
+		r := PD(w,z);
+	elif Length(x)<>1 and Length(y)=1 then 
+		r := P(w,z);
+	elif Length(x)=1 and Length(y)=1 then 
+		r:=PP(w,z);
+	fi;
+	
+	return(r);
+	end);
+	
 	
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
