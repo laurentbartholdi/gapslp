@@ -207,8 +207,6 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 	end);
 
 ################################################################
-# comparaisons et opérations
-
 ##Fonction qui simplifie un mot
 
 RacPuis := function(w)
@@ -252,70 +250,9 @@ RacPuis := function(w)
 	end;
 ##ATTENTION : le mot f.1*f.2*f.2^-1*f.1^-1; ne devrait pas être parfaitement simplifié
 
-
-##La comparaison (fonctionne, j'ai réutilisé du code de Wordass.gi) 
-
-InstallMethod(\<,"assoc. in SLP rep",IsIdenticalObj,
-	[ IsAssocWord and IsSLPAssocWordRep, 
-      IsAssocWord and IsSLPAssocWordRep],0,
-	function( w, z )
-	
-	local x, # Liste SLP w
-		  y, # liste SLP z
-		  n, #divers
-		  m; #divers
-		  
-	#Initialisation 
-	
-	x:=w![1][1];
-	y:=z![1][1];
-	n:=Sum([2,4..Length(x)],i->AbsInt(x[i]));
-	m:=Sum([2,4..Length(y)],i->AbsInt(y[i]));
-	
-	#Le mot le plus long est le plus grand (code de syllable)
-		
-	if n<m then 
-		return true;
-	elif n>m then 
-		return false;
-	fi;
-	
-	#A taille égale on regarde l'ordre lexicographique (code de syllable)
-		if n>Length(x) then
-			return x<y; # x is a prefix of y. They could be same
-		elif n>Length(y) then
-			return false; # y is a prefix of x
-		elif not IsInt(n/2) then
-			# discrepancy at generator
-			return x[n]<y[n];
-		fi;
-		# so the exponents disagree.
-		if SignInt(x[n])<>SignInt(y[n]) then
-			#they have different sign: The smaller wins
-			return x[n]<y[n];
-		fi;
-		# but have the same sign. We need to compare the generators with the next
-		# one
-		if AbsInt(x[n])<AbsInt(y[n]) then
-			# x runs out first
-			if Length(x)<=n then
-			return true;
-			else
-			return x[n+1]<y[n-1];
-			fi;
-		else
-			# y runs out first
-			if Length(y)<=n then
-				return false;
-			else
-				return x[n-1]<y[n+1];
-			fi;
-		fi;
-
-	end );
-	
-	
-##Multiplier 2 mots 
+#########################################################################
+#MULTIPLIER DEUX MOTS 
+ 
 #Fonction pour 2 mots complexes
 P := function(w,z)
 local  x, #Liste de SLP
@@ -508,7 +445,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		r := PG(w,z);
 	elif Length(x)<>1 and Length(y)=1 then 
 		r := PD(w,z);
-	elif Length(x)<>1 and Length(y)=1 then 
+	elif Length(x)<>1 and Length(y)<>1 then 
 		r := P(w,z);
 	elif Length(x)=1 and Length(y)=1 then 
 		r:=PP(w,z);
@@ -518,9 +455,11 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	end);
 	
 	
-##Passage à la puissance (fonctionne)
+############################################################################
+#PASSER A LA PUISSANCE 
 
 #Si a est positif 
+
 PuisPos := function(w,a)
 	local r; #résultat 
 
@@ -534,7 +473,10 @@ PuisPos := function(w,a)
 	return r;
  
     end;
+	
+	
 #si a est négatif 
+
 PuisNeg := function(w,a)
 	local x, #Liste SLP
 		  r, #Résultat 
@@ -573,6 +515,9 @@ PuisNeg := function(w,a)
 	return r;
  
     end;
+
+#si le mot est un générateur	
+
 PuisGen := function(w,a)
 	local  x, #liste SLP 
 		   ng,#Nb générateurs
@@ -602,6 +547,8 @@ PuisGen := function(w,a)
 
 	end;
 
+##Fonction puissance 	
+	
 InstallMethod( \^,
     "for an assoc. word with inverse in syllable rep, and an integer",
     true,
@@ -619,6 +566,7 @@ InstallMethod( \^,
 		r:=PuisNeg(w,a);
 	elif a>0 then 
 		r:=PuisPos(w,a);
+		Print("ok");
 	else 
 		r:=NewSLP(FamilyObj(w),[[]]); #c'est pas très propre 
 	fi;
@@ -628,161 +576,48 @@ InstallMethod( \^,
     end);
 	 
 
+###########################################################
+##AUTRES 
 
-
-##Puissance de chaque éléments un par un (fonctionne) lié à une erreur ...
-	if false then
-	
-PuisElt := function(w,a)	
-	local i, #indice qui parcours 
-		   r, #résultat
-		   x, #SLP sous forme de liste
-		   l; #Longeur x[1]
-	 x:=w![1];
-	 r:=[];
-	 if x<>[] and x<>[[]] then 
-		l:=Length(x[1]);
-		
-		#Cas exposant positif
-		if a>0 then 
-			r:=ShallowCopy(x[1]);
-			for i in [1..l] do 
-				if i mod 2 = 0 then 
-					r[i]:=r[i]*a;
-				fi;
-			od;	
-		fi;
-	 
-		#Cas exposant négatif 
-		if a<0 then 
-			for i in [l,l-2..2] do
-				Add(r,x[1][i-1]);
-				Add(r,x[1][i]*a);
-			od;
-		fi;
-	 fi;
-	 r:=[r];
-	 return(ObjByExtRep(FamilyObj(w),1,1,r));
-	 
-	 end;
-	 
-	fi;
-	 
 ##Longueur d'un mot (fonctionne)
+
+  
 InstallMethod(Length,"assoc word in SLP rep",true,
   [IsAssocWord and IsSLPAssocWordRep],0,
   function(w)
-  local c, #compteur
-		i, #Parcourt la liste 
-		x; #Liste SLP
-	c:=0;
-	x:=w![1];
-	if x<>[] and x<>[[]] then 
-		x:=x[1];
-		for i in [2,4..Length(x)] do
-			c:=c+AbsInt(x[i]);
-		od;
-	fi;
-	return(c);
-    end);
-	
-## Ecrire le mot à l'envers (fonctionne)
-
-InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
-    [ IsAssocWord and IsSLPAssocWordRep], 0,
-	function( w )
-	local r, #mot à l'envers
-		  x, #Liste SLP
-		  i, #Parcourt la liste 
-		  l; #Longueur de x[1]
+	local r, #liste de stockage
+		  l, #liste de travail 
+		  x, #Liste SLP 
+		  i, #Parcourt
+		  j, #Parcourt 
+		  c, #Compteur intermédiaire 
+		  ng,#nb de générateurs 
+		  n; #Longueur x
 		  
-	x:=w![1];
-	r:=[];
-	l:=Length(x[1]);
-	for i in [l-1,l-3..1] do
-		Add(r,x[1][i]);
-		Add(r,x[1][i+1]);
-	od;
-	r:=r; 
-	return(ObjByExtRep(FamilyObj(w),1,1,r));
-	
-	end);
-
-## Accéder à un sous mot (fonctionne)
-
-InstallOtherMethod( Subword,"for SLP associative word and two positions",
-    true, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ], 0,
-	function( w, from, to )
-	local r, #liste résultat
-		  x, #liste associée au SLP
-		  i, #élément qui parcours la liste
-		  c; #compteur d'éléments
 	#Initialisation 
-	i:=1;
-	c:=0;
+	x:=w![1];
+	l:=[];
+	n:=Length(x);
 	r:=[];
-	x:=w![1]; 
+	ng:= FamilyObj(w)!.SLPrank;
 	
-	if x<>[] and x<>[[]] then
-		x:=x[1];
-		if from>=1 and to<=2*Length(w) then
-		
-		#On parcourt pour trouver le début
-			while c<from and i<Length(x) do
-				c:=c+AbsInt(i+1);
-				i:=i+2;
-			od;
-			Add(r,x[i-2]);
-			if x[i-1]<0 then 
-				Add(r,-(c-from+1));
-			else 
-				Add(r,(c-from+1));
-			fi;
-			
-		#On récupère les éléments
-			while c<to and i<Length(x) do 
-				Add(r,x[i]);
-				if c+AbsInt(x[i+1])>to then 
-					Add(r,to-c);
-					c:=to;
-				else
-					Add(r,x[i+1]);
-					c:=c+AbsInt(x[i+1]);
-				fi;
-				i:=i+2;
-			od;
-		fi;
-	else
-		r:=ShallowCopy(x);
+	if Length(x)=1 then 
+		return(1);
 	fi;
-	return (ObjByExtRep(FamilyObj(w),1,1,r));
-	end);
 	
-
-## On a ensuite 2 méthodes spécifiques aux Syllables : PositionWord et SubSyllables
-
-##Remplacer un générateur par un autre (ne fonctionne pas)
-
-InstallMethod( EliminatedWord,
-  "for three associative words, SLP rep.",IsFamFamFam,
-    [ IsAssocWord and IsSLPAssocWordRep, 
-	IsAssocWord and IsSLPAssocWordRep, 
-	IsAssocWord and IsSLPAssocWordRep ],0,
-	function( w, gen, by )
-	local x, #Liste SLP résultat
-		  i, # Parcourt la liste 
-		  g1,#Liste ancien générateur
-		  g2;#Liste nouveau générateur
-	
-	x:=ShallowCopy(w![1][1]);
-	g1:=gen![1][1];
-	g2:=by![1][1];
-	
-	for i in [1,3..Length(x)-1] do
-		if x[i]=g1[1] then 
-			x[i]:=g2[1];
-			x[i+1]:=x[i+1]*g2[2];
-		fi;
+	for i in [1..ng] do 
+		Add(r,1);
 	od;
-	return (ObjByExtRep(FamilyObj(w),1,1,x));
+	
+	for i in [ng+1..n] do 
+		l:=ShallowCopy(x[i]);
+		c:=0;
+		for j in [1,3..Length(l)-1] do 
+			c:=c+r[l[j]]*AbsInt(l[j+1]);
+		od;
+		Add(r,c);
+	od;
+	return(r[Length(r)]);
+	
 	end);
+
