@@ -621,3 +621,83 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 	
 	end);
 
+InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
+	
+	local x, #Liste SLP
+		  r, #Résultat 
+		  l, #Liste de travail
+		  m, #Liste 
+		  ng,#Nb de générateurs
+		  n, #Length(x)
+		  i, #Parcourt x
+		  j; #parcourt l
+	
+	#Initialisation 
+	x:=w![1];
+	n:= Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	r:=[];
+	
+	#On retourne les liste intermédiaires 
+	for i in [1..n] do 
+		m:=ShallowCopy(x[i]);
+		l:=[];
+		for j in [Length(m)-1,Length(m)-3..1] do 
+				Add(l,m[j]);
+				Add(l,m[j+1]);
+		od;
+		Add(r,l);
+	od;
+	
+	r:=NewSLP(FamilyObj(w),r);
+	return r;
+ 
+    end);
+
+##Si on remplace un générateur par un autre générateur 
+	
+InstallMethod( EliminatedWord,
+  "for three associative words, SLP rep.",IsFamFamFam,
+    [ IsAssocWord and IsSLPAssocWordRep, 
+	IsAssocWord and IsSLPAssocWordRep, 
+	IsAssocWord and IsSLPAssocWordRep ],0,
+	function( w, gen, by )
+	local x, #Liste SLP
+		  r, #résultat 
+		  l, #liste de travail 
+		  n, #longueur de x
+		  i,
+		  j,
+		  g,
+		  b,
+		  ng;#Nb de générateurs 
+		  
+	#Initialisation 
+	x:=w![1];
+	r:=[];
+	n:=Length(x);
+	ng:=FamilyObj(w)!.SLPrank;
+	g:=gen![1][1];
+	b:=by![1][1];
+	
+	for i in [1..ng] do
+		Add(r,x[i]);
+	od;
+	for i in [ng+1..n] do 
+		l:=ShallowCopy(x[i]);
+		for j in [1,3..Length(l)-1] do
+			if l[j]=g then 
+				l[j]:=b;
+			fi;
+		od;
+	Add(r,l);
+	od;
+	
+	r:=NewSLP(FamilyObj(w),r);
+	return r;
+ 
+    end);
+	
+
