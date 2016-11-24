@@ -86,7 +86,7 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	
 	#Initialisation
 	s:=""; 
-	n:=Length(FamilyObj(w)!.names);
+	n:=FamilyObj(w)!.SLPrank;
 	l:=[];
 	x:=w![1];
 	#Tester si la liste est vide 
@@ -291,7 +291,7 @@ local  x, #Liste de SLP
 	y:=z![1];
 	nx:=Length(x);
 	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
+	ng:=FamilyObj(w)!.SLPrank;
 	n:=0;
 	l:=[];
 	r:=[];
@@ -339,7 +339,7 @@ PG :=function(w,z)
 	x:=ShallowCopy(w![1]);
 	y:=ShallowCopy(z![1]);
 	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
+	ng:=FamilyObj(w)!.SLPrank;
 	n:=0;
 	l:=[];
 	r:=[];
@@ -392,7 +392,7 @@ PD :=function(w,z)
 	x:=ShallowCopy(z![1]);
 	y:=ShallowCopy(w![1]);
 	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
+	ng:=FamilyObj(w)!.SLPrank;
 	n:=0;
 	l:=[];
 	r:=[];
@@ -424,7 +424,7 @@ PP := function(w,z)
 	x:=w![1];
 	y:=z![1];
 	r:=[];
-	ng:=Length(FamilyObj(w)!.names);
+	ng:=FamilyObj(w)!.SLPrank;
 	
 	#On ajoute les générateurs 
 	for i in [1..ng] do
