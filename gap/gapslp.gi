@@ -140,7 +140,7 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	
 	#Tester si vide 
 	if l=[] then 
-		s:=Concatenation(s,"<Identity...>");
+		s:="<Identity...>";
 	fi;
 	
 	for j in [1,3..Length(l)-1] do
@@ -221,7 +221,7 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	
 	#Tester si vide 
 	if l=[] then 
-		s:=Concatenation(s,"<Identity...>");
+		s:="<Identity...>";
 	fi;
 	
 	for j in [1,3..Length(l)-1] do
@@ -525,7 +525,7 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 		  n; #Longueur x
 		  
 	#Initialisation 
-	x:=w![1];
+	x:=TransSLP(w)![1];
 	l:=[];
 	n:=Length(x);
 	r:=[];
@@ -539,7 +539,7 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 		Add(r,1);
 	od;
 	
-	for i in [ng+1..n] do 
+	for i in [ng+1..n] do
 		l:=ShallowCopy(x[i]);
 		c:=0;
 		for j in [1,3..Length(l)-1] do 
@@ -565,7 +565,7 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 		  j; #parcourt l
 	
 	#Initialisation 
-	x:=w![1];
+	x:=TransSLP(w)![1];
 	n:= Length(x);
 	ng:= FamilyObj(w)!.SLPrank;
 	r:=[];
@@ -586,7 +586,7 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
  
     end);
 
-##Si on remplace un générateur par un autre générateur 
+##Si on remplace un générateur par un autre générateur (fonctionne)
 	
 InstallMethod( EliminatedWord,
   "for three associative words, SLP rep.",IsFamFamFam,
@@ -605,12 +605,12 @@ InstallMethod( EliminatedWord,
 		  ng;#Nb de générateurs 
 		  
 	#Initialisation 
-	x:=w![1];
+	x:=TransSLP(w)![1];
 	r:=[];
 	n:=Length(x);
-	ng:=FamilyObj(w)!.SLPrank;
-	g:=gen![1][1];
-	b:=by![1][1];
+	ng:= FamilyObj(w)!.SLPrank;
+	g:=gen![1];
+	b:=by![1];
 	
 	for i in [1..ng] do
 		Add(r,x[i]);
@@ -618,8 +618,9 @@ InstallMethod( EliminatedWord,
 	for i in [ng+1..n] do 
 		l:=ShallowCopy(x[i]);
 		for j in [1,3..Length(l)-1] do
-			if l[j]=g then 
-				l[j]:=b;
+			if l[j]=g[Length(g)][1] then 
+				
+				l[j]:=b[Length(b)][1];
 			fi;
 		od;
 	Add(r,l);
