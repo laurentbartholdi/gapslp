@@ -294,8 +294,11 @@ RacPuis := function(w)
 	
 	for i in [1..nx] do 
 		l:=ShallowCopy(x[i]);
+		Print(l);
 		n:=Length(l)-3;
+		j:=1;
 		while j<=n do
+		Print("ok");
 			if j mod 2 = 1 and l[j]=l[j+2] then 
 				e:=l[j+1]+l[j+3];
 				Remove(l,j+3);
@@ -348,6 +351,14 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	ny:=Length(y);
 	ng:=FamilyObj(w)!.SLPrank;
 
+	
+	#Si une des listes est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
+	if x[Length(l)]=[] then 
+		return(TransSLP(z));
+	fi;
+	if y[Length(l)]=[] then 
+		return(TransSLP(w));
+	fi;
 	
 	#Création de d
 	for i in [1..ny] do 
@@ -411,6 +422,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	Add(r,m);
 		
 	r:=NewSLP(FamilyObj(w),r);
+	r:=RacPuis(r);
 	return r;
  
     end);
@@ -425,26 +437,43 @@ InstallMethod( \^,
     [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
     
 	local   x,
+			l,
+			i,
+			ng,
 			r; #résultat
-	
+	#Initialisation
 	x:=TransSLP(w);
-	#Si les listes sont vides 
+	r:=[];
+	ng:=FamilyObj(w)!.SLPrank;
+	l:=ShallowCopy(x![1]);
 	
-	#Initialisation 
-	r:=ShallowCopy(x![1]);
-	Print(Length(r));
-	Add(r,[Length(r),a]);
+	#Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
+	if l[Length(l)]=[] then 
+		return(x);
+	fi;
+	
+	#Pour une liste non vide 
+	if a=0 then 
+		for i in [1..ng] do
+			Add(r,[i,1]);
+		od;
+		Add(r,[]);
+	else 	
+		r:=l;
+		Add(r,[Length(r),a]);
+	fi;
+	
 	r:=NewSLP(FamilyObj(w),r);
-
+	r:=RacPuis(r);
 	return r;
  
     end);
 	 
 
 ###########################################################
-##AUTRES 
+##AUTRES (A MODIFIER)
 
-##Longueur d'un mot (fonctionne)
+##Longueur d'un mot (à modifier)
 
   
 InstallMethod(Length,"assoc word in SLP rep",true,
