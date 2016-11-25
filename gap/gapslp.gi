@@ -105,7 +105,6 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	n:=FamilyObj(w)!.SLPrank;
 	l:=[];
 	x:=TransSLP(w)![1];
-	Print(x);
 	#Tester si la liste est vide
 	if EstVide(w) then 
 		return ("<identity...>");
@@ -187,7 +186,6 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	n:=FamilyObj(w)!.SLPrank;
 	l:=[];
 	x:=TransSLP(w)![1];
-	Print(x);
 	#Tester si la liste est vide
 	if EstVide(w) then 
 		return ("<identity...>");
@@ -277,47 +275,85 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ##Fonction qui simplifie un mot
 
 RacPuis := function(w)
-	local e, #Nouvel exposant
-		  i, #Parcourt la liste x
-		  j, #Parcourt la liste l
-		  nx, #Longueur limite de la liste
-		  l, # Liste de travail 
-		  n, #Longueur de travail sur l 
-		  r, #résultat
-		  x; #Liste de SLP
-	
-	#Initialisation
+	local x, #liste à parcourir 
+		  r, #liste réponse
+		  p, #premier
+		  d, #dernier
+		  i,
+		  ed,
+		  ep,
+		  bool,
+		  l,
+		  n,
+		  nx;#longueur x
+		  
+	l:=[];	  
 	r:=[];
-	x:=w![1];
+	x:=TransSLP(w)![1];
 	nx:=Length(x);
-	j:=1;
+	bool:=true;
+	
+	#Supposé non vide 	  
 	
 	for i in [1..nx] do 
-		l:=ShallowCopy(x[i]);
-		Print(l);
-		n:=Length(l)-3;
-		j:=1;
-		while j<=n do
-		Print("ok");
-			if j mod 2 = 1 and l[j]=l[j+2] then 
-				e:=l[j+1]+l[j+3];
-				Remove(l,j+3);
-				Remove(l,j+2);
-				if e<>0 then 
-					l[j+1]:=e;
-				else 
-					Remove(l,j+1);
-					Remove(l,j);
+		p:=1;
+		d:=3;
+		ep:=x[i][p+1];
+		n:=Length(x[i]); 
+		l:=[];
+		
+		while 0<p and d<n do 
+			ed:=x[i][d+1];
+			bool:=true;
+			if x[i][p]=x[i][d] then 
+				if ep+ed<>0 then 
+					ep:=ep+ed;
+					d:=d+2;
+				else
+					if p-2>0 then 
+						p:=p-2;
+						ep:=x[i][p+1];
+						d:=d+2;
+						Remove(l,Length(l));
+						Remove(l,Length(l));
+					elif d+2<n then 
+						p:=d+2;
+						ep:=x[i][p+1];
+						d:=d+4;
+					else 
+						d:=n;
+						bool:=false;
+					fi;
 				fi;
-			else
-				j:=j+1;
+			else 
+				Add(l,x[i][p]);
+				Add(l,ep);
+				p:=d;
+				ep:=x[i][d+1];
+				d:=d+2;
 			fi;
-			n:=Length(l)-3;
 		od;
+		if bool then 
+			Add(l,x[i][p]);
+			Add(l,ep);	
+		fi;
 		Add(r,l);
 	od;
-	return NewSLP(FamilyObj(w),r);
+	r:=NewSLP(FamilyObj(w),r);
+	return r;
+ 
 	end;
+	
+					
+			
+	
+	
+	
+	
+	
+	
+	
+	
 ##ATTENTION : le mot f.1*f.2*f.2^-1*f.1^-1; ne devrait pas être parfaitement simplifié
 
 #########################################################################
@@ -353,10 +389,10 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 
 	
 	#Si une des listes est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
-	if x[Length(l)]=[] then 
+	if x[Length(x)]=[] then 
 		return(TransSLP(z));
 	fi;
-	if y[Length(l)]=[] then 
+	if y[Length(y)]=[] then 
 		return(TransSLP(w));
 	fi;
 	
@@ -466,7 +502,7 @@ InstallMethod( \^,
 	r:=NewSLP(FamilyObj(w),r);
 	r:=RacPuis(r);
 	return r;
- 
+	
     end);
 	 
 
