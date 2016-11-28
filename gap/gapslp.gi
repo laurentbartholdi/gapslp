@@ -320,8 +320,86 @@ ReduceList := function(x)
  
 	end;
 	
-					
-
+ReduceWord := function(w)
+	local x,#Liste de SLP
+		  ng,#Nb de générateurs 
+		  n, #Longueur de x
+		  r, #Liste résultat travail
+		  l, #Liste de travail
+		  d, #renumérotation
+		  m, #maximum
+		  k, #Liste finale
+		  j; #indice qui parcourt 
+			
+	#Initialisation
+	x:=ShallowCopy(w![1]);
+	ng:=FamilyObj(w)!.SLPrank;
+	r:=[];
+	n:=Length(x);
+	l:=[];
+	d:=[];
+	c:=0;
+	k:=[];
+	
+	#liste non vide 
+	
+	#On ajoute les générateurs 
+	for i in [1..ng] do 
+		Add(r,[i,1]);
+		Add(d,i);
+	od;
+	
+	#On trie et on simplifie les premiers termes
+	for i in [ng+1..n-1] do
+		l:=[];
+		for j in [1,3..Length(x[i])-1] do 
+			Add(l,d[x[i][j]]);
+			Add(l,x[i][j+1]);
+		od;
+		l:=ReduceList(l);
+		bool:=true;
+		for j in [1..Length(r)] do
+			if l=r[j] then 
+				d[i]:=j;
+				bool:=false;
+			fi;
+		od;
+		if bool then 
+			d[i]:=Length(r)+1;
+			Add(r,l);
+		fi;
+	od;
+	
+	#On réduit et renumérote x[n]
+	l:=[];
+	for j in [1,3..Length(x[n])-1] do 
+		Add(l,d[x[n][j]]);
+		Add(l,x[n][j+1]);
+	od;
+	l:=ReduceList(l);
+	
+	#On simplifie pour que x[n] dépende de x[n-1]
+	m:=-1;
+	for j in [1,3..Length(l)-1] do 
+		if l[j]>m then 
+			m:=l[j];
+		fi;
+	od;
+	for i in [1..ng] do 
+		Add(k,[i,1]);
+	od;
+	for i in [ng+1..m] do 
+		Add(k,r[i]);
+	od;
+	Add(k,l);
+	
+	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(k)]);
+	
+    end;
+	
+	
+	
+	
 #########################################################################
 #MULTIPLIER DEUX MOTS (fonctionne)
  
@@ -341,7 +419,9 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		  j,
 		  bool,
 		  m,
+		  max,
 		  l,
+		  k,
 		  r; #resultat
 	
 	#Initialisation 
@@ -349,6 +429,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	y:=z![1];
 	d:=[];
 	r:=[];
+	k:=[];
 	nx:=Length(x);
 	ny:=Length(y);
 	ng:=FamilyObj(w)!.SLPrank;
@@ -393,7 +474,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		fi;
 	od;
 	
-	#Derniers termes 
+#Derniers termes 
 	for i in [1..Length(r)] do 
 		if x[nx]=r[i]then 
 			m:=[i,1];
@@ -422,9 +503,22 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		fi;
 	
 	m:=ReduceList(m);
-	Add(r,m);
+	max:=-1;
+	for j in [1,3..Length(m)-1] do 
+		if m[j]>max then 
+			max:=m[j];
+		fi;
+	od;
+	for i in [1..ng] do 
+		Add(k,[i,1]);
+	od;
+	for i in [ng+1..max] do 
+		Add(k,r[i]);
+	od;
+	
+	Add(k,m);
 		
-	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
+	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(k)]);
 	
     end);
 	
@@ -599,4 +693,5 @@ InstallMethod( EliminatedWord,
  
     end);
 	
+
 
