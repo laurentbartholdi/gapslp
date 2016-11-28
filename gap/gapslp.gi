@@ -5,33 +5,30 @@
 #
 
 # Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
+
+
 BindGlobal("NewSLP", function( F, elt )
-	return Objectify(F!.SLPtype,[Immutable(elt)]);
-end );
-
-TransSLP:=function(w)
-
 	local i,
 		  r, #résultat
-		  x, #Liste SLP
 		  ng;#Nb générateurs 
 		  
 	#Initialisation
-	x:=ShallowCopy(w![1]);
-	r:=ShallowCopy(w![1]);
-	ng:= FamilyObj(w)!.SLPrank;
+	r:=ShallowCopy(elt);
+	ng:= F!.SLPrank;
+	
+	
 	for i in [1..ng] do 
-		if i<Length(x) and x[i]<>[i,1] then 
+		if i<Length(r) and r[i]<>[i,1] then 
 			Add(r,[i,1],i);
-		elif Length(x)<=i then 
+		elif Length(r)<=i then 
 			Add(r,[i,1],i);
 		fi;
 	od;
 	
-	r:=NewSLP(FamilyObj(w),r);
-	return r;
+	return Objectify(F!.SLPtype,[Immutable(r)]);
  
-	end;
+	end);
+	
 
 InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
         [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
@@ -63,18 +60,16 @@ end,[]);
 EstVide:=function(w)
 	local x, #liste de SLPObj
 		  i, #parcourt la liste 
+		  n,
 		  c; #competeur
 	#Initialisation
 	x:=w![1];
 	c:=0;
+	n:=FamilyObj(w)!.SLPrank;
 	
 	#Test1
-	if x<>[] then
-		for i in [1..Length(x)] do 
-			if x[i]<>[] then 
-				c:=1;
-			fi;
-		od;
+	if x[Length(x)]<>[] and Length(x)<>n then 
+			c:=1;
 	fi;
 	
 	if c=1 then 
@@ -85,7 +80,6 @@ EstVide:=function(w)
 	
 	end;
 ##ATTENTION ne dit pas si c'est l'identité 			
-
 
 ################################################################
 # methodes d'impression
@@ -104,7 +98,7 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	s:=""; 
 	n:=FamilyObj(w)!.SLPrank;
 	l:=[];
-	x:=TransSLP(w)![1];
+	x:=w![1];
 	#Tester si la liste est vide
 	if EstVide(w) then 
 		return ("<identity...>");
@@ -137,11 +131,6 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	
 	#Faire une boucle qui s'occupe de la dernière liste 
 	l:=x[Length(x)];
-	
-	#Tester si vide 
-	if l=[] then 
-		s:="<Identity...>";
-	fi;
 	
 	for j in [1,3..Length(l)-1] do
 			
@@ -185,7 +174,7 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	s:=""; 
 	n:=FamilyObj(w)!.SLPrank;
 	l:=[];
-	x:=TransSLP(w)![1];
+	x:=w![1];
 	#Tester si la liste est vide
 	if EstVide(w) then 
 		return ("<identity...>");
@@ -219,11 +208,6 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	#Faire une boucle qui s'occupe de la dernière liste 
 	l:=x[Length(x)];
 	
-	#Tester si vide 
-	if l=[] then 
-		s:="<Identity...>";
-	fi;
-	
 	for j in [1,3..Length(l)-1] do
 			
 			if l[j]<=n then 
@@ -243,7 +227,6 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 		
 	return (s);
 	end);
-	
 
 	
 InstallOtherMethod( ViewObj, "for an assoc. word in SLP rep", true,
@@ -274,87 +257,70 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ################################################################
 ##Fonction qui simplifie un mot
 
-RacPuis := function(w)
-	local x, #liste à parcourir 
-		  r, #liste réponse
-		  p, #premier
+ReduceList := function(x)
+	local p, #premier
 		  d, #dernier
-		  i,
 		  ed,
 		  ep,
 		  bool,
 		  l,
-		  n,
-		  nx;#longueur x
+		  n;
 		  
 	l:=[];	  
-	r:=[];
-	x:=TransSLP(w)![1];
-	nx:=Length(x);
 	bool:=true;
 	
 	#Supposé non vide 	  
+	if x=[] then 
+		return(x);
+	fi;
 	
-	for i in [1..nx] do 
-		p:=1;
-		d:=3;
-		ep:=x[i][p+1];
-		n:=Length(x[i]); 
-		l:=[];
-		
-		while 0<p and d<n do 
-			ed:=x[i][d+1];
-			bool:=true;
-			if x[i][p]=x[i][d] then 
-				if ep+ed<>0 then 
-					ep:=ep+ed;
-					d:=d+2;
-				else
-					if p-2>0 then 
-						p:=p-2;
-						ep:=x[i][p+1];
-						d:=d+2;
-						Remove(l,Length(l));
-						Remove(l,Length(l));
-					elif d+2<n then 
-						p:=d+2;
-						ep:=x[i][p+1];
-						d:=d+4;
-					else 
-						d:=n;
-						bool:=false;
-					fi;
-				fi;
-			else 
-				Add(l,x[i][p]);
-				Add(l,ep);
-				p:=d;
-				ep:=x[i][d+1];
+	p:=1;
+	d:=3;
+	ep:=x[p+1];
+	n:=Length(x); 
+	l:=[];
+	
+	while 0<p and d<n do 
+		ed:=x[d+1];
+		bool:=true;
+		if x[p]=x[d] then 
+			if ep+ed<>0 then 
+				ep:=ep+ed;
 				d:=d+2;
+			else
+				if p-2>0 then 
+					p:=p-2;
+					ep:=x[p+1];
+					d:=d+2;
+					Remove(l,Length(l));
+					Remove(l,Length(l));
+				elif d+2<n then 
+					p:=d+2;
+					ep:=x[p+1];
+					d:=d+4;
+				else 
+					d:=n;
+					bool:=false;
+				fi;
 			fi;
-		od;
-		if bool then 
-			Add(l,x[i][p]);
-			Add(l,ep);	
+		else 
+			Add(l,x[p]);
+			Add(l,ep);
+			p:=d;
+			ep:=x[d+1];
+			d:=d+2;
 		fi;
-		Add(r,l);
 	od;
-	r:=NewSLP(FamilyObj(w),r);
-	return r;
+	if bool then 
+		Add(l,x[p]);
+		Add(l,ep);	
+	fi;
+	
+	return l;
  
 	end;
 	
 					
-			
-	
-	
-	
-	
-	
-	
-	
-	
-##ATTENTION : le mot f.1*f.2*f.2^-1*f.1^-1; ne devrait pas être parfaitement simplifié
 
 #########################################################################
 #MULTIPLIER DEUX MOTS (fonctionne)
@@ -379,8 +345,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		  r; #resultat
 	
 	#Initialisation 
-	x:=TransSLP(w)![1];
-	y:=TransSLP(z)![1];
+	x:=w![1];
+	y:=z![1];
 	d:=[];
 	r:=[];
 	nx:=Length(x);
@@ -388,12 +354,12 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	ng:=FamilyObj(w)!.SLPrank;
 
 	
-	#Si une des listes est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
-	if x[Length(x)]=[] then 
-		return(TransSLP(z));
+	#Si une des listes est vide  
+	if EstVide(w) then 
+		return(z);
 	fi;
-	if y[Length(y)]=[] then 
-		return(TransSLP(w));
+	if EstVide(z) then 
+		return(w);
 	fi;
 	
 	#Création de d
@@ -455,12 +421,11 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 			od;
 		fi;
 	
+	m:=ReduceList(m);
 	Add(r,m);
 		
-	r:=NewSLP(FamilyObj(w),r);
-	r:=RacPuis(r);
-	return r;
- 
+	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
+	
     end);
 	
 	
@@ -472,20 +437,20 @@ InstallMethod( \^,
     true,
     [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
     
-	local   x,
-			l,
+	local  	l,
 			i,
 			ng,
+			n,
 			r; #résultat
 	#Initialisation
-	x:=TransSLP(w);
 	r:=[];
 	ng:=FamilyObj(w)!.SLPrank;
-	l:=ShallowCopy(x![1]);
+	l:=ShallowCopy(w![1]);
+	n:=Length(l);
 	
 	#Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
-	if l[Length(l)]=[] then 
-		return(x);
+	if EstVide(w) then 
+		return(w);
 	fi;
 	
 	#Pour une liste non vide 
@@ -493,23 +458,26 @@ InstallMethod( \^,
 		for i in [1..ng] do
 			Add(r,[i,1]);
 		od;
-		Add(r,[]);
 	else 	
-		r:=l;
-		Add(r,[Length(r),a]);
+		if Length(l[n])=2 then 
+			for i in [1..n-1] do 
+				Add(r,l[i]);
+			od;
+			Add(r,[l[n][1],l[n][2]*a]);
+		else 	
+			r:=l;
+			Add(r,[Length(r),a]);
+		fi;
 	fi;
 	
-	r:=NewSLP(FamilyObj(w),r);
-	r:=RacPuis(r);
-	return r;
-	
+	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
     end);
 	 
 
 ###########################################################
 ##AUTRES (A MODIFIER)
 
-##Longueur d'un mot (à modifier)
+##Longueur d'un mot 
 
   
 InstallMethod(Length,"assoc word in SLP rep",true,
@@ -525,7 +493,7 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 		  n; #Longueur x
 		  
 	#Initialisation 
-	x:=TransSLP(w)![1];
+	x:=w![1];
 	l:=[];
 	n:=Length(x);
 	r:=[];
@@ -565,7 +533,7 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 		  j; #parcourt l
 	
 	#Initialisation 
-	x:=TransSLP(w)![1];
+	x:=w![1];
 	n:= Length(x);
 	ng:= FamilyObj(w)!.SLPrank;
 	r:=[];
@@ -605,7 +573,7 @@ InstallMethod( EliminatedWord,
 		  ng;#Nb de générateurs 
 		  
 	#Initialisation 
-	x:=TransSLP(w)![1];
+	x:=w![1];
 	r:=[];
 	n:=Length(x);
 	ng:= FamilyObj(w)!.SLPrank;
