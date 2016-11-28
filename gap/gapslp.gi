@@ -338,7 +338,6 @@ ReduceWord := function(w)
 	n:=Length(x);
 	l:=[];
 	d:=[];
-	c:=0;
 	k:=[];
 	
 	#liste non vide 
