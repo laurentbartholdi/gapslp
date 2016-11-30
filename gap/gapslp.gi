@@ -8,24 +8,7 @@
 
 
 BindGlobal("NewSLP", function( F, elt )
-	local i,
-		  r, #résultat
-		  ng;#Nb générateurs 
-		  
-	#Initialisation
-	r:=ShallowCopy(elt);
-	ng:= F!.SLPrank;
-	
-	
-	for i in [1..ng] do 
-		if i<Length(r) and r[i]<>[i,1] then 
-			Add(r,[i,1],i);
-		elif Length(r)<=i then 
-			Add(r,[i,1],i);
-		fi;
-	od;
-	
-	return Objectify(F!.SLPtype,[Immutable(r)]);
+	return Objectify(F!.SLPtype,[Immutable(elt)]);
  
 	end);
 	
@@ -105,10 +88,10 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	fi;
 	
 	#On s'occupe des premières listes 
-	for i in [n+1..Length(x)-1] do
+	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
 		s:=Concatenation(s,"_");
-			s:=Concatenation(s,String(i-n));
+			s:=Concatenation(s,String(i));
 			s:=Concatenation(s,":=");
 		for j in [1,3..Length(l)-1] do
 			
@@ -181,10 +164,10 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	fi;
 	
 	#On s'occupe des premières listes 
-	for i in [n+1..Length(x)-1] do
+	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
 		s:=Concatenation(s,"_");
-			s:=Concatenation(s,String(i-n));
+			s:=Concatenation(s,String(i));
 			s:=Concatenation(s,":=");
 		for j in [1,3..Length(l)-1] do
 			
@@ -254,7 +237,9 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 	Print(DisplayString(w));
 	end);
 
-################################################################
+
+
+###################################################################
 ##Fonction qui simplifie un mot
 
 ReduceList := function(x)
@@ -329,6 +314,8 @@ ReduceWord := function(w)
 		  d, #renumérotation
 		  m, #maximum
 		  k, #Liste finale
+		  i,
+		  bool, 
 		  j; #indice qui parcourt 
 			
 	#Initialisation
@@ -342,37 +329,39 @@ ReduceWord := function(w)
 	
 	#liste non vide 
 	
-	#On ajoute les générateurs 
-	for i in [1..ng] do 
-		Add(r,[i,1]);
-		Add(d,i);
-	od;
-	
 	#On trie et on simplifie les premiers termes
-	for i in [ng+1..n-1] do
+	for i in [1..n-1] do
 		l:=[];
 		for j in [1,3..Length(x[i])-1] do 
-			Add(l,d[x[i][j]]);
+			if x[i][j]<=ng then
+				Add(l,x[i][j]);
+			else 
+				Add(l,d[x[i][j]-ng]);
+			fi;
 			Add(l,x[i][j+1]);
 		od;
 		l:=ReduceList(l);
 		bool:=true;
 		for j in [1..Length(r)] do
 			if l=r[j] then 
-				d[i]:=j;
+				d[i]:=j+ng;
 				bool:=false;
 			fi;
 		od;
 		if bool then 
-			d[i]:=Length(r)+1;
 			Add(r,l);
+			d[i]:=Length(r)+ng;
 		fi;
 	od;
 	
 	#On réduit et renumérote x[n]
 	l:=[];
 	for j in [1,3..Length(x[n])-1] do 
-		Add(l,d[x[n][j]]);
+		if x[n][j]<=ng then
+				Add(l,x[n][j]);
+			else 
+				Add(l,d[x[n][j]-ng]);
+		fi;
 		Add(l,x[n][j+1]);
 	od;
 	l:=ReduceList(l);
@@ -384,10 +373,7 @@ ReduceWord := function(w)
 			m:=l[j];
 		fi;
 	od;
-	for i in [1..ng] do 
-		Add(k,[i,1]);
-	od;
-	for i in [ng+1..m] do 
+	for i in [1..m-ng] do 
 		Add(k,r[i]);
 	od;
 	Add(k,l);
@@ -396,9 +382,7 @@ ReduceWord := function(w)
 	
     end;
 	
-	
-	
-	
+
 #########################################################################
 #MULTIPLIER DEUX MOTS (fonctionne)
  
@@ -418,6 +402,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		  j,
 		  bool,
 		  m,
+		  o,
 		  max,
 		  l,
 		  k,
@@ -458,65 +443,74 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	for i in [1..Length(y)-1] do 
 		l:=ShallowCopy(y[i]);
 		for j in [1,3..Length(l)-1] do 
-			l[j]:=d[l[j]];
+			if l[j]>ng then 
+				l[j]:=d[l[j]-ng];
+			fi;
 		od;
+		l:=ReduceList(l);
 		bool:=true;
 		for j in [1..Length(r)] do
 			if l=r[j] then 
-				d[i]:=j;
+				d[i]:=j+ng;
 				bool:=false;
 			fi;
 		od;
 		if bool then 
-			d[i]:=Length(r)+1;
 			Add(r,l);
+			d[i]:=Length(r)+ng;
 		fi;
 	od;
 	
 #Derniers termes 
-	for i in [1..Length(r)] do 
-		if x[nx]=r[i]then 
+	o:=ReduceList(x[nx]);	
+	Print(Length(r));
+	m:=o;
+	for i in [1..Length(r)] do
+		if o=r[i]then 
 			m:=[i,1];
 		else 
-			m:=ShallowCopy(x[nx]);
+			m:=o;
 		fi;
 	od;
 	
 	l:=ShallowCopy(y[ny]);
-		for j in [1,3..Length(l)-1] do 
-			l[j]:=d[l[j]];
-		od;
-		bool:=true;
-		for j in [1..Length(r)] do
-			if l=r[j] then 
-				d[i]:=j;
-				bool:=false;
-				Add(m,j);
-				Add(m,1);
-			fi;
-		od;
-		if bool then 
-			for i in [1..Length(l)] do 
-				Add(m,l[i]);
-			od;
+	for j in [1,3..Length(l)-1] do 
+		if l[j]>ng then 
+			l[j]:=d[l[j]-ng];
 		fi;
+	od;
+	bool:=true;
+	l:=ReduceList(l);
+	for j in [1..Length(r)] do
+		if l=r[j] then 
+			d[ny]:=j+ng;
+			bool:=false;
+			Add(m,j+ng);
+			Add(m,1);
+		fi;
+	od;
+	Print(m);
+	if bool then 
+		for i in [1..Length(l)] do 
+			Add(m,l[i]);
+		od;
+	fi;
 	
 	m:=ReduceList(m);
 	max:=-1;
-	for j in [1,3..Length(m)-1] do 
-		if m[j]>max then 
-			max:=m[j];
-		fi;
-	od;
-	for i in [1..ng] do 
-		Add(k,[i,1]);
-	od;
-	for i in [ng+1..max] do 
-		Add(k,r[i]);
-	od;
-	
-	Add(k,m);
-		
+	if m<>[] then 
+		for j in [1,3..Length(m)-1] do 
+			if m[j]>max then 
+				max:=m[j];
+			fi;
+		od;
+		for i in [1..max-ng] do 
+			Add(k,r[i]);
+		od;
+		Add(k,m);
+	else 
+		k:=[[]];
+	fi;
 	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(k)]);
 	
     end);
@@ -547,11 +541,7 @@ InstallMethod( \^,
 	fi;
 	
 	#Pour une liste non vide 
-	if a=0 then 
-		for i in [1..ng] do
-			Add(r,[i,1]);
-		od;
-	else 	
+	if a<>0 then  	
 		if Length(l[n])=2 then 
 			for i in [1..n-1] do 
 				Add(r,l[i]);
@@ -559,7 +549,7 @@ InstallMethod( \^,
 			Add(r,[l[n][1],l[n][2]*a]);
 		else 	
 			r:=l;
-			Add(r,[Length(r),a]);
+			Add(r,[Length(r)+ng,a]);
 		fi;
 	fi;
 	
@@ -568,9 +558,9 @@ InstallMethod( \^,
 	 
 
 ###########################################################
-##AUTRES (A MODIFIER)
+##AUTRES 
 
-##Longueur d'un mot 
+##Longueur d'un mot (à jour)
 
   
 InstallMethod(Length,"assoc word in SLP rep",true,
@@ -592,26 +582,24 @@ InstallMethod(Length,"assoc word in SLP rep",true,
 	r:=[];
 	ng:= FamilyObj(w)!.SLPrank;
 	
-	if Length(x)=1 then 
-		return(1);
-	fi;
-	
-	for i in [1..ng] do 
-		Add(r,1);
-	od;
-	
-	for i in [ng+1..n] do
+	for i in [1..n] do
 		l:=ShallowCopy(x[i]);
 		c:=0;
 		for j in [1,3..Length(l)-1] do 
-			c:=c+r[l[j]]*AbsInt(l[j+1]);
+			if l[j]<=ng then 
+				c:=c+AbsInt(l[j+1]);
+			else 
+				c:=c+r[l[j]-ng]*AbsInt(l[j+1]);
+			fi;
 		od;
-		Add(r,c);
+		r[i]:=c;
 	od;
 	return(r[Length(r)]);
 	
 	end);
 
+#Ecrit un mot à l'envers (à mettre à jour)
+	
 InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
 	function( w )
@@ -647,7 +635,7 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
  
     end);
 
-##Si on remplace un générateur par un autre générateur (fonctionne)
+##Si on remplace un générateur par un autre générateur (à mettre à jour)
 	
 InstallMethod( EliminatedWord,
   "for three associative words, SLP rep.",IsFamFamFam,
