@@ -51,7 +51,7 @@ EstVide:=function(w)
 	n:=FamilyObj(w)!.SLPrank;
 	
 	#Test1
-	if x[Length(x)]<>[] and Length(x)<>n then 
+	if x[Length(x)]<>[] then 
 			c:=1;
 	fi;
 	
@@ -427,15 +427,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		return(w);
 	fi;
 	
-	#Création de d
-	for i in [1..ny] do 
-		if i<=ng then 
-			Add(d,i);
-		else	
-		Add(d,0);
-		fi;
-	od;
-	
+		
 	for i in [1..Length(x)-1] do 
 		Add(r,x[i]);
 	od;
@@ -463,7 +455,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	
 #Derniers termes 
 	o:=ReduceList(x[nx]);	
-	Print(Length(r));
 	m:=o;
 	for i in [1..Length(r)] do
 		if o=r[i]then 
@@ -489,7 +480,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 			Add(m,1);
 		fi;
 	od;
-	Print(m);
 	if bool then 
 		for i in [1..Length(l)] do 
 			Add(m,l[i]);
