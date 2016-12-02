@@ -51,7 +51,7 @@ EstVide:=function(w)
 	n:=FamilyObj(w)!.SLPrank;
 	
 	#Test1
-	if x[Length(x)]<>[] and Length(x)<>n then 
+	if x[Length(x)]<>[] then 
 			c:=1;
 	fi;
 	
@@ -427,14 +427,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		return(w);
 	fi;
 	
-	#Création de d
-	for i in [1..ny] do 
-		if i<=ng then 
-			Add(d,i);
-		else	
-		Add(d,0);
-		fi;
-	od;
 	
 	for i in [1..Length(x)-1] do 
 		Add(r,x[i]);
@@ -468,8 +460,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	for i in [1..Length(r)] do
 		if o=r[i]then 
 			m:=[i,1];
-		else 
-			m:=o;
 		fi;
 	od;
 	
@@ -495,7 +485,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 			Add(m,l[i]);
 		od;
 	fi;
-	
+	Print(m);
 	m:=ReduceList(m);
 	max:=-1;
 	if m<>[] then 
@@ -507,7 +497,15 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		for i in [1..max-ng] do 
 			Add(k,r[i]);
 		od;
+		while Length(m)>4 do 
+			Add(k,[m[1],m[2],m[3],m[4]]);
+			Remove(m,1);
+			Remove(m,1);
+			m[1]:=Length(k)+ng;
+			m[2]:=1;
+		od;
 		Add(k,m);
+		
 	else 
 		k:=[[]];
 	fi;
@@ -519,44 +517,226 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 ############################################################################
 #PASSER A LA PUISSANCE 	
 	
-InstallMethod( \^,
-    "for an assoc. word with inverse in syllable rep, and an integer",
-    true,
-    [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
-    
-	local  	l,
-			i,
-			ng,
-			n,
-			r; #résultat
-	#Initialisation
-	r:=[];
-	ng:=FamilyObj(w)!.SLPrank;
-	l:=ShallowCopy(w![1]);
-	n:=Length(l);
-	
-	#Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
-	if EstVide(w) then 
-		return(w);
-	fi;
-	
-	#Pour une liste non vide 
-	if a<>0 then  	
-		if Length(l[n])=2 then 
-			for i in [1..n-1] do 
-				Add(r,l[i]);
-			od;
-			Add(r,[l[n][1],l[n][2]*a]);
-		else 	
-			r:=l;
-			Add(r,[Length(r)+ng,a]);
-		fi;
-	fi;
-	
-	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
-    end);
-	 
 
+
+################################################################
+#Fonction qui convertit un SLP en un SLP in Chomsky normal form (Thm 3.8 p 45)
+
+Chomsky := function(w)
+	local x, #Liste SLP
+		  e, #Permet de garder en mémoire si la liste est vide ou non
+		  i,
+		  j,
+		  n, #Longueur de x
+		  bool,
+		  c,#compteur de liste supprimées 
+		  r,#Résultat
+		  ng,
+		  l;#liste de travail
+		  
+		 
+	#Initialisation 
+	x:=ShallowCopy(w![1]);
+	e:=[];
+	n:= Length(x);
+	r:=[];
+	l:=[];
+	ng:=FamilyObj(w)!.SLPrank;
+	
+	#Step 1 : vérifié pour les SLP tels qu'ils sont créés
+	
+	#Step 2 : on supprime toutes les listes vides 
+		#On marque les mots vides
+	
+	for i in [1..n] do 
+		if ReduceList(x[i])=[] then 
+			e[i]:=1;
+		else 
+			bool:=true;
+			for j in [1,3..Length(x[i])-1] do 
+				if x[i][j]<=ng then
+					bool:=false;
+				elif e[x[i][j]-ng]<>1 then 
+					bool:=false;
+					fi;
+			od;
+			if bool then 
+				e[i]:=1;
+			else 
+				e[i]:=0;
+			fi;
+		fi;
+	od;
+		#On enlève les mots vides
+	c:=[];
+	
+	for i in [1..n] do
+	
+		if e[i]=0 then 
+			l:=[];
+			for j in [1,3..Length(x[i])-1] do 
+				if x[i][j]<=ng then 
+					Add(l,x[i][j]);
+					Add(l,x[i][j+1]);
+				elif e[x[i][j]-ng]=0 then 
+					Add(l,c[x[i][j]-ng]);
+					Add(l,x[i][j+1]);
+				fi;
+			od;
+			Add(r,l);
+			c[i]:=Length(r)+ng;
+		else
+			c[i]:=0;
+		fi;
+	od;
+	
+	#Step 3 : Vérif
+	return(r);
+	end;
+
+
+	
+###########################################################
+##Travail sur les mots réduits (fonction en cours d'élaboration)
+
+#Recenser paires 
+RP := function(w) 
+	local x, #Liste du SLP
+		  n, 
+		  v,
+		  i,
+		  j,
+		  k,
+		  p,
+		  ext,
+		  f,
+		  l,
+		  sf,
+		  sl,
+		  ng;
+		  
+	
+	#Initialisation
+	x:=w![1];
+	n:= Length(x);
+	v:=[];
+	p:=[];
+	ext:=[];
+	ng:= FamilyObj(w)!.SLPrank;
+	
+	#On créé la liste v 
+	for i in [1..n-1] do 
+		v[i]:=0;
+	od;
+	v[n]:=1;
+	
+	for i in [n,n-1..1] do
+		for j in [1,3..Length(x[i])-1] do 
+			if x[i][j]>ng then 
+				v[x[i][j]-ng]:=v[x[i][j]-ng]+v[i]*AbsInt(x[i][j+1]);
+			fi;
+		od;
+	od;
+	
+	#On recense les éléments extrêmes 
+	
+	for i in [1..n]do 
+		if x[i][2]<0 then 
+			if x[i][1]<=ng then 
+				f:=x[i][1];
+				sf :=-1;
+			else 
+				f:=ext[x[i][1]-ng][3];
+				sf :=ext[x[i][1]-ng][4]*(-1);
+			fi;
+			
+		else 
+			if x[i][1]<=ng then 
+				f:=x[i][1];
+				sf :=1;
+			else 
+				f:=ext[x[i][1]-ng][1];
+				sf :=ext[x[i][1]-ng][2];
+			fi;
+			
+		fi;
+		if x[i][Length(x[i])]<0 then 
+			if x[i][Length(x[i])-1]<=ng then 
+				l:=x[i][Length(x[i])-1];
+				sl:=-1; 
+			else 
+				l:=ext[x[i][Length(x[i])-1]-ng][1];
+				sl:=-1*ext[x[i][Length(x[i])-1]-ng][2]; 
+			fi;
+		else 
+			if x[i][Length(x[i])-1]<=ng then 
+				l:=x[i][Length(x[i])-1];
+				sl:=1; 
+			else 
+				l:=ext[x[i][Length(x[i])-1]-ng][3];
+				sl:=1*ext[x[i][Length(x[i])-1]-ng][4]; 
+			fi;
+		fi;
+		
+		ext[i]:=[f,sf,l,sl];
+	od;
+	
+	#Recense les paires 
+	for i in [1..n] do 
+		k:=3;
+		j:=1;
+		Print(x[i]);
+		while k<Length(x[i]) and j<Length(x[i]) do 
+			if x[i][k+1]<0 then 
+				if x[i][k]<=ng then 
+					f:=x[i][k];
+					sf :=-1;
+				else 
+					f:=ext[x[i][k]-ng][3];
+					sf :=ext[x[i][k]-ng][4]*(-1);
+				fi;
+			
+			else 
+				if x[i][k]<=ng then 
+					f:=x[i][k];
+					sf :=1;
+				else 
+					f:=ext[x[i][k]-ng][1];
+					sf :=ext[x[i][k]-ng][2];
+				fi;
+			fi;
+			
+			if x[i][j+1]<0 then 
+				if x[i][j]<=ng then 
+					l:=x[i][j];
+					sl :=-1;
+				else 
+					l:=ext[x[i][k]-ng][1];
+					sl :=ext[x[i][k]-ng][2]*(-1);
+				fi;
+			
+			else 
+				if x[i][j]<=ng then 
+					l:=x[i][j];
+					sl :=1;
+				else 
+					l:=ext[x[i][k]-ng][3];
+					sl :=ext[x[i][k]-ng][4];
+				fi;
+				
+			fi;
+			Print([l,sl,f,sf,v[i]]);
+			Add(p,[l,sl,f,sf,v[i]]);
+			k:=k+2;
+			j:=j+2;
+		od;
+		
+	od;
+	return p;
+	end;
+	
+	
+	
 ###########################################################
 ##AUTRES 
 
