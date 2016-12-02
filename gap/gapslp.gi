@@ -517,11 +517,88 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 ############################################################################
 #PASSER A LA PUISSANCE 	
 	
+InstallMethod( \^,"for an assoc. word with inverse in syllable rep, and an integer",
+		true,
+     [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
 
+    local  x,
+           l,
+           m,
+		   ng,
+           i,
+           n,
+           b,
+           exp,
+           j,
+           r; #résultat
+		   
+       #Initialisation
+       r:=[];
+       ng:=FamilyObj(w)!.SLPrank;
+       x:=ShallowCopy(w![1]);
+       n:=Length(x);
+       exp :=a;
+	   
+       #Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS
+       if EstVide(w) then
+               return(w);
+       fi;
+
+       if a<0 then
+       for i in [1..n] do
+               m:=ShallowCopy(x[i]);
+               l:=[];
+               for j in [Length(m)-1,Length(m)-3..1] do
+                               if m[j]<=ng then
+                                       Add(l,m[j]);
+                                       Add(l,-1*m[j+1]);
+                               else
+                                       Add(l,m[j]);
+                                       Add(l,m[j+1]);
+                               fi;
+               od;
+               Add(r,l);
+               exp:=-a;
+       od;
+       else
+               r:=ShallowCopy(x);
+       fi;
+
+       if exp>1 then
+       i:=Length(r)+ng;
+       Add(r,[n+ng,1,n+ng,1]);
+       b:=Length(r)+ng;
+       j:=b;
+
+       if exp mod 2 =1 then
+               exp:=(exp-1)/2;
+       else
+               exp:=exp/2;
+       fi;
+
+       while exp<>1 do
+               if exp mod 2 =1 then
+                       Add(r,[j,1,b,1]);
+                       Add(r,[i,1,j,1]);
+                       exp:=(exp-1)/2;
+                       j:=j+2;
+                       i:=i+2;
+               else
+                       exp:=exp/2;
+                       Add(r,[j,1,b,1]);
+                       j:=j+1;
+                       if exp=1 then
+                               Add(r,[i,1,j,1]);
+                       fi;
+               fi;
+       od;
+       fi;
+       return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
+     end);
 
 ################################################################
 #Fonction qui convertit un SLP en un SLP in Chomsky normal form (Thm 3.8 p 45)
-
+#En cours de réalisation 
 Chomsky := function(w)
 	local x, #Liste SLP
 		  e, #Permet de garder en mémoire si la liste est vide ou non
