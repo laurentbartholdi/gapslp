@@ -455,7 +455,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	
 #Derniers termes 
 	o:=ReduceList(x[nx]);	
-	Print(Length(r));
 	m:=o;
 	for i in [1..Length(r)] do
 		if o=r[i]then 
@@ -479,13 +478,11 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 			Add(m,1);
 		fi;
 	od;
-	Print(m);
 	if bool then 
 		for i in [1..Length(l)] do 
 			Add(m,l[i]);
 		od;
 	fi;
-	Print(m);
 	m:=ReduceList(m);
 	max:=-1;
 	if m<>[] then 
@@ -762,13 +759,14 @@ RP := function(w)
 	for i in [1..n] do 
 		k:=3;
 		j:=1;
-		Print(x[i]);
+		
 		while k<Length(x[i]) and j<Length(x[i]) do 
 			if x[i][k+1]<0 then 
 				if x[i][k]<=ng then 
 					f:=x[i][k];
 					sf :=-1;
 				else 
+					Print(x[i][k]);
 					f:=ext[x[i][k]-ng][3];
 					sf :=ext[x[i][k]-ng][4]*(-1);
 				fi;
@@ -788,8 +786,8 @@ RP := function(w)
 					l:=x[i][j];
 					sl :=-1;
 				else 
-					l:=ext[x[i][k]-ng][1];
-					sl :=ext[x[i][k]-ng][2]*(-1);
+					l:=ext[x[i][j]-ng][1];
+					sl :=ext[x[i][j]-ng][2]*(-1);
 				fi;
 			
 			else 
@@ -797,20 +795,57 @@ RP := function(w)
 					l:=x[i][j];
 					sl :=1;
 				else 
-					l:=ext[x[i][k]-ng][3];
-					sl :=ext[x[i][k]-ng][4];
+					l:=ext[x[i][j]-ng][3];
+					sl :=ext[x[i][j]-ng][4];
 				fi;
 				
 			fi;
-			Print([l,sl,f,sf,v[i]]);
 			Add(p,[l,sl,f,sf,v[i]]);
 			k:=k+2;
 			j:=j+2;
 		od;
 		
 	od;
-	return p;
+	return [v,p];
 	end;
+
+	
+#Tris et range les paires 
+TP := function(p)
+	local 	r, 
+			n,
+			c,
+			bool,
+			i,
+			j;
+			
+	
+	
+	#Initilisation 
+	r:=[];
+	n:=Length(p);
+	c:=0;
+	
+	for i in [1..n] do
+		bool:=true;
+		for j in [1..Length(r)] do
+			if r[j]{[1..4]}=p[i]{[1..4]} then 
+				r[j][5]:= r[j][5]+ p[i][5];
+				bool:=false;
+			fi;
+		od;
+		if bool then 
+			if p[i][1]=p[i][3] and p[i][2]=-p[i][4] then 
+				c:=c+1;
+				Add(r,p[i],c);
+			else 
+				Add(r,p[i]);
+			fi;
+		fi;
+	od;
+	return [r,c];
+	end;
+		
 	
 	
 	
