@@ -242,7 +242,7 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ###################################################################
 ##Fonction qui simplifie un mot
 
-ReduceList := function(x)
+BindGlobal("ReduceList",function(x)
 	local p, #premier
 		  d, #dernier
 		  ed,
@@ -670,5 +670,297 @@ InstallMethod( EliminatedWord,
  
     end);
 	
+#######################################################################
+#Conversion en format lettre 
 
-
+Convert:=function(w)
+local x, #Liste SLP
+		  r, #résultat 
+		  f,
+		  l, #liste de travail 
+		  n, #longueur de x
+		  i,
+		  j,
+		  t,
+		  k,
+		  ng;#Nb de générateurs 
+		  
+	#Initialisation 
+	x:=w![1];
+	r:=[];
+	f:=[];
+	n:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	
+	for i in [1..n] do
+		l:=x[i];
+		r:=[];
+		for j in [1,3..Length(l)-1] do
+			if l[j]<=ng then 
+				for k in [1..AbsInt(l[j+1])] do 
+					Add(r,SignInt(l[j+1])*l[j]);
+				od;
+			else 
+				for t in [1..AbsInt(l[j+1])] do 
+					if SignInt(l[j+1])<0 then
+						for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
+							
+							Add(r,-1*f[l[j]-ng][k]);
+						od;
+					else 
+						for k in [1..Length(f[l[j]-ng])] do
+							Add(r,f[l[j]-ng][k]);
+						od;
+					fi;
+				od;
+			fi;
+		od;
+		Add(f,r);
+	od;
+	f:=f[Length(f)];
+	return Objectify(FamilyObj(w)!.letterWordType,[f]);
+	end;
+			
+fin:= function(L,i,A,ng,e,T)
+	local c,
+		  j,
+		  r,
+		  k,
+		  s,
+		  m,
+		  l,
+		  f;
+		  
+	#Initialisation
+	j:=1;
+	c:=0;
+	f:=[];
+	r:=[];
+	l:=[];
+	
+	#Travail 
+	while c<i and j<Length(L[A]) do 
+		c:=c+T[L[A][j]]*AbsInt(L[A][j+1]);
+		Add(r,L[A][j]);
+		Add(r,L[A][j+1]);
+		j:=j+2;
+	od;
+	j:=j-2;	
+	if AbsInt(L[A][j+1])<>1 and c<>i then 
+		c:= c-T[L[A][j]]*AbsInt(L[A][j+1]);
+		k:=0;
+		while c<i do 
+			c:=c+T[L[A][j]];
+			k:=k+1;
+		od;
+		if c<>i then 
+			s:=r[Length(r)-1];
+			r[Length(r)]:=(k-1)*SignInt(L[A][j+1]);
+			Add(r,e-1);
+			Add(r,1*SignInt(L[A][j+1]));
+		else 
+			r[Length(r)]:=k;
+		fi;
+	elif AbsInt(L[A][j+1])=1 and c<>i then
+		s:=r[Length(r)-1];
+		r[Length(r)-1]:=e-1;
+	fi;
+	#Sortie
+	if c=i then 
+		Add(f,r);
+		for k in [A+1..Length(L)] do
+			Add(f,L[k]);
+		od;
+		return(f);	
+	else 
+		m:=T[s]-c+i;
+		for k in [1..s-ng] do 
+			Add(f,L[k]);
+		od;
+		Add(f,r);
+		for k in [A+1..Length(L)] do
+			Add(f,L[k]);
+		od;
+		return fin(f,m,s-ng,ng,e-1,T);
+	fi;
+	end;
+	
+debut:= function(L,i,A,ng,e,T)
+	local c,
+		  j,
+		  r,
+		  k,
+		  s,
+		  m,
+		  l,
+		  f;
+		  
+	#Initialisation
+	j:=1;
+	c:=0;
+	f:=[];
+	r:=[];
+	l:=[];
+	
+	#Travail 
+	while c<i and j<Length(L[A]) do 
+		c:=c+T[L[A][j]]*AbsInt(L[A][j+1]);
+		j:=j+2;
+	od;
+	j:=j-2;	
+	for k in [j,j+2..Length(L[A])-1] do
+		Add(r,L[A][k]);
+		Add(r,L[A][k+1]);
+	od;
+	if AbsInt(L[A][j+1])<>1 and c<>i then 
+		c:= c-T[L[A][j]]*AbsInt(L[A][j+1]);
+		k:=0;
+		while c<i do 
+			c:=c+T[L[A][j]];
+			k:=k+1;
+		od;
+		if c<>i then 
+			s:=r[1];
+			r[2]:=(i-k)*SignInt(L[A][j+1]);
+			Add(r,e-1,1);
+			Add(r,1*SignInt(L[A][j+1]),2);
+		else 
+			r[2]:=i-k;
+		fi;
+	elif AbsInt(L[A][j+1])=1 and c<>i then
+		s:=r[1];
+		r[2]:=e-1;
+	fi;
+	#Sortie
+	if c=i then 
+		Add(f,r);
+		for k in [A+1..Length(L)] do
+			Add(f,L[k]);
+		od;
+		return(f);	
+	else 
+		m:=T[s]-c+i;
+		for k in [1..s-ng] do 
+			Add(f,L[k]);
+		od;
+		Add(f,r);
+		for k in [A+1..Length(L)] do
+			Add(f,L[k]);
+		od;
+		return fin(f,m,s-ng,ng,e-1,T);
+	fi;
+	end;
+	
+CoupeMotf := function(w,i)
+	local L,
+		  A,
+		  ng,
+		  e,
+		  G,
+		  T,
+		  x,
+		  c,
+		  k,
+		  j,
+		  t,
+		  r,
+		  l;
+		    
+	#Initialisation 
+	x:=w![1];
+	A:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	e:=0;
+	t:=0;
+	r:=[];
+	T:=[];
+	
+	for j in [1..ng] do
+		Add(T,1);
+	od;
+	
+	for j in [1..A] do 
+		l:=x[j];
+		t:=0;
+		for k in [1,3..Length(l)-1] do
+			if l[k]<=ng then 
+				t:=t+AbsInt(l[k+1]);
+		else 
+			t:=t+T[l[k]]*AbsInt(l[k+1]);
+		fi;
+		od;
+		Add(T,t);
+	od;
+	G:=fin(x,i,A,ng,e,T);
+	k:=Length(x)+Length(G)+ng;
+	
+	for j in [1..Length(x)] do 
+		Add(r,x[j]);
+	od;
+	
+	for j in [1..Length(G)] do 
+		if G[j][Length(G[j])-1]<0 then 
+			G[j][Length(G[j])-1]:= G[j][Length(G[j])-1]+k;
+		fi;
+		Add(r,G[j]);
+	od;
+	
+	return(NewSLP(FamilyObj(w),r));
+	end;
+	
+CoupeMotd := function(w,i)
+	local L,
+		  A,
+		  ng,
+		  e,
+		  G,
+		  T,
+		  x,
+		  c,
+		  k,
+		  j,
+		  t,
+		  r,
+		  l;
+		    
+	#Initialisation 
+	x:=w![1];
+	A:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	e:=0;
+	t:=0;
+	r:=[];
+	T:=[];
+	
+	for j in [1..ng] do
+		Add(T,1);
+	od;
+	
+	for j in [1..A] do 
+		l:=x[j];
+		t:=0;
+		for k in [1,3..Length(l)-1] do
+			if l[k]<=ng then 
+				t:=t+AbsInt(l[k+1]);
+		else 
+			t:=t+T[l[k]]*AbsInt(l[k+1]);
+		fi;
+		od;
+		Add(T,t);
+	od;
+	G:=debut(x,i,A,ng,e,T);
+	k:=Length(x)+Length(G)+ng;
+	
+	for j in [1..Length(x)] do 
+		Add(r,x[j]);
+	od;
+	
+	for j in [1..Length(G)] do 
+		if G[j][1]<0 then 
+			G[j][1]:= G[j][1]+k;
+		fi;
+		Add(r,G[j]);
+	od;
+	Print(r);
+	return(NewSLP(FamilyObj(w),r));
+	end;
