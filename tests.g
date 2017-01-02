@@ -27,7 +27,7 @@ t:=NewSLP(FamilyObj(f.1),[[],[],[3,1,4,1],[1,2,4,1]]);
 #test fin :
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
 x:=Convert(y);
-L:= [[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]];
+L:= [[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]];
 i:=4;
 A:=4;
 ng:=2;
@@ -36,11 +36,14 @@ T:=[1,1,2,3,5,8];
 debut(L,i,A,ng,e,T);
 
 #Test Coupe mot
-y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
-x:=CoupeMot(y,4,6);
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
+x:=CoupeMot(y,4,30);
 Convert(y);
 Convert(x);
 
+ #test convert
+t:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]); 
+Convert(t);
 
 #Test 01/12
 i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,1,3,1]]);

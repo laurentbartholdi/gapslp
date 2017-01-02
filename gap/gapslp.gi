@@ -821,15 +821,15 @@ debut:= function(L,i,A,ng,e,T)
 		od;
 		if c<>i then 
 			s:=r[1];
-			r[2]:=(i-k)*SignInt(L[A][j+1]);
+			r[2]:=(L[A][j+1]-k)*SignInt(L[A][j+1]);
 			Add(r,e-1,1);
 			Add(r,1*SignInt(L[A][j+1]),2);
 		else 
-			r[2]:=i-k;
+			r[2]:=L[A][j+1]-k+1;
 		fi;
 	elif AbsInt(L[A][j+1])=1 and c<>i then
 		s:=r[1];
-		r[2]:=e-1;
+		r[1]:=e-1;
 	fi;
 	#Sortie
 	if c=i then 
@@ -844,10 +844,11 @@ debut:= function(L,i,A,ng,e,T)
 			Add(f,L[k]);
 		od;
 		Add(f,r);
+		
 		for k in [A+1..Length(L)] do
 			Add(f,L[k]);
 		od;
-		return fin(f,m,s-ng,ng,e-1,T);
+		return debut(f,m,s-ng,ng,e-1,T);
 	fi;
 	end;
 	
@@ -961,6 +962,13 @@ CoupeMotd := function(w,i)
 		fi;
 		Add(r,G[j]);
 	od;
-	Print(r);
 	return(NewSLP(FamilyObj(w),r));
 	end;
+CoupeMot := function(w,i,j)
+	local r;
+	r:=CoupeMotd(w,i);
+	r:=CoupeMotf(w,j-i+1);
+	return(r);
+	end;
+	
+	
