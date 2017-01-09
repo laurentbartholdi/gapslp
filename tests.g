@@ -1,30 +1,101 @@
+#Document de test 
+
 f:=FreeGroup(IsSLPWordsFamily,2);
-t:=f.1^5;
-Subword(t,2,3);
-EliminatedWord(t,f.1,f.2);
 
+###################################################################
+##Fonctions 
 
-#Test
-t:=PD(f.1,f.2);
-i:=PG(f.2,t);
-P(i,t);
+#EstVide 
+h:= NewSLP(FamilyObj(f.1),[[2,2],[1,3],[1,2,1,3],[5,2,3,5],[3,1,4,1],[3,1,4,1],[]]);
+EstVide(h);
 
+###################################################################
+##methodes d'impression 
 
-#test 25/11
-f:=FreeGroup(IsSLPWordsFamily,2);
-t:= NewSLP(FamilyObj(f.1),[[2,1],[1,1,2,1],[3,2],[4,-3]]);
-i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,2,3,2],[2,3],[4,1,5,1]]);
-t*i;
+#PrintObj
 t:= NewSLP(FamilyObj(f.1),[[1,2,1,-2]]);
 h:= NewSLP(FamilyObj(f.1),[[2,2],[1,3],[1,2,1,3],[5,2,3,5],[3,1,4,1],[3,1,4,1],[1,1]]);
 o:=NewSLP(FamilyObj(f.1),[[2,2],[2,1],[3,2,1,2],[1,2],[3,1,4,1],[1,2],[2,3],[3,1,4,1],[7,1,10,1]] );
 x:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,1,4,1],[3,1,5,1,]]);
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,1,4,1],[5,-1,4,1]]);
 
-#Test Chomsky 
-t:=NewSLP(FamilyObj(f.1),[[],[],[3,1,4,1],[1,2,4,1]]);
+#Display
+o:=NewSLP(FamilyObj(f.1),[[2,2],[2,1],[3,2,1,2],[1,2],[3,1,4,1],[1,2],[2,3],[3,1,4,1],[7,1,10,1]] );
+x:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,1,4,1],[3,1,5,1,]]);
+Display(o);
+Display(x);
 
-#test fin :
+###################################################################
+##Fonctions qui simplifient un mot
+
+#SimplifieListe
+l:=[3,10,3,-6,3,-4,2,3,2,-3];
+SimplifieListe(l);
+
+l:=[3,1,3,-6,3,-4,2,3,2,-3];
+SimplifieListe(l);
+
+#ReduceWord
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
+x:=CoupeMot(y,2,2);
+ReduceWord(x);
+
+
+#########################################################################
+##MULTIPLIER DEUX MOTS 
+
+t:= NewSLP(FamilyObj(f.1),[[2,1],[1,1,2,1],[3,2],[4,-3]]);
+i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,2,3,2],[2,3],[4,1,5,1]]);
+Display(t*i);
+
+
+############################################################################
+##PASSER A LA PUISSANCE 
+
+t:= NewSLP(FamilyObj(f.1),[[2,1],[1,1,2,1],[3,2],[4,-3]]);
+i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,2,3,2],[2,3],[4,1,5,1]]);
+Display(t^-5);
+Display(i^5);
+Display(t^0);
+
+###########################################################
+##AUTRES 
+
+#Longueur d'un mot (Length)
+t:= NewSLP(FamilyObj(f.1),[[2,1],[1,1,2,1],[3,2],[4,-3]]);
+i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,2,3,2],[2,3],[4,1,5,1]]);
+Length(t);
+Length(i);
+
+#Ecrit un mot à l'envers (à mettre à jour)
+
+#Si on remplace un générateur par un autre générateur (à mettre à jour)
+
+
+#######################################################################
+##Conversion en format lettre 
+t:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]); 
+Convert(t);
+
+#######################################################################
+##Création du sous mot
+
+#Taille 
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
+Taille(y);
+
+#fin
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
+x:=Convert(y);
+L:= [[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]];
+i:=4;
+A:=4;
+ng:=2;
+e:=0;
+T:=[1,1,2,3,5,8];
+fin(L,i,A,ng,e,T);
+
+#debut
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
 x:=Convert(y);
 L:= [[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]];
@@ -35,31 +106,50 @@ e:=0;
 T:=[1,1,2,3,5,8];
 debut(L,i,A,ng,e,T);
 
-#Test Coupe mot
-y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
-x:=CoupeMot(y,4,30);
+#CoupeMotf
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,5,4,-1]]);
+x:=CoupeMotf(y,2);
 Convert(y);
 Convert(x);
 
- #test convert
-t:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]); 
-Convert(t);
+#CoupeMotd
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,5,4,-1]]);
+x:=CoupeMotd(y,2);
+Convert(y);
+Convert(x);
+
+#CoupeMot
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
+x:=CoupeMot(y,2,2);
+Convert(y);
+Convert(x);
+###################################################################################################################
+##Egalité 
+
+#ReduceWordPart
+y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
+x:=CoupeMot(y,2,2);
+ReduceWordPart(x);
+
+#Equality 
+x:=f.1*f.2*f.2;
+y:=f.1*f.2;
+D:= NewDictionary([1,2],true);
+Equality(x,y,D,0);
+
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,1,4,1,5,1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,1,1,2],[4,1,2,-2]]);
+D:= NewDictionary([1,2],true);
+Equality(x,y,D,0);
+
+######################################################
+##Autres tests
 
 #Test 01/12
 i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,1,3,1]]);
+
 #Test 02/12 
 i:=[[1,1,2,1,4],[1,-1,1,1,6],[1,1,2,1,4]];
 
-#Test fonction récursive:
- F:=function (t)
-	if t=16 then 
-		c:=1;
-	if t=1 then
-		return true;
-	elif t<1 then 
-		return false;
-	else 
-		return F(t/2);
-	fi;
-	end;
-	
+
+

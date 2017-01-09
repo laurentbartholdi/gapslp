@@ -4,8 +4,6 @@
 # Implementations
 #
 
-# Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
-
 
 BindGlobal("NewSLP", function( F, elt )
 	return Objectify(F!.SLPtype,[Immutable(elt)]);
@@ -240,27 +238,19 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ###################################################################
 ##Fonctions qui simplifient un mot
 
-SimplifieListe := function(w)
+SimplifieListe := function(x)
 	local p, #premier
 		  d, #dernier
 		  ed,
 		  ep,
-		  t,
-		  x,
-		  i,
 		  bool,
 		  l,
-		  r,
 		  n;
 	#Initialisation
-	t:=w![1];
 	l:=[];	  
-	r:=[];
 	bool:=true;
 	
-	for i in [1..Length(t)] do
-	x:=t[i];
-	
+
 		#Supposé non vide 	  
 		if x=[] then 
 			return(x);
@@ -278,11 +268,12 @@ SimplifieListe := function(w)
 			if x[p]=x[d] then 
 				if ep+ed<>0 then 
 					ep:=ep+ed;
+					Print(ep);
 					d:=d+2;
 				else
-					if p-2>0 then 
+					if p-2>0 and l<>[] then 
 						p:=p-2;
-						ep:=x[p+1];
+						ep:=l[Length(l)];
 						d:=d+2;
 						Remove(l,Length(l));
 						Remove(l,Length(l));
@@ -307,9 +298,8 @@ SimplifieListe := function(w)
 			Add(l,x[p]);
 			Add(l,ep);	
 		fi;
-		Add(r,l);
-	od;
-	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
+		
+	return l;
  
 	end;
 	
@@ -333,21 +323,22 @@ ReduceWord := function(w)
 	l:=[];
 	d:=NewDictionary(1,true) ; 
 	v:=NewDictionary(1,true) ; 
-
+	AddDictionary(v,Length(x),1);
 	
 	#liste non vide 
-	for i in [1..n] do 
-		for j in [1,3..Length(x[i])-1] do 
-			if x[i][j]>ng and LookupDictionary(v,x[i][j]-ng)=fail then
-				AddDictionary(v,x[i][j]-ng,1);
-			fi;
-		od;
+	for i in [n,n-1..1] do
+		if LookupDictionary(v,i)<>fail then
+			for j in [1,3..Length(x[i])-1] do 
+				if x[i][j]>ng and LookupDictionary(v,x[i][j]-ng)=fail then
+					AddDictionary(v,x[i][j]-ng,1);
+				fi;
+			od;
+		fi;
 	od;
 		
 	#On supprime les listes en double
 	for i in [1..n] do
 		l:=[];
-		Print(LookupDictionary(v,i)=1);
 		if LookupDictionary(v,i)=1 then
 			for j in [1,3..Length(x[i])-1] do 
 				if x[i][j]<=ng then
@@ -435,7 +426,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 				l[j]:=d[l[j]-ng];
 			fi;
 		od;
-		l:=ReduceList(l);
+		l:=SimplifieListe(l);
 		bool:=true;
 		for j in [1..Length(r)] do
 			if l=r[j] then 
@@ -450,7 +441,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	od;
 	
 #Derniers termes 
-	o:=ReduceList(x[nx]);	
+	o:=SimplifieListe(x[nx]);	
 	m:=o;
 	for i in [1..Length(r)] do
 		if o=r[i]then 
@@ -467,7 +458,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		fi;
 	od;
 	bool:=true;
-	l:=ReduceList(l);
+	l:=SimplifieListe(l);
 	for j in [1..Length(r)] do
 		if l=r[j] then 
 			d[ny]:=j+ng;
@@ -482,7 +473,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		od;
 	fi;
 	
-	m:=ReduceList(m);
+	m:=SimplifieListe(m);
 	max:=-1;
 	if m<>[] then 
 		for j in [1,3..Length(m)-1] do 
@@ -716,6 +707,8 @@ local x, #Liste SLP
 	return Objectify(FamilyObj(w)!.letterWordType,[f]);
 	end;
 	
+
+	
 #######################################################################
 ##Création du sous mot 
 InstallMethod(Taille, [ IsAssocWord and IsSLPAssocWordRep],0,function(w)
@@ -938,7 +931,11 @@ CoupeMotd := function(w,i)
 		  t,
 		  r,
 		  l;
-		    
+	
+	#Test sécurité 
+	if i=0 then 
+		return(w);
+	fi;	    
 	#Initialisation 
 	x:=w![1];
 	A:=Length(x);
@@ -962,6 +959,7 @@ CoupeMotd := function(w,i)
 	od;
 	return(NewSLP(FamilyObj(w),r));
 	end;
+	
 CoupeMot := function(w,i,j)
 	local r,
 		  f;
@@ -969,4 +967,116 @@ CoupeMot := function(w,i,j)
 	f:=CoupeMotf(r,j-i+1);
 	return(f);
 	end;
+	
+###################################################################################################################
+#Egalité 
+
+ReduceWordPart:=function(w)
+local x, #Liste SLP
+		  r, #résultat 
+		  f,
+		  l, #liste de travail 
+		  n, #longueur de x
+		  i,
+		  j,
+		  t,
+		  k,
+		  ng;#Nb de générateurs 
+		  
+	#Initialisation 
+	x:=w![1];
+	r:=[];
+	f:=[];
+	n:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	
+	for i in [1..n] do
+		l:=x[i];
+		r:=[];
+		for j in [1,3..Length(l)-1] do
+			if l[j]<=ng then 
+				for k in [1..AbsInt(l[j+1])] do 
+					Add(r,SignInt(l[j+1])*l[j]);
+				od;
+			else 
+				for t in [1..AbsInt(l[j+1])] do
+					if SignInt(l[j+1])<0 then
+						for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
+							Add(r,-1*f[l[j]-ng][k]);
+						od;
+					else 
+						for k in [1..Length(f[l[j]-ng])] do
+							Add(r,f[l[j]-ng][k]);
+						od;
+					fi;
+				od;
+			fi;
+		od;
+		Add(f,r);
+	od;
+	f:=f[Length(f)];
+	return f;
+	end;
+
+Equality := function(x,y,D,s)
+
+	local x2,
+		  y2,
+		  x1,
+		  y1,
+		  e1,
+		  e2,
+		  n,
+		  m,
+		  lx,
+		  ly,
+		  B1,
+		  B2;
+		  
+	#Initialisation
+	n:= Length(x);
+	m:=Length(y);
+	
+	if n<>m then 
+		return[false,D];
+	elif n=1 then
+		lx:=ReduceWordPart(x);
+		ly:=ReduceWordPart(y);
+		AddDictionary(D,[1+s,1+s],lx[1]=ly[1]);
+		return([lx[1]=ly[1],D]);
+	else 
+		x1 := CoupeMot(x,1,Int(n/2));
+		x2 := CoupeMot(x,Int(n/2)+1,n);
+		y1 := CoupeMot(y,1,Int(m/2));
+		y2 := CoupeMot(y,Int(m/2)+1,m);
+		B1 :=LookupDictionary(D,[1+s,Int(n/2)+s]);
+		B2 :=LookupDictionary(D,[Int(n/2)+s,n+s]);
+		if B1<> fail then 
+			if B2<>fail then 
+				return[B1 and B2,D];
+			else 
+				e2:=Equality(x2,y2,D,s+Int(n/2));
+				AddDictionary(e2[2],[Int(n/2)+1+s,n+s],e2[1]);
+				return[e2[1] and B1,e2[2]];
+			fi;
+		else 
+			e1:=Equality(x1,y1,D,s);
+			AddDictionary(e1[2],[1+s,Int(n/2)+s],e1[1]);
+			if B2<>fail then 
+				return[e1[1] and B2,e1[2]];
+			else
+				e2:=Equality(x2,y2,e1[2],s+Int(n/2));
+				AddDictionary(e2[2],[Int(n/2)+1,n],e2[1]);
+				return[e2[1] and e1[1],e2[2]];
+			fi;
+		fi;
+	fi;
+	
+	end;
+	
+	
+	
+	
+	
+	
 	
