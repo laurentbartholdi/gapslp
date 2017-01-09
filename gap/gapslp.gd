@@ -21,3 +21,6 @@ DeclareRepresentation( "IsSLPAssocWordRep", IsAssocWord, [] );
 
 #On déclare une fonction qui convertit en SLP :
 DeclareOperation( "AssocWordBySLPRep", [IsAssocWord] );
+
+#On déclare l'attribut qui garde la taille de toutes les listes
+DeclareAttribute("Taille",IsAssocWord and IsSLPAssocWordRep);

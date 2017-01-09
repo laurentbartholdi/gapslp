@@ -9,7 +9,6 @@
 
 BindGlobal("NewSLP", function( F, elt )
 	return Objectify(F!.SLPtype,[Immutable(elt)]);
- 
 	end);
 	
 
@@ -238,70 +237,79 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 	end);
 
 
-
 ###################################################################
-##Fonction qui simplifie un mot
+##Fonctions qui simplifient un mot
 
-BindGlobal("ReduceList",function(x)
+SimplifieListe := function(w)
 	local p, #premier
 		  d, #dernier
 		  ed,
 		  ep,
+		  t,
+		  x,
+		  i,
 		  bool,
 		  l,
+		  r,
 		  n;
-		  
+	#Initialisation
+	t:=w![1];
 	l:=[];	  
+	r:=[];
 	bool:=true;
 	
-	#Supposé non vide 	  
-	if x=[] then 
-		return(x);
-	fi;
+	for i in [1..Length(t)] do
+	x:=t[i];
 	
-	p:=1;
-	d:=3;
-	ep:=x[p+1];
-	n:=Length(x); 
-	l:=[];
-	
-	while 0<p and d<n do 
-		ed:=x[d+1];
-		bool:=true;
-		if x[p]=x[d] then 
-			if ep+ed<>0 then 
-				ep:=ep+ed;
-				d:=d+2;
-			else
-				if p-2>0 then 
-					p:=p-2;
-					ep:=x[p+1];
-					d:=d+2;
-					Remove(l,Length(l));
-					Remove(l,Length(l));
-				elif d+2<n then 
-					p:=d+2;
-					ep:=x[p+1];
-					d:=d+4;
-				else 
-					d:=n;
-					bool:=false;
-				fi;
-			fi;
-		else 
-			Add(l,x[p]);
-			Add(l,ep);
-			p:=d;
-			ep:=x[d+1];
-			d:=d+2;
+		#Supposé non vide 	  
+		if x=[] then 
+			return(x);
 		fi;
-	od;
-	if bool then 
-		Add(l,x[p]);
-		Add(l,ep);	
-	fi;
 	
-	return l;
+		p:=1;
+		d:=3;
+		ep:=x[p+1];
+		n:=Length(x); 
+		l:=[];
+	
+		while 0<p and d<n do 
+			ed:=x[d+1];
+			bool:=true;
+			if x[p]=x[d] then 
+				if ep+ed<>0 then 
+					ep:=ep+ed;
+					d:=d+2;
+				else
+					if p-2>0 then 
+						p:=p-2;
+						ep:=x[p+1];
+						d:=d+2;
+						Remove(l,Length(l));
+						Remove(l,Length(l));
+					elif d+2<n then 
+						p:=d+2;
+						ep:=x[p+1];
+						d:=d+4;
+					else 
+						d:=n;
+						bool:=false;
+					fi;
+				fi;
+			else 
+				Add(l,x[p]);
+				Add(l,ep);
+				p:=d;
+				ep:=x[d+1];
+				d:=d+2;
+			fi;
+		od;
+		if bool then 
+			Add(l,x[p]);
+			Add(l,ep);	
+		fi;
+		Add(r,l);
+	od;
+	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(r)]);
  
 	end;
 	
@@ -312,9 +320,8 @@ ReduceWord := function(w)
 		  r, #Liste résultat travail
 		  l, #Liste de travail
 		  d, #renumérotation
-		  m, #maximum
-		  k, #Liste finale
 		  i,
+		  v,
 		  bool, 
 		  j; #indice qui parcourt 
 			
@@ -324,64 +331,53 @@ ReduceWord := function(w)
 	r:=[];
 	n:=Length(x);
 	l:=[];
-	d:=[];
-	k:=[];
+	d:=NewDictionary(1,true) ; 
+	v:=NewDictionary(1,true) ; 
+
 	
 	#liste non vide 
-	
-	#On trie et on simplifie les premiers termes
-	for i in [1..n-1] do
-		l:=[];
+	for i in [1..n] do 
 		for j in [1,3..Length(x[i])-1] do 
-			if x[i][j]<=ng then
-				Add(l,x[i][j]);
-			else 
-				Add(l,d[x[i][j]-ng]);
-			fi;
-			Add(l,x[i][j+1]);
-		od;
-		l:=ReduceList(l);
-		bool:=true;
-		for j in [1..Length(r)] do
-			if l=r[j] then 
-				d[i]:=j+ng;
-				bool:=false;
+			if x[i][j]>ng and LookupDictionary(v,x[i][j]-ng)=fail then
+				AddDictionary(v,x[i][j]-ng,1);
 			fi;
 		od;
-		if bool then 
-			Add(r,l);
-			d[i]:=Length(r)+ng;
+	od;
+		
+	#On supprime les listes en double
+	for i in [1..n] do
+		l:=[];
+		Print(LookupDictionary(v,i)=1);
+		if LookupDictionary(v,i)=1 then
+			for j in [1,3..Length(x[i])-1] do 
+				if x[i][j]<=ng then
+					Add(l,x[i][j]);
+					Add(l,x[i][j+1]);
+				elif LookupDictionary(d,x[i][j]-ng)<>fail then 
+					Add(l,LookupDictionary(d,x[i][j]-ng));
+					Add(l,x[i][j+1]);
+				fi;
+			od;
+			
+			bool:=true;
+			for j in [1..Length(r)] do
+				if l=r[j] then 
+					AddDictionary(d,i,j+ng);
+					bool:=false;
+				fi;
+			od;
+			if bool then 
+				Add(r,l);
+				AddDictionary(d,i,Length(r)+ng);
+			fi;
 		fi;
 	od;
-	
-	#On réduit et renumérote x[n]
-	l:=[];
-	for j in [1,3..Length(x[n])-1] do 
-		if x[n][j]<=ng then
-				Add(l,x[n][j]);
-			else 
-				Add(l,d[x[n][j]-ng]);
-		fi;
-		Add(l,x[n][j+1]);
-	od;
-	l:=ReduceList(l);
-	
-	#On simplifie pour que x[n] dépende de x[n-1]
-	m:=-1;
-	for j in [1,3..Length(l)-1] do 
-		if l[j]>m then 
-			m:=l[j];
-		fi;
-	od;
-	for i in [1..m-ng] do 
-		Add(k,r[i]);
-	od;
-	Add(k,l);
-	
-	return Objectify(FamilyObj(w)!.SLPtype,[Immutable(k)]);
+
+	return r;
 	
     end;
-	
+
+
 
 #########################################################################
 #MULTIPLIER DEUX MOTS (fonctionne)
@@ -701,10 +697,9 @@ local x, #Liste SLP
 					Add(r,SignInt(l[j+1])*l[j]);
 				od;
 			else 
-				for t in [1..AbsInt(l[j+1])] do 
+				for t in [1..AbsInt(l[j+1])] do
 					if SignInt(l[j+1])<0 then
 						for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
-							
 							Add(r,-1*f[l[j]-ng][k]);
 						od;
 					else 
@@ -720,7 +715,44 @@ local x, #Liste SLP
 	f:=f[Length(f)];
 	return Objectify(FamilyObj(w)!.letterWordType,[f]);
 	end;
-			
+	
+#######################################################################
+##Création du sous mot 
+InstallMethod(Taille, [ IsAssocWord and IsSLPAssocWordRep],0,function(w)
+	local j,
+		  x,
+		  l,
+		  t,
+		  k,
+		  ng,
+		  T;
+	
+	#Initialisation 
+	x:=w![1];
+	t:=0;
+	ng:= FamilyObj(w)!.SLPrank;
+	T:=[];
+	
+	for j in [1..ng] do
+		Add(T,1);
+	od;
+	
+	for j in [1..Length(x)] do 
+		l:=x[j];
+		t:=0;
+		for k in [1,3..Length(l)-1] do
+			if l[k]<=ng then 
+				t:=t+AbsInt(l[k+1]);
+		else 
+			t:=t+T[l[k]]*AbsInt(l[k+1]);
+		fi;
+		od;
+		Add(T,t);
+	od;
+
+	return(T);
+	end);
+
 fin:= function(L,i,A,ng,e,T)
 	local c,
 		  j,
@@ -821,16 +853,16 @@ debut:= function(L,i,A,ng,e,T)
 		od;
 		if c<>i then 
 			s:=r[1];
-			r[2]:=(L[A][j+1]-k)*SignInt(L[A][j+1]);
+			r[2]:=(AbsInt(L[A][j+1])-k)*SignInt(L[A][j+1]);
 			Add(r,e-1,1);
 			Add(r,1*SignInt(L[A][j+1]),2);
 		else 
-			r[2]:=L[A][j+1]-k+1;
+			r[2]:=(AbsInt(L[A][j+1])-k)*SignInt(L[A][j+1]);
 		fi;
 	elif AbsInt(L[A][j+1])=1 and c<>i then
 		s:=r[1];
 		r[1]:=e-1;
-	fi;
+		fi;
 	#Sortie
 	if c=i then 
 		Add(f,r);
@@ -874,24 +906,7 @@ CoupeMotf := function(w,i)
 	e:=0;
 	t:=0;
 	r:=[];
-	T:=[];
-	
-	for j in [1..ng] do
-		Add(T,1);
-	od;
-	
-	for j in [1..A] do 
-		l:=x[j];
-		t:=0;
-		for k in [1,3..Length(l)-1] do
-			if l[k]<=ng then 
-				t:=t+AbsInt(l[k+1]);
-		else 
-			t:=t+T[l[k]]*AbsInt(l[k+1]);
-		fi;
-		od;
-		Add(T,t);
-	od;
+	T:=Taille(w);
 	G:=fin(x,i,A,ng,e,T);
 	k:=Length(x)+Length(G)+ng;
 	
@@ -931,24 +946,7 @@ CoupeMotd := function(w,i)
 	e:=0;
 	t:=0;
 	r:=[];
-	T:=[];
-	
-	for j in [1..ng] do
-		Add(T,1);
-	od;
-	
-	for j in [1..A] do 
-		l:=x[j];
-		t:=0;
-		for k in [1,3..Length(l)-1] do
-			if l[k]<=ng then 
-				t:=t+AbsInt(l[k+1]);
-		else 
-			t:=t+T[l[k]]*AbsInt(l[k+1]);
-		fi;
-		od;
-		Add(T,t);
-	od;
+	T:=Taille(w);
 	G:=debut(x,i,A,ng,e,T);
 	k:=Length(x)+Length(G)+ng;
 	
@@ -965,10 +963,10 @@ CoupeMotd := function(w,i)
 	return(NewSLP(FamilyObj(w),r));
 	end;
 CoupeMot := function(w,i,j)
-	local r;
-	r:=CoupeMotd(w,i);
-	r:=CoupeMotf(w,j-i+1);
-	return(r);
+	local r,
+		  f;
+	r:=CoupeMotd(w,i-1);
+	f:=CoupeMotf(r,j-i+1);
+	return(f);
 	end;
-	
 	
