@@ -832,7 +832,10 @@ debut:= function(L,i,A,ng,e,T)
 		c:=c+T[L[A][j]]*AbsInt(L[A][j+1]);
 		j:=j+2;
 	od;
-	j:=j-2;	
+	if c<>i then
+		j:=j-2;
+	fi;
+	
 	for k in [j,j+2..Length(L[A])-1] do
 		Add(r,L[A][k]);
 		Add(r,L[A][k+1]);
@@ -845,10 +848,17 @@ debut:= function(L,i,A,ng,e,T)
 			k:=k+1;
 		od;
 		if c<>i then 
-			s:=r[1];
-			r[2]:=(AbsInt(L[A][j+1])-k)*SignInt(L[A][j+1]);
-			Add(r,e-1,1);
-			Add(r,1*SignInt(L[A][j+1]),2);
+			if AbsInt(L[A][j+1])-k <>0 then 
+				s:=r[1];
+				r[2]:=(AbsInt(L[A][j+1])-k)*SignInt(L[A][j+1]);
+				Add(r,e-1,1);
+				Add(r,1*SignInt(L[A][j+1]),2);
+			else 
+				s:=r[1];
+				r[1]:= e-1;
+				r[2]:=1*SignInt(L[A][j+1]);
+			fi;
+			
 		else 
 			r[2]:=(AbsInt(L[A][j+1])-k)*SignInt(L[A][j+1]);
 		fi;
@@ -935,6 +945,8 @@ CoupeMotd := function(w,i)
 	#Test sécurité 
 	if i=0 then 
 		return(w);
+	elif i=Length(w) then 
+		return("vide");
 	fi;	    
 	#Initialisation 
 	x:=w![1];
@@ -963,8 +975,8 @@ CoupeMotd := function(w,i)
 CoupeMot := function(w,i,j)
 	local r,
 		  f;
-	r:=CoupeMotd(w,i-1);
-	f:=CoupeMotf(r,j-i+1);
+	r:=CoupeMotf(w,j);
+	f:=CoupeMotd(r,i-1);
 	return(f);
 	end;
 	
@@ -1035,8 +1047,7 @@ Equality := function(x,y,D,s)
 		  
 	#Initialisation
 	n:= Length(x);
-	m:=Length(y);
-	
+	m:=Length(y);	
 	if n<>m then 
 		return[false,D];
 	elif n=1 then
@@ -1066,17 +1077,141 @@ Equality := function(x,y,D,s)
 				return[e1[1] and B2,e1[2]];
 			else
 				e2:=Equality(x2,y2,e1[2],s+Int(n/2));
-				AddDictionary(e2[2],[Int(n/2)+1,n],e2[1]);
+				AddDictionary(e2[2],[Int(n/2)+s+1,n+s],e2[1]);
 				return[e2[1] and e1[1],e2[2]];
 			fi;
 		fi;
 	fi;
-	
 	end;
 	
 	
+
+	
+##################################################################
+## Préfixe (en cours de réalisation)
+
+prefixe := function(w,z) 
+	local n,
+		  m,
+		  D,
+		  B,
+		  l,
+		  p,
+		  u,
+		  min,
+		  max,
+		  r,
+		  v;
+		  
+		  
+	#Initialisation
+	D:=NewDictionary([1,2],true);
+	n:=Length(w);
+	m:=Length(z);
+	B:=Equality(w,z,D,0);
+	D:=B[2];
+	B:=B[1];
+	
+	if B then 
+		return(n);
+	fi;
+	
+	if n>m then
+		max:=n;
+		min:=m;
+	else 
+		max:=m;
+		min:=n;
+	fi;
+		
+	l:=min;
+	p:=min;
+	r:=min;
+	if p<>1 then 
+		while p<>1 do
+			u:=CoupeMot(w,1,l);
+			v:=CoupeMot(z,1,l);
+			B:=Equality(u,v,D,0);
+			D:=B[2];
+			B:=B[1];
+			r:=l;
+			if B then 
+				p:=Int((min-p)/2);
+				l:=l+p;
+			else
+				p:=Int((p)/2);
+				l:=l-p;
+			fi;
+		od;
+		return(l);
+	else 
+		return(0);
+	fi;
+	end;
+
+prefixe := function(w,z) 
+	local n,
+		  m,
+		  D,
+		  B,
+		  l,
+		  p,
+		  u,
+		  min,
+		  max,
+		  r,
+		  e,
+		  v;
+		  
+		  
+	#Initialisation
+	D:=NewDictionary([1,2],true);
+	n:=Length(w);
+	m:=Length(z);
+	B:=Equality(w,z,D,0);
+	D:=B[2];
+	e:=0;
+	B:=B[1];
+	
+	if B then 
+		return(n);
+	fi;
+	
+	if n>m then
+		max:=n;
+		min:=m;
+	else 
+		max:=m;
+		min:=n;
+	fi;
+	
+	while 2^e<max do
+		e:=e+1;
+	od;
+		
 	
 	
-	
-	
-	
+	l:=min;
+	p:=min;
+	r:=min;
+	if p<>1 then 
+		while p<>1 do
+			u:=CoupeMot(w,1,l);
+			v:=CoupeMot(z,1,l);
+			B:=Equality(u,v,D,0);
+			D:=B[2];
+			B:=B[1];
+			r:=l;
+			if B then 
+				p:=Int((min-p)/2);
+				l:=l+p;
+			else
+				p:=Int((p)/2);
+				l:=l-p;
+			fi;
+		od;
+		return(l);
+	else 
+		return(0);
+	fi;
+	end;

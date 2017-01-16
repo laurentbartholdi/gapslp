@@ -84,6 +84,12 @@ Convert(t);
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
 Taille(y);
 
+y:=NewSLP(FamilyObj(f.1),[[2,3],[1,4],[3,25,4,-1]]);
+Taille(y);
+
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,4],[4,1]]);
+Taille(y);
+
 #fin
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
 x:=Convert(y);
@@ -94,6 +100,17 @@ ng:=2;
 e:=0;
 T:=[1,1,2,3,5,8];
 fin(L,i,A,ng,e,T);
+
+y:=NewSLP(FamilyObj(f.1),[[2,3],[1,4],[3,25,4,-1]] );
+x:=Convert(y);
+L:= [[2,3],[1,4],[3,25,4,-1]] ;
+i:=79;
+A:=3;
+ng:=2;
+e:=0;
+T:=Taille(y);
+fin(L,i,A,ng,e,T);
+
 
 #debut
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
@@ -106,21 +123,47 @@ e:=0;
 T:=[1,1,2,3,5,8];
 debut(L,i,A,ng,e,T);
 
+
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+x:=Convert(y);
+L:= [[2,3],[3,25,1,2],[4,1,2,-3]];
+i:=3;
+A:=3;
+ng:=2;
+e:=0;
+T:=Taille(y);
+debut(L,i,A,ng,e,T);
+
 #CoupeMotf
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,5,4,-1]]);
 x:=CoupeMotf(y,2);
 Convert(y);
 Convert(x);
 
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+x:=CoupeMotf(y,76);
+Convert(y);
+Convert(x);
+
 #CoupeMotd
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,5,4,-1]]);
-x:=CoupeMotd(y,2);
+x:=CoupeMotd(y,148);
+Convert(y);
+Convert(x);
+
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+x:=CoupeMotd(y,76);
 Convert(y);
 Convert(x);
 
 #CoupeMot
 y:=NewSLP(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[5,25,4,-1]]);
-x:=CoupeMot(y,2,2);
+x:=CoupeMot(y,2,728);
+Convert(y);
+Convert(x);
+
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+x:=CoupeMot(y,78,78);
 Convert(y);
 Convert(x);
 ###################################################################################################################
@@ -137,11 +180,35 @@ y:=f.1*f.2;
 D:= NewDictionary([1,2],true);
 Equality(x,y,D,0);
 
-x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,1,4,1,5,1]]);
-y:=NewSLP(FamilyObj(f.1),[[2,3],[3,1,1,2],[4,1,2,-2]]);
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,1,5,1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
 D:= NewDictionary([1,2],true);
 Equality(x,y,D,0);
 
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,-1,5,1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+D:= NewDictionary([1,2],true);
+Equality(y,x,D,0);
+
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,4],[3,25,4,-1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,4],[4,1]]);
+D:= NewDictionary([1,2],true);
+Equality(y,x,D,0);
+
+###############################################################################
+##Prefixe
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,1,5,1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+prefixe(x,y);
+
+#Ce test devrait renvoyer 80 mais renvoie 82...
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,1,5,12]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+prefixe(x,y);
+
+x:=NewSLP(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,-1,5,1]]);
+y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+prefixe(x,y);
 ######################################################
 ##Autres tests
 
