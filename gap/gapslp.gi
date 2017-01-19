@@ -1090,64 +1090,6 @@ Equality := function(x,y,D,s)
 ##################################################################
 ## Préfixe (en cours de réalisation)
 
-prefixe := function(w,z) 
-	local n,
-		  m,
-		  D,
-		  B,
-		  l,
-		  p,
-		  u,
-		  min,
-		  max,
-		  r,
-		  v;
-		  
-		  
-	#Initialisation
-	D:=NewDictionary([1,2],true);
-	n:=Length(w);
-	m:=Length(z);
-	B:=Equality(w,z,D,0);
-	D:=B[2];
-	B:=B[1];
-	
-	if B then 
-		return(n);
-	fi;
-	
-	if n>m then
-		max:=n;
-		min:=m;
-	else 
-		max:=m;
-		min:=n;
-	fi;
-		
-	l:=min;
-	p:=min;
-	r:=min;
-	if p<>1 then 
-		while p<>1 do
-			u:=CoupeMot(w,1,l);
-			v:=CoupeMot(z,1,l);
-			B:=Equality(u,v,D,0);
-			D:=B[2];
-			B:=B[1];
-			r:=l;
-			if B then 
-				p:=Int((min-p)/2);
-				l:=l+p;
-			else
-				p:=Int((p)/2);
-				l:=l-p;
-			fi;
-		od;
-		return(l);
-	else 
-		return(0);
-	fi;
-	end;
 
 prefixe := function(w,z) 
 	local n,
@@ -1211,6 +1153,111 @@ prefixe := function(w,z)
 			fi;
 		od;
 		return(l);
+	else 
+		return(0);
+	fi;
+	end;
+	
+	
+prefixe := function(w,z) 
+
+	local B,
+		  x,
+		  y,
+		  n,
+		  m,
+		  max,
+		  min,
+		  i,
+		  u,
+		  v,
+		  D,
+		  e,
+		  p,
+		  l;
+		  
+	#Initialisation
+		D:=NewDictionary([1,2],true);
+		n:=Length(w);
+		m:=Length(z);
+		B:=Equality(w,z,D,0);
+		D:=B[2];
+		e:=0;
+		B:=B[1];
+		x:=[];
+		y:=[];
+		l:=[];
+
+	if B then 
+		return(n);
+	fi;
+	
+	if n>m then
+		max:=n;
+		min:=m;
+	else 
+		max:=m;
+		min:=n;
+	fi;
+	
+	while 2^e<max do
+		e:=e+1;
+	od;
+	
+	n:=Length(w![1]);
+	m:=Length(z![1]);
+	
+	for i in [1..n-1] do 
+		Add(x,w![1][i]);
+	od;
+	
+	for i in [1..Length(w![1][n])] do 
+		Add(l,w![1][n][i]);
+	od;
+	
+	Add(l,1);
+	Add(l,(2^e)-m);
+	Add(x,l);
+	
+	x:=NewSLP(FamilyObj(w),x);
+	l:=[];
+	
+	for i in [1..m-1] do 
+		Add(y,z![1][i]);
+	od;
+	
+	for i in [1..Length(z![1][m])] do 
+		Add(l,z![1][m][i]);
+	od;
+	
+	Add(l,1);
+	Add(l,(2^e)-m);
+	Add(y,l);
+	
+	y:=NewSLP(FamilyObj(z),y);
+	
+	l:=2^e;
+	p:=2^e;
+	if p<>1 then 
+		while p<>1 do
+			u:=CoupeMot(x,1,l);
+			v:=CoupeMot(y,1,l);
+			B:=Equality(u,v,D,0);
+			D:=B[2];
+			B:=B[1];
+			if B then 
+				p:=Int((min-p)/2);
+				l:=l+p;
+			else
+				p:=Int((p)/2);
+				l:=l-p;
+			fi;
+		od;
+		if l<min then 
+			return(l);
+		else 
+			return(min);
+		fi;
 	else 
 		return(0);
 	fi;
