@@ -4,4 +4,4 @@
 #
 ReadPackage("gapslp", "gap/gapslp.gi");
 
-ReadPackage("gapslp", "tests.g");
+#ReadPackage("gapslp", "tests.g");

@@ -660,7 +660,8 @@ InstallMethod( EliminatedWord,
 #######################################################################
 #Conversion en format lettre 
 
-Convert:=function(w)
+InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+        function(w)
 local x, #Liste SLP
 		  r, #résultat 
 		  f,
@@ -703,10 +704,11 @@ local x, #Liste SLP
 		od;
 		Add(f,r);
 	od;
-	f:=f[Length(f)];
-	return Objectify(FamilyObj(w)!.letterWordType,[f]);
-	end;
+	return f[Length(f)];
+    end);
 	
+InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+            w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
 	
 #######################################################################
