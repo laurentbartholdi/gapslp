@@ -162,6 +162,7 @@ x:=CoupeMot(y,2,728);
 Convert(y);
 Convert(x);
 
+
 y:=NewSLP(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
 x:=CoupeMot(y,78,78);
 Convert(y);
