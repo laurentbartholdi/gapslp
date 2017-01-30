@@ -6,7 +6,7 @@
 #############################################################################
 ##Création des SLP
 
-BindGlobal(AssocWordBySLPRep, function( F, elt )
+InstallMethod(AssocWordBySLPRep,"SLP rep family", true,[ IsAssocWordFamily and IsSLPWordsFamily, IsHomogeneousList ], 0, function( F, elt )
 	return Objectify(F!.SLPtype,[Immutable(elt)]);
 	end);
 
@@ -37,7 +37,9 @@ end,[]);
 #Fonctions 
 
 #Regarde si la liste est vide 	
-BindGlobal(EstVide, [ IsAssocWord and IsSLPAssocWordRep],0,function(w)
+InstallMethod(EstVide, "for an assoc. word in SLP rep", true,
+    [ IsAssocWord and IsSLPAssocWordRep], 0,
+	function( w )
 	local x, #liste de SLPObj
 		  i, #parcourt la liste 
 		  n,
