@@ -25,7 +25,7 @@ DeclareRepresentation( "IsSLPAssocWordRep", IsAssocWord, [] );
 DeclareOperation( "AssocWordBySLPRep", [IsFamily,IsList] );
 
 #On déclare une fonction qui regarde si le mot est vide
-DeclareOperation( "EstVide", [IsFamily,IsList] );
+DeclareOperation( "EstVide",[ IsAssocWord and IsSLPAssocWordRep] );
 
 ##Déclarations des attributs 
 
