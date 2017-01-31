@@ -19,14 +19,6 @@ DeclareCategory( "IsSLPWordsFamily", IsAssocWordFamily );
 #!   associative words in syllable representation.
 DeclareRepresentation( "IsSLPAssocWordRep", IsAssocWord, [] );
 
-##Déclarations des fonctions
-
-#On déclare une fonction qui convertit en SLP : entrée = famille d'un élément SLP et liste de listes
-DeclareOperation( "AssocWordBySLPRep", [IsFamily,IsList] );
-
-#On déclare une fonction qui regarde si le mot est vide
-DeclareOperation( "EstVide",[ IsAssocWord and IsSLPAssocWordRep] );
-
 ##Déclarations des attributs 
 
 #On déclare une fonction qui convertit en SLP :

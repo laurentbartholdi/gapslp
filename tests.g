@@ -7,7 +7,8 @@ f:=FreeGroup(IsSLPWordsFamily,2);
 
 #EstVide 
 h:= AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3],[1,2,1,3],[5,2,3,5],[3,1,4,1],[3,1,4,1],[]]);
-EstVide(h);
+gap> EstVide(h);
+true
 
 ###################################################################
 ##methodes d'impression 
@@ -33,8 +34,10 @@ Display(x);
 #Longueur d'un mot (Length)
 t:= AssocWordBySLPRep(FamilyObj(f.1),[[2,1],[1,1,2,1],[3,2],[4,-3]]);
 i:= AssocWordBySLPRep(FamilyObj(f.1),[[1,1,2,1],[1,2,3,2],[2,3],[4,1,5,1]]);
-Length(t);
-Length(i);
+gap> Length(t);
+6
+gap> Length(i);
+9
 
 #SubLengths  
 y:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3],[3,-1,4,1],[5,1,4,-1]]);
@@ -52,4 +55,11 @@ SubLengths(y);
 t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]); 
 LetterRepAssocWord(t);
 
+##########################################################################
+#SubWord
+##Ne marche pas !! Resoudre pb
+t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]);
+Subword(t,17,18);
 
+t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[3,3,2,4],[4,1,1,1],[5,3,2,14]]);
+Subword(t,38,3);
