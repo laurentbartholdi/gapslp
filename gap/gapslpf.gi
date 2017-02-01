@@ -6,21 +6,26 @@
 #############################################################################
 ##Création d'une fonction sous-mot 
 
-InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ],0,function(w,i,l)
+InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt ],0,function(w,o,l)
 	local c,
 		  x,
 	      n,
+		  i,
 		  j,
 		  s,
 		  k,
 		  T,
 		  ng,
+		  fin,
+		  m,
 		  r,
 		  debut;
 		  
 	#Initialisation
 	c:=0;
 	r:=[];
+	fin:=[];
+	i:=o-1;
 	x:=w![1];
 	n:=Length(x);
 	debut:=[];
@@ -29,8 +34,7 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 	T:=SubLengths(w);
 	
 	#Travail pour le debut
-	while c<>i do
-	Print(x[n]);
+	while c<>i and n>0 do
 		if s>0 then 
 			j:=1;
 			while c<i and j<Length(x[n]) do                   #On parcourt grossièrement la liste 
@@ -56,13 +60,11 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 				od;
 			fi;
 		fi;
-		Print(",",j);
 		if s>0 and j-2>0 then 
 				j:=j-2;
 		elif s<0 and j+2<Length(x[n]) then 
 				j:=j+2;
 		fi;
-		Print(",",j);
 		if AbsInt(x[n][j+1])<>1 and c<>i then                #Si la puissance est différente de -1 ou 1 on affine la sélection 
 			c:= c-T[x[n][j]]*AbsInt(x[n][j+1]);
 			k:=0;
@@ -87,12 +89,12 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 				fi;
 			else
 				if c<=l then 
-						Add(debut,x[n][j]);
-						Add(debut,(AbsInt(x[n][j+1])-k)*SignInt(x[n][j+1]));
-					fi;
-					s:=s*SignInt(x[n][j+1]);
-					c:=c-T[x[n][j]];
-					n:=x[n][j]-ng;
+					Add(debut,x[n][j]);
+					Add(debut,(AbsInt(x[n][j+1])-k)*SignInt(x[n][j+1]));
+				fi;
+				s:=s*SignInt(x[n][j+1]);
+				c:=c-T[x[n][j]];
+				n:=x[n][j]-ng;
 			fi;
 		elif AbsInt(x[n][j+1])=1 and c<>i then             #on met à jour n et s pour recommencer la boucle
 			s:=s*SignInt(x[n][j+1]);
@@ -100,7 +102,148 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 			n:=x[n][j]-ng;
 		fi;
 	od;
-	return(debut);
+	
+	m:=0;
+	for k in [1,3..Length(debut)-1] do 
+		m:=m+T[debut[k]]*AbsInt(debut[k+1]);
+	od;
+	m:=m+i-l;
+	
+	n:=Length(x);
+	c:=0;
+	s:=1;
+	
+	while c<>m and n>0 do
+		if n=Length(x) then 
+			if s>0 then 
+				j:=1;
+				while c<m and j<Length(debut) do                   #On parcourt grossièrement la liste 
+				c:=c+T[debut[j]]*AbsInt(debut[j+1]);
+				j:=j+2;
+				od;
+				for k in [Length(debut)-1,Length(debut)-3..j] do    #On récupère la partie de la liste qui nous intéresse (à l'enver) sans prendre l'élément de travail
+					Add(r,debut[k]);
+					Add(r,debut[k+1]);
+				od;
+			
+			elif s<0 then 
+				j:=Length(debut)-1;
+				while c<m and j>0 do                              #On parcourt grossièrement la liste 
+				c:=c+T[debut[j]]*AbsInt(debut[j+1]);
+				j:=j-2;
+				od;
+				for k in [1,3..j] do #On récupère la partie de la liste qui nous intéresse (à l'enver) sans prendre l'élément de travail
+					Add(r,debut[k]);
+					Add(r,debut[k+1]);
+				od;
+			fi;
+
+			if s>0 and j-2>0 then 
+					j:=j-2;
+			elif s<0 and j+2<Length(debut) then 
+					j:=j+2;
+			fi;
+		
+			if AbsInt(debut[j+1])<>1 and c<>m then                #Si la puissance est différente de -1 ou 1 on affine la sélection 
+				c:= c-T[debut[j]]*AbsInt(debut[j+1]);
+				k:=0;
+				while c<m do 
+					c:=c+T[debut[j]];
+					k:=k+1;
+				od;
+
+				if c<>m then 
+					if AbsInt(debut[j+1])-k <>0 then				#Si on garde une partie des puissance on l'ajoute à la fin de la liste 
+						Add(r,debut[j]);
+						Add(r,(AbsInt(debut[j+1])-k)*SignInt(debut[j+1]));
+						s:=s*SignInt(debut[j+1]);
+						c:=c-T[debut[j]];
+						n:=debut[j]-ng;
+								
+					else                                        #Dans tous les cas on met à jour n et s pour recommencer la boucle 
+						s:=s*SignInt(debut[j+1]);
+						c:=c-T[debut[j]];
+						n:=debut[j]-ng;
+					fi;
+				else
+					Add(r,debut[j]);
+					Add(r,(AbsInt(debut[j+1])-k)*SignInt(debut[j+1]));
+					s:=s*SignInt(debut[j+1]);
+					c:=c-T[debut[j]];
+					n:=debut[j]-ng; 
+				fi;
+			elif AbsInt(debut[j+1])=1 and c<>m then             #on met à jour n et s pour recommencer la boucle
+				s:=s*SignInt(debut[j+1]);
+				c:=c-T[debut[j]];
+				n:=debut[j]-ng;
+			fi;
+
+		else 
+			if s>0 then 
+				j:=1;
+				while c<m and j<Length(x[n]) do                   #On parcourt grossièrement la liste 
+				c:=c+T[x[n][j]]*AbsInt(x[n][j+1]);
+				j:=j+2;
+				od;
+				for k in [Length(x[n])-1,Length(x[n])-3..j] do    #On récupère la partie de la liste qui nous intéresse (à l'enver) sans prendre l'élément de travail
+					Add(r,x[n][k]);
+					Add(r,x[n][k+1]);
+				od;
+			elif s<0 then 
+				j:=Length(x[n])-1;
+				while c<m and j>0 do                              #On parcourt grossièrement la liste 
+				c:=c+T[x[n][j]]*AbsInt(x[n][j+1]);
+				j:=j-2;
+				od;
+				for k in [1,3..j] do #On récupère la partie de la liste qui nous intéresse (à l'enver) sans prendre l'élément de travail
+					Add(r,x[n][k]);
+					Add(r,x[n][k+1]);
+				od;
+			fi;
+			if s>0 and j-2>0 then 
+				j:=j-2;
+			elif s<0 and j+2<Length(x[n]) then 
+				j:=j+2;
+			fi;
+			if AbsInt(x[n][j+1])<>1 and c<>m then                #Si la puissance est différente de -1 ou 1 on affine la sélection 
+				c:= c-T[x[n][j]]*AbsInt(x[n][j+1]);
+				k:=0;
+				while c<m do 
+					c:=c+T[x[n][j]];
+					k:=k+1;
+				od;
+				if c<>m then 
+					if AbsInt(x[n][j+1])-k <>0 then				#Si on garde une partie des puissance on l'ajoute à la fin de la liste 
+						Add(r,x[n][j]);
+						Add(r,(AbsInt(x[n][j+1])-k)*SignInt(x[n][j+1]));
+						s:=s*SignInt(x[n][j+1]);
+						c:=c-T[x[n][j]];
+						n:=x[n][j]-ng;
+					else                                        #Dans tous les cas on met à jour n et s pour recommencer la boucle 
+						s:=s*SignInt(x[n][j+1]);
+						c:=c-T[x[n][j]];
+						n:=x[n][j]-ng;
+					fi;
+				else
+					Add(r,x[n][j]);
+					Add(r,(AbsInt(x[n][j+1])-k)*SignInt(x[n][j+1]));
+					s:=s*SignInt(x[n][j+1]);
+					c:=c-T[x[n][j]];
+					n:=x[n][j]-ng;
+				fi;
+			elif AbsInt(x[n][j+1])=1 and c<>m then             #on met à jour n et s pour recommencer la boucle
+				s:=s*SignInt(x[n][j+1]);
+				c:=c-T[x[n][j]];
+				n:=x[n][j]-ng;
+			fi;
+		fi;
+	od;
+	
+	for k in [1..Length(x)-1] do 
+		Add(fin,x[k]);
+	od;
+	Add(fin,r);
+	return(AssocWordBySLPRep(FamilyObj(w),fin));	
 	end);
 	
 
