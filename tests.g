@@ -57,9 +57,38 @@ LetterRepAssocWord(t);
 
 ##########################################################################
 #SubWord
-##Ne marche pas !! Resoudre pb
-t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3],[3,-13,4,1],[3,-12,4,1],[6,1,5,24,4,-1]]);
-Subword(t,17,18);
+
+t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[1,3909],[3,-18300,4,1],[3,-12008,4,1],[6,199,5,24,4,-190]]);
+Subword(t,1900,88888);
 
 t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[3,3,2,4],[4,1,1,1],[5,3,2,14]]);
 Subword(t,38,3);
+
+x:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,1,5,1]]);
+LetterRepAssocWord(Subword(x,1,2));
+
+y:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+LetterRepAssocWord(Subword(y,1,2));
+
+y:=AssocWordBySLPRep(FamilyObj(f.1),[ [ 2, 3 ], [ 3, 25, 1, 2 ], [ 2, 2, 3, 1, 1, 2, 2, -3 ]]);
+LetterRepAssocWord(Subword(y,1,5));
+
+#################################################################################
+##Egalité
+
+#Equality 
+
+x:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,1,5,1]]);
+y:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+D:= NewDictionary([1,2],true);
+(y,n) := Equality(x,y,D,0);
+
+x:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[1,2],[2,-3],[3,25,4,-1,5,1]]);
+y:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[3,25,1,2],[4,1,2,-3]]);
+D:= NewDictionary([1,2],true);
+Equality(y,x,D,0);
+
+x:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[1,4],[3,25,4,-1]]);
+y:=AssocWordBySLPRep(FamilyObj(f.1),[[2,3],[3,25,1,4],[4,1]]);
+D:= NewDictionary([1,2],true);
+Equality(y,x,D,0);
