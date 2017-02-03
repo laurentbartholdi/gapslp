@@ -12,6 +12,8 @@
 #!   The family of SLP words
 DeclareCategory( "IsSLPWordsFamily", IsAssocWordFamily );
 
+DeclareInfoClass( "InfoSLP" );
+
 ##On déclare une représentation associée: 
 #! @Description
 #!   The representation of SLP words. It is by a list of lists of integers.
