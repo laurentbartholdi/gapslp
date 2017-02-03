@@ -299,12 +299,12 @@ Equality:=function(x,y,D,s)
 	Print(lx,ly);
 	if n<>m then 
 		Print("pb");
-		return[false,D];
+		return false;
 	elif n=1 then
 		lx:=LetterRepAssocWord(x);
 		ly:=LetterRepAssocWord(y);
 		AddDictionary(D,[1+s,1+s],lx[1]=ly[1]);
-		return([lx=ly,D]);
+		return lx=ly;
 	else 
 		x1 := Subword(x,1,Int(n/2));
 		x2 := Subword(x,Int(n/2)+1,n);
@@ -318,24 +318,28 @@ Equality:=function(x,y,D,s)
 		fi;
 		if B1<> fail then 
 			if B2<>fail then 
-				return[B1 and B2,D];
+				return B1 and B2;
 			else 
 				e2:=Equality(x2,y2,D,s+Int(n/2));
-				AddDictionary(e2[2],[Int(n/2)+1+s,n+s],e2[1]);
-				return[e2[1] and B1,e2[2]];
+				AddDictionary(D,[Int(n/2)+1+s,n+s],e2);
+				return e2 and B1;
 			fi;
 		else 
 			e1:=Equality(x1,y1,D,s);
-			AddDictionary(e1[2],[1+s,Int(n/2)+s],e1[1]);
+			AddDictionary(D,[1+s,Int(n/2)+s],e1);
 			if B2<>fail then 
-				return[e1[1] and B2,e1[2]];
+				return e1 and B2;
 			else
-				e2:=Equality(x2,y2,e1[2],s+Int(n/2));
-				AddDictionary(e2[2],[Int(n/2)+s+1,n+s],e2[1]);
-				return[e2[1] and e1[1],e2[2]];
+				e2:=Equality(x2,y2,D,s+Int(n/2));
+				AddDictionary(D,[Int(n/2)+s+1,n+s],e2);
+				return e1 and e2;
 			fi;
 		fi;
 	fi;
 	end;
-	
-	
+
+InstallMethod(\=, "for SLP words", IsIdenticalObj,
+	[IsAssocWord and IsSLPAssocWordRep,IsAssocWord and IsSLPAssocWordRep],
+	function(x,y)
+    return Equality(x,y,NewDictionary([1],true),0);
+end);
