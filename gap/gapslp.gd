@@ -26,3 +26,5 @@ DeclareAttribute( "LetterRepOfAssocWord", IsAssocWord );
 
 #On déclare l'attribut qui garde la taille de toutes les listes
 DeclareAttribute("SubLengths",IsAssocWord and IsSLPAssocWordRep);
+
+DeclareAttribute("IsReducedWord",  IsAssocWord );
