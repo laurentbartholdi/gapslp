@@ -363,3 +363,44 @@ InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssoc
             w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
 	
+###################################################################################
+##Test d'un mot réduit 
+
+InstallMethod(IsReducedWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], function(w)
+	
+	local x,
+		  ng,
+		  n,
+		  i,
+		  d,
+		  y1,
+		  y2,
+		  j;
+		  
+	#Initialisation
+	x:=w![1];
+	d:=NewDictionary(1,true) ; 
+	n:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	
+	#Remplir le dico [1,d]
+	for i in [1..ng] do 
+		AddDictionary(d,i,[i,0,i]);	
+	od;
+	
+	for i in [1..n] do 
+		j:=1;
+		AddDictionary(d,i+ng,[x[i][1],0,x[i][Length(x[i])-1]]);	
+		
+		while j<Length(x[i])-2 do 
+		y1 := LookupDictionary(d,x[i][j]);
+		y2 := LookupDictionary(d,x[i][j+2]);
+			if y1[2+SignInt(x[i][j+1])]=y2[2-SignInt(x[i][j+3])] then
+				return(false);
+			fi;
+		j:=j+2;
+		od;
+		
+	od;
+	return(true);
+	end);
