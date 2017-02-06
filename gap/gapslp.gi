@@ -84,6 +84,7 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 		return ("<identity...>");
 	fi;
 	
+	s:=Concatenation(s,"(");
 	#On s'occupe des premières listes 
 	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
@@ -127,8 +128,8 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 			if j<>Length(l)-1 then 
 				s:=Concatenation(s,"*");
 			fi;
-		od;
-		
+	od;
+	s:=Concatenation(s,")");	
 	return (s);
 	end);
 	
@@ -160,6 +161,7 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 		return ("<identity...>");
 	fi;
 	
+	s:=Concatenation(s,"(");
 	#On s'occupe des premières listes 
 	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
@@ -203,8 +205,8 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 			if j<>Length(l)-1 then 
 				s:=Concatenation(s,"*");
 			fi;
-		od;
-		
+	od;
+	s:=Concatenation(s,")");
 	return (s);
 	end);
 
@@ -332,6 +334,10 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 	n:=Length(x);
 	ng:= FamilyObj(w)!.SLPrank;
 	
+	if EstVide(w) then 
+		return([]);
+	fi;
+	Print(x);
 	for i in [1..n] do
 		l:=x[i];
 		r:=[];
@@ -344,10 +350,13 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 				for t in [1..AbsInt(l[j+1])] do
 					if SignInt(l[j+1])<0 then
 						for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
+							
 							Add(r,-1*f[l[j]-ng][k]);
 						od;
 					else 
+						Print(f);
 						for k in [1..Length(f[l[j]-ng])] do
+							Print(l[j]-ng);
 							Add(r,f[l[j]-ng][k]);
 						od;
 					fi;

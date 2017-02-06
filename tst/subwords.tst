@@ -3,7 +3,7 @@ gap> g := FreeGroup(2);
 gap> f := FreeGroup(IsSLPWordsFamily,2);
 <free group on the generators [ f1, f2 ]>
 gap> t:=AssocWordBySLPRep(FamilyObj(f.1),[[2,2],[3,3,2,4],[4,1,1,1],[5,3,2,14]]);
-_1:=f2^2;_2:=_1^3*f2^4;_3:=_2*f1;_3^3*f2^14
+(_1:=f2^2;_2:=_1^3*f2^4;_3:=_2*f1;_3^3*f2^14)
 gap> tt := AssocWordByLetterRep(FamilyObj(g.1),LetterRepAssocWord(t));
 f2^10*f1*f2^10*f1*f2^10*f1*f2^14
 gap> Subword(tt,38,3);
@@ -18,5 +18,60 @@ gap> Length(f25);
 196418
 gap> last=Length(LetterRepAssocWord(f25));
 true
-gap> ForAll(Combinations([0..Length(f5)],2),c->LetterRepAssocWord(Subword(f5,c[1]+1,c[2]))=LetterRepAssocWord(f5){[c[1]+1..c[2]]});
+gap> ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f5,c[1]+1,c[2]))=LetterRepAssocWord(f5){[c[1]+1..c[2]]});
 true
+
+f := FreeGroup(IsSLPWordsFamily,2);
+fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLPRep(f,p); end;;
+f25 := fibo(FamilyObj(f.1),10);;
+ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+
+f := FreeGroup(IsSLPWordsFamily,2);
+fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,-1]); od; return AssocWordBySLPRep(f,p); end;;
+f25 := fibo(FamilyObj(f.1),10);;
+ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+
+f := FreeGroup(IsSLPWordsFamily,2);
+fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLPRep(f,p); end;;
+f25 := fibo(FamilyObj(f.1),5);;
+ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+
+f := FreeGroup(IsSLPWordsFamily,2);
+fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,-1]); od; return AssocWordBySLPRep(f,p); end;;
+f25 := fibo(FamilyObj(f.1),5);;
+ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+
+f := FreeGroup(IsSLPWordsFamily,2);
+long := function(f,n) 
+	local p,q, i; 
+	p := []; 
+	for i in [1..n] do 
+		q:=[];
+		for j in [1..i] do
+			Add(q,j);
+			Add(q,5);
+		od;
+		Add(p,q); 
+	od; 
+	return AssocWordBySLPRep(f,p); 
+	end;;
+f25 := long(FamilyObj(f.1),5);;
+ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+
+
+
+a:=1;
+b:=5;
+LetterRepAssocWord(Subword(f25,a,b));
+LetterRepAssocWord(f25){[a..b]};
+
+LetterRepAssocWord(AssocWordBySLPRep(FamilyObj(f.1),[[]]));
+
+
+
+
+#######################################
+f := FreeGroup(IsSLPWordsFamily,2);
+a:=AssocWordBySLPRep(FamilyObj(f.1),[[1,2,2,1],[3,1,2,1]]);
+b:=AssocWordBySLPRep(FamilyObj(f.1),[[1,2,2,1],[3,1,1,1]]);
+prefixe(a,b);
