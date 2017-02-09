@@ -350,7 +350,7 @@ Equality:= function(x,y,D,s)
 			fi;
 		fi;
 	fi;
-	end);
+	end;
 
 InstallMethod(\=, "for SLP words", IsIdenticalObj,
 	[IsAssocWord and IsSLPAssocWordRep,IsAssocWord and IsSLPAssocWordRep],
