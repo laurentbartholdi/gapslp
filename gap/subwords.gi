@@ -34,7 +34,6 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 	s:=1;
 	ng:= FamilyObj(w)!.SLPrank;
 	T:=SubLengths(w);
-	Print(o>l);
 	if o>l then 
 		return(AssocWordBySLPRep(FamilyObj(w),[[]]));
 	fi;
@@ -125,17 +124,15 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 		m:=m+T[debut[k]]*AbsInt(debut[k+1]);
 	od;
 	m:=m+i-l;
-	Print(m);
+	
 	
 	n:=Length(x);
 	c:=0;
 	s:=(-1);
-	Print(s);
+	
 	
 	while c<>m and n>0 do
-	Print("r",r,"s",s);
 		if n=Length(x) then 
-			Print(debut);
 			if s<0 then 
 				j:=1;
 				while c<m and j<Length(debut) do                   #On parcourt grossièrement la liste 
@@ -199,7 +196,6 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 			fi;
 
 		else 
-			Print(x[n]);
 			if s>0 then 
 				j:=1;
 				while c<m and j<Length(x[n]) do                   #On parcourt grossièrement la liste 
@@ -258,7 +254,6 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 				n:=x[n][j]-ng;
 			fi;
 		fi;
-		Print("r",r);
 	od;
 	
 	
@@ -301,7 +296,7 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 ###################################################################
 ##Fonction égalité
 
-Equality:=function(x,y,D,s)
+BindGlobal("Equality", function(x,y,D,s)
 	local x2,
 		  y2,
 		  x1,
@@ -320,9 +315,7 @@ Equality:=function(x,y,D,s)
 	m:=Length(y);	
 	lx:=LetterRepAssocWord(x);
 	ly:=LetterRepAssocWord(y);
-	Print(lx,ly);
 	if n<>m then 
-		Print("pb");
 		return false;
 	elif n=1 then
 		lx:=LetterRepAssocWord(x);
@@ -336,10 +329,7 @@ Equality:=function(x,y,D,s)
 		y2 := Subword(y,Int(m/2)+1,m);
 		B1 :=LookupDictionary(D,[1+s,Int(n/2)+s]);
 		B2 :=LookupDictionary(D,[Int(n/2)+s,n+s]);
-		if Length(x1)<>Length(y1) then 
-			Display(y);
-			Print(Int(n/2));
-		fi;
+		
 		if B1<> fail then 
 			if B2<>fail then 
 				return B1 and B2;
@@ -360,7 +350,7 @@ Equality:=function(x,y,D,s)
 			fi;
 		fi;
 	fi;
-	end;
+	end);
 
 InstallMethod(\=, "for SLP words", IsIdenticalObj,
 	[IsAssocWord and IsSLPAssocWordRep,IsAssocWord and IsSLPAssocWordRep],
@@ -372,7 +362,7 @@ end);
 #################################################################################
 ##Prefixe 
 
-prefixe := function(w,z) 
+BindGlobal("prefixe", function(w,z) 
 	local n,
 		  m,
 		  D,
@@ -415,13 +405,24 @@ prefixe := function(w,z)
 			if B then 
 				c:=b;
 				b:=b+Int((b-a)/2);
+				if b>min then 
+					b:=min;
+				fi;
 				a:=c;
 			else
 				b:=b-Int((b-a)/2);
 			fi;
 	od;
 	
-	return(b);
-	end;
+	u:=Subword(w,a,b);
+	v:=Subword(z,a,b);
+	B:=Equality(u,v,D,0);
+	
+	if B then 
+		return(b);
+	else 
+		return(b-1);
+	fi;
+	end);
 
 
