@@ -43,7 +43,7 @@ gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[
 true 
 
 gap>long := function(f,n) 
-	local p,q, i; 
+	local p,q,j,i; 
 	p := []; 
 	for i in [1..n] do 
 		q:=[];
@@ -58,4 +58,5 @@ gap>long := function(f,n)
 gap>f25 := long(FamilyObj(f.1),5);;
 gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
 true 
+
 

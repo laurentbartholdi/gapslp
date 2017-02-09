@@ -21,7 +21,6 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 		  r,
 		  debut;
 	
-	Print("couple",o,l);
 	
 	#Initialisation
 	c:=0;

@@ -337,7 +337,6 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 	if EstVide(w) then 
 		return([]);
 	fi;
-	Print(x);
 	for i in [1..n] do
 		l:=x[i];
 		r:=[];
@@ -354,9 +353,7 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 							Add(r,-1*f[l[j]-ng][k]);
 						od;
 					else 
-						Print(f);
 						for k in [1..Length(f[l[j]-ng])] do
-							Print(l[j]-ng);
 							Add(r,f[l[j]-ng][k]);
 						od;
 					fi;
