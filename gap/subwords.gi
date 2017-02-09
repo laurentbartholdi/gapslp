@@ -296,7 +296,7 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
 ###################################################################
 ##Fonction égalité
 
-BindGlobal("Equality", function(x,y,D,s)
+Equality:= function(x,y,D,s)
 	local x2,
 		  y2,
 		  x1,
