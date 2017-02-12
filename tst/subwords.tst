@@ -18,31 +18,10 @@ gap> Length(f25);
 196418
 gap> last=Length(LetterRepAssocWord(f25));
 true
-gap> ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f5,c[1]+1,c[2]))=LetterRepAssocWord(f5){[c[1]+1..c[2]]});
+gap> ForAll(Combinations([0..Length(f5)],2),c->LetterRepAssocWord(Subword(f5,c[1]+1,c[2]))=LetterRepAssocWord(f5){[c[1]+1..c[2]]});
 true
 
-gap>fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLPRep(f,p); end;;
-gap>f25 := fibo(FamilyObj(f.1),10);;
-gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
-true 
-
-gap>fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,-1]); od; return AssocWordBySLPRep(f,p); end;;
-gap>f25 := fibo(FamilyObj(f.1),10);;
-gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
-true
-
-
-gap>fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLPRep(f,p); end;;
-gap>f25 := fibo(FamilyObj(f.1),5);;
-gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
-true 
-
-gap>fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,-1]); od; return AssocWordBySLPRep(f,p); end;;
-gap>f25 := fibo(FamilyObj(f.1),5);;
-gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
-true 
-
-gap>long := function(f,n) 
+gap> long := function(f,n) 
 	local p,q,j,i; 
 	p := []; 
 	for i in [1..n] do 
@@ -55,8 +34,8 @@ gap>long := function(f,n)
 	od; 
 	return AssocWordBySLPRep(f,p); 
 	end;;
-gap>f25 := long(FamilyObj(f.1),5);;
-gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
+gap> l5 := long(FamilyObj(f.1),5);;
+gap>ForAll(Combinations([0..Length(l5)]],2),c->LetterRepAssocWord(Subword(l5,c[1]+1,c[2]))=LetterRepAssocWord(l5){[c[1]+1..c[2]]});
 true 
 
 
