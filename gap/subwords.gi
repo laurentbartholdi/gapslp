@@ -424,4 +424,177 @@ BindGlobal("prefixe", function(w,z)
 	fi;
 	end);
 
+#############################################################################
+## Multiplication 
 
+InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
+    [ IsAssocWord and IsSLPAssocWordRep, 
+      IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
+	 
+	local p,
+		  u,
+		  v,
+		  n,
+		  m,
+		  d,
+		  i,
+		  c,
+		  e,
+		  r,
+		  k,
+		  x,
+		  y,
+		  b,
+		  l,
+		  t,
+		  f,
+		  ps,
+		  s;
+	 
+	#Initialisation
+	t:=w![1];
+	r:=[];
+	l:=[];
+	n:=Length(t);
+	ng:=FamilyObj(w)!.SLPrank;
+	
+	#Attention il faut prendre l'inverse....
+	for k in [1..n-1] do 
+		Add(r,t[k]);
+	od;
+	
+	for k in [Length(t[n])-1,Length(t[n])-3..1] do 
+		Add(l,t[n][k]);
+		Add(l,-1*t[n][k+1]);
+	od;
+	
+	Add(r,l);
+	r:=AssocWordBySLPRep(FamilyObj(w),r);
+	n:=Length(w);
+	m:=Length(r);
+	
+	p:=prefixe(w,r);
+	Print(p);
+	u := Subword(w,1,n-p);
+	v := Subword(z,p+1,m);
+	d:=NewDictionary(1,true);
+	e:=NewDictionary(1,true);
+	r:=[];
+	s:=[];
+	
+	x:=u![1];
+	y:=v![1];
+	n:=Length(x);
+	m:=Length(y);
+	AddDictionary(d,n+ng,true);
+	
+	for k in [1..ng] do 
+		AddDictionary(d,k,true);
+		AddDictionary(e,k,k);
+	od;
+	
+	for k in [n..1] do
+		if LookupDictionary(d,k+ng) then 
+			Print("OKvrai");
+			for i in [1,3..Length(x[k])-1] do 
+				Print("OK");
+				if LookupDictionary(d,x[k][i])=fail then 
+					AddDictionary(d,x[k][i],true);
+				fi;
+			od;
+		fi;
+	od;
+	
+	c:=ng+1;
+	for k in [1..n-1] do
+		if LookupDictionary(d,k+ng) then 
+			AddDictionary(e,k,c);
+			c:=c+1;
+			l:=[];
+			for i in [1,3..Length(x[k])-1] do 
+				b:=LookupDictionary(e,x[k][i]);
+				if b<>fail then 
+					Add(l,b);
+					Add(l,x[k][i+1]);
+				fi;
+			od;
+			Add(r,l);
+		fi;
+	od;
+	###########Renumérotation....
+	
+	f:=LookupDictionary(e,x[n][1]);
+	ps:=x[n][2];
+	while k<Length(x[n])-1 do 
+		if f=LookupDictionary(e,x[n][k]) then 
+			ps:=ps+x[n][k+1];
+			k:=k+2;
+		else 
+			Add(s,f);
+			Add(s,ps);
+			f:=LookupDictionary(e,x[n][k]);
+			ps:=x[n][k+1];
+			k:=k+2;
+		fi;
+	od;
+	Print(f,ps);
+	d:=NewDictionary(1,true);
+	e:=NewDictionary(1,true);
+	
+	for k in [1..ng] do 
+		AddDictionary(d,k,true);
+		AddDictionary(e,k,k);
+	od;
+	
+	AddDictionary(d,n+ng,true);
+	
+	for k in [m..1] do
+		if LookupDictionary(d,k+ng) then 
+			for i in [1,3..Length(y[k])-1] do 
+				if LookupDictionary(d,y[k][i])=fail then 
+					AddDictionary(d,y[k][i],true);
+				fi;
+			od;
+		fi;
+	od;
+	c:=1;
+	for k in [1..m-1] do 
+		if LookupDictionary(d,k+ng) then 
+			AddDictionary(e,k+ng,c);
+			c:=c+1;
+			l:=[];
+			for i in [1,3..Length(y[k])-1] do 
+				b:=LookupDictionary(e,y[k][i]);
+				if b<>fail then 
+					Add(l,b);
+					Add(l,y[k][i+1]);
+				fi;
+			od;
+			Add(r,l);
+		fi;
+	od;
+	Print(r);
+	#finir de remplir intelligent
+	k:=1;
+	Print(f,y);
+	while k<=Length(y[m])-1 do 
+		if f=LookupDictionary(e,y[m][k]) then 
+			Print("OKnul");
+			ps:=ps+y[m][k+1];
+			k:=k+2;
+		else 
+			Print("OKOK");
+			Add(s,f);
+			Add(s,ps);
+			f:=LookupDictionary(e,y[n][k]);
+			ps:=y[m][k+1];
+			k:=k+2;
+		fi;
+	od;
+	Print(f,ps);
+	Add(s,f);
+	Add(s,ps);
+	Add(r,s);
+	return(AssocWordBySLPRep(FamilyObj(w),r));
+	end);
+	

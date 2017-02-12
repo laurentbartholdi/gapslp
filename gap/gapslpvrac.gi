@@ -3,10 +3,74 @@
 #
 # Implementations 
 #
-#############################################################################
-##
 
 
+################################################################
+SimplifieListe := function(x)
+	local p, #premier
+		  d, #dernier
+		  ed,
+		  ep,
+		  bool,
+		  l,
+		  n;
+	#Initialisation
+	l:=[];	  
+	bool:=true;
+	
+
+		#Supposé non vide 	  
+		if x=[] then 
+			return(x);
+		fi;
+	
+		p:=1;
+		d:=3;
+		ep:=x[p+1];
+		n:=Length(x); 
+		l:=[];
+	
+		while 0<p and d<n do 
+			ed:=x[d+1];
+			bool:=true;
+			if x[p]=x[d] then 
+				if ep+ed<>0 then 
+					ep:=ep+ed;
+					Print(ep);
+					d:=d+2;
+				else
+					if p-2>0 and l<>[] then 
+						p:=p-2;
+						ep:=l[Length(l)];
+						d:=d+2;
+						Remove(l,Length(l));
+						Remove(l,Length(l));
+					elif d+2<n then 
+						p:=d+2;
+						ep:=x[p+1];
+						d:=d+4;
+					else 
+						d:=n;
+						bool:=false;
+					fi;
+				fi;
+			else 
+				Add(l,x[p]);
+				Add(l,ep);
+				p:=d;
+				ep:=x[d+1];
+				d:=d+2;
+			fi;
+		od;
+		if bool then 
+			Add(l,x[p]);
+			Add(l,ep);	
+		fi;
+		
+	return l;
+ 
+	end;
+	
 ###################################################################
 ##Fonctions qui simplifient un mot(à supprimer)
 
