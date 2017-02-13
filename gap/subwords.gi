@@ -443,6 +443,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		  r,
 		  k,
 		  x,
+		  ng,
 		  y,
 		  b,
 		  l,
@@ -529,12 +530,14 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		if f=LookupDictionary(e,x[n][k]) then 
 			ps:=ps+x[n][k+1];
 			k:=k+2;
+			Print("oooooo");
 		else 
 			Add(s,f);
 			Add(s,ps);
 			f:=LookupDictionary(e,x[n][k]);
 			ps:=x[n][k+1];
 			k:=k+2;
+			Print("aaaaaaaaaaaaa");
 		fi;
 	od;
 	Print(f,ps);

@@ -81,10 +81,13 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	x:=w![1];
 	#Tester si la liste est vide
 	if EstVide(w) then 
-		return ("<identity...>");
+		return ("<identity ...>");
 	fi;
 	
-	s:=Concatenation(s,"(");
+	if Length(x)<>1 then 
+		s:=Concatenation(s,"(");
+	fi;
+	
 	#On s'occupe des premières listes 
 	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
@@ -129,7 +132,11 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 				s:=Concatenation(s,"*");
 			fi;
 	od;
-	s:=Concatenation(s,")");	
+	
+	if Length(x)<>1 then 
+		s:=Concatenation(s,")");	
+	fi;
+	
 	return (s);
 	end);
 	
@@ -158,10 +165,13 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	x:=w![1];
 	#Tester si la liste est vide
 	if EstVide(w) then 
-		return ("<identity...>");
+		return ("<identity ...>");
 	fi;
 	
-	s:=Concatenation(s,"(");
+	if Length(x)<>1 then 
+		s:=Concatenation(s,"(");
+	fi;
+	
 	#On s'occupe des premières listes 
 	for i in [1..Length(x)-1] do
 		l:=ShallowCopy(x[i]);
@@ -206,7 +216,10 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 				s:=Concatenation(s,"*");
 			fi;
 	od;
-	s:=Concatenation(s,")");
+	if Length(x)<>1 then
+		s:=Concatenation(s,")");
+	fi;
+	
 	return (s);
 	end);
 
