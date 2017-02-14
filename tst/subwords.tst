@@ -59,4 +59,11 @@ gap>f25 := long(FamilyObj(f.1),5);;
 gap>ForAll(Combinations([0..Length(f25)],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2]))=LetterRepAssocWord(f25){[c[1]+1..c[2]]});
 true 
 
+############################################
+##Test produit 
+
+fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,-1]); od; return AssocWordBySLPRep(f,p); end;;
+f25 := fibo(FamilyObj(f.1),5);;
+ForAll(Combinations([0..Length(f25)-2],2),c->LetterRepAssocWord(Subword(f25,c[1]+1,c[2])*Subword(f25,c[1]+2,c[2]+1))=LetterRepAssocWord(f25){[c[1]+1..c[2]]}*LetterRepAssocWord(f25){[c[1]+2..c[2]+3]});
+true 
 

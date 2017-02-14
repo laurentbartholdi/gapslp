@@ -427,10 +427,15 @@ BindGlobal("prefixe", function(w,z)
 #############################################################################
 ## Multiplication 
 
-InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
+InstallMethod( \*, "for two assoc. words in SLP rep", 
     [ IsAssocWord and IsSLPAssocWordRep, 
       IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
-	 
+	  return(w);
+	  end);
+
+InstallMethod( \*, "for two assoc. words in SLP rep", 
+    [ IsAssocWord and IsSLPAssocWordRep, 
+      IsAssocWord and IsSLPAssocWordRep], 0, function(w,z)
 	local p,
 		  u,
 		  v,
@@ -451,9 +456,9 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		  f,
 		  ps,
 		  s;
-	 
+	Print("OKx");
 	#Initialisation
-	t:=w![1];
+	t:=z![1];
 	r:=[];
 	l:=[];
 	n:=Length(t);
@@ -463,7 +468,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	for k in [1..n-1] do 
 		Add(r,t[k]);
 	od;
-	
+	Print("OKx");
 	for k in [Length(t[n])-1,Length(t[n])-3..1] do 
 		Add(l,t[n][k]);
 		Add(l,-1*t[n][k+1]);
@@ -487,15 +492,20 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	y:=v![1];
 	n:=Length(x);
 	m:=Length(y);
-	AddDictionary(d,n+ng,true);
+	
+	for i in [1,3..Length(x[n])-1] do 
+		Print("OK");
+		AddDictionary(d,x[n][i],true);
+	od;
 	
 	for k in [1..ng] do 
 		AddDictionary(d,k,true);
 		AddDictionary(e,k,k);
 	od;
 	
-	for k in [n..1] do
-		if LookupDictionary(d,k+ng) then 
+	for k in [n,n-1..1] do
+	Print("LA");
+		if LookupDictionary(d,k+ng)<>fail then 
 			Print("OKvrai");
 			for i in [1,3..Length(x[k])-1] do 
 				Print("OK");
@@ -508,8 +518,9 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	
 	c:=ng+1;
 	for k in [1..n-1] do
-		if LookupDictionary(d,k+ng) then 
-			AddDictionary(e,k,c);
+	Print(k+ng);
+		if LookupDictionary(d,k+ng)<>fail then 
+			AddDictionary(e,k+ng,c);
 			c:=c+1;
 			l:=[];
 			for i in [1,3..Length(x[k])-1] do 
@@ -526,7 +537,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	
 	f:=LookupDictionary(e,x[n][1]);
 	ps:=x[n][2];
-	while k<Length(x[n])-1 do 
+	while k<=Length(x[n])-1 do 
 		if f=LookupDictionary(e,x[n][k]) then 
 			ps:=ps+x[n][k+1];
 			k:=k+2;
@@ -549,10 +560,13 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		AddDictionary(e,k,k);
 	od;
 	
-	AddDictionary(d,n+ng,true);
+	for i in [1,3..Length(x[m])-1] do 
+			Print("OK");
+			AddDictionary(d,x[m][i],true);
+	od;
 	
-	for k in [m..1] do
-		if LookupDictionary(d,k+ng) then 
+	for k in [m,m-1..1] do
+		if LookupDictionary(d,k+ng)<>fail then 
 			for i in [1,3..Length(y[k])-1] do 
 				if LookupDictionary(d,y[k][i])=fail then 
 					AddDictionary(d,y[k][i],true);
@@ -562,7 +576,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	od;
 	c:=1;
 	for k in [1..m-1] do 
-		if LookupDictionary(d,k+ng) then 
+		if LookupDictionary(d,k+ng)<>fail then 
 			AddDictionary(e,k+ng,c);
 			c:=c+1;
 			l:=[];
@@ -589,7 +603,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 			Print("OKOK");
 			Add(s,f);
 			Add(s,ps);
-			f:=LookupDictionary(e,y[n][k]);
+			f:=LookupDictionary(e,y[m][k]);
 			ps:=y[m][k+1];
 			k:=k+2;
 		fi;
@@ -598,6 +612,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 	Add(s,f);
 	Add(s,ps);
 	Add(r,s);
+	Print(r);
 	return(AssocWordBySLPRep(FamilyObj(w),r));
 	end);
 	
