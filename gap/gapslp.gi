@@ -4,18 +4,18 @@
 # Implementations
 #
 
-# Cette méthode va permettre de passer de la représentation en syllabe à la représentation en SLP
-BindGlobal("NewSLP", function( F, elt )
+#Création d'un élément (Etat)
+BindGlobal("AssocWordBySLPRep", function( F, elt )
     return Objectify(F!.SLPtype,[Immutable(elt)]);
 end );
 
 InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
         [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
         function( F, exp, maxcand, elt )
-    return NewSLP(F,[elt]);
+    return AssocWordBySLPRep(F,[elt]);
 end );
     
-# Prendre le controle de StoreInfoFreeMagma
+# Prendre le controle de StoreInfoFreeMagma (fonctionne)
 CallFuncList(function()
     local sifm;
     sifm := StoreInfoFreeMagma;
@@ -33,7 +33,9 @@ CallFuncList(function()
 end,[]);
 
 ################################################################
-# methodes d'impression
+# methodes d'impression (fonctionne)
+
+##Implémenter les méthodes PrintString et PrintObj (fonctionne)
 
 InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
@@ -72,7 +74,7 @@ InstallOtherMethod( PrintObj, "for an assoc. word in SLP rep", true,
 	Print(PrintString(w));
 	end);
 	
-##Implémenter les méthodes ViewString et ViewObj
+##Implémenter les méthodes ViewString et ViewObj (fonctionne)
 	
 InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
     [ IsAssocWord and IsSLPAssocWordRep], 0,
@@ -147,7 +149,8 @@ InstallOtherMethod( ViewObj, "for an assoc. word in SLP rep", true,
 	end);
 	
 	
-## Implémenter DisplayString et Display
+## Implémenter DisplayString et Display (fonctionne)
+
 InstallMethod( DisplayString,
     "for element in SLP",
     [ IsSLPAssocWordRep ],
@@ -168,9 +171,9 @@ InstallOtherMethod( Display, "for an assoc. word in SLP rep", true,
 ################################################################
 # comparaisons et opérations
 
-##Fonction qui simplifie un mot
+##Fonction qui simplifie un mot (fonctionne)
 
-RacPuis := function(w)
+BindGlobal("Simplify", function(w)
 	local e, #Nouvel exposant
 		  i, #Parcourt la liste x
 		  j, #Parcourt la liste l
@@ -207,8 +210,8 @@ RacPuis := function(w)
 		od;
 		Add(r,l);
 	od;
-	return NewSLP(FamilyObj(w),r);
-	end;
+	return AssocWordBySLPRep(FamilyObj(w),r);
+	end);
 
 ##La comparaison (fonctionne, j'ai réutilisé du code de Wordass.gi) 
 
@@ -299,170 +302,12 @@ InstallMethod( \*, "for two assoc. words in SLP rep", IsIdenticalObj,
 		Add(r,y[1][i]);
 	od;
 	
-	r := NewSLP(FamilyObj(w),[r]);
-	r:=RacPuis(r); 	 
+	r := AssocWordBySLPRep(FamilyObj(w),[r]);
+	r:=Simplify(r); 	 
 	return r;
 	end);
 
-##Multiplier 2 mots 
 
-P := function(w,z)
-local  x, #Liste de SLP
-		   y, #liste de SLP
-		   nx,#longueur de la liste x
-		   ny,#longueur de la liste y
-		   ng,#nb de générateurs
-		   n, #cases rajoutées
-		   l, #liste de travail
-		   i,
-		   j,
-		   r; #ce sera le résultat
-	
-	#Initialisation
-	x:=w![1];
-	y:=z![1];
-	nx:=Length(x);
-	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
-	n:=0;
-	l:=[];
-	r:=[];
-	
-	#On suppose ici que les 2 listes ne sont pas vide
-	#Et qu'elle commence par les générateurs 
-	r:= ShallowCopy(x);
-	
-	n:=nx;
-	for i in [ng+1..ny] do
-		l:=ShallowCopy(y[i]);
-		for j in [1,3..Length(l)-1] do
-			if l[j]>ng then 
-				l[j]:=l[j]+n;
-			fi;
-		od;
-		Add(r,l);
-	od;
-	
-	n:=n+ny-ng;
-	l:=[nx,1,n,1];
-	Add(r,l);
-
-	r:=NewSLP(FamilyObj(w),r);
-	r:=RacPuis(r);
-	return r;
- 
-	end;
-
-
-##Multiplier à gauche par un générateur   
-PG :=function(w,z)
-	local  x, #Liste de SLP
-		   y, #liste de SLP
-		   ny,#longueur de la liste y
-		   ng,#nb de générateurs
-		   n, #cases rajoutées
-		   i, #Parcourt les listes
-		   j, #Parcourt les listes 
-		   l, #liste de travail
-		   k,
-		   r; #ce sera le résultat
-	
-	#Initialisation
-	x:=ShallowCopy(w![1]);
-	y:=ShallowCopy(z![1]);
-	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
-	n:=0;
-	l:=[];
-	r:=[];
-			
-	#On ajoute les générateurs 
-	for i in [1..ng] do
-		Add(r,[i,1]);
-	od;
-	
-	n:=ng;
-	
-	#Comme x est un générateur 
-	k:=x[1][1];
-	
-	
-	for i in [1..ny] do
-	#a terme il faudra penser à enlever les ng premiers
-		l:=ShallowCopy(y[i]);
-		for j in [1,3..Length(l)-1] do
-			if l[j]>ng then 
-				l[j]:=l[j]+n;
-			fi;
-		od;
-		Add(r,l);
-	od;
-	
-	n:=Length(r);
-	Add(r[n],k,1);
-	Add(r[n],1,2);
-	r:=NewSLP(FamilyObj(w),r);
-	r:=RacPuis(r);
-	return r;
- 
-    end;
-
-##Multiplier à droite par un générateur   
-PD :=function(w,z)
-	local  x, #Liste de SLP
-		   y, #liste de SLP
-		   ny,#longueur de la liste y
-		   ng,#nb de générateurs
-		   n, #cases rajoutées
-		   i, #Parcourt les listes
-		   j, #Parcourt les listes 
-		   l, #liste de travail
-		   	k,
-			r; #ce sera le résultat
-		   
-	#j'ai gardé le même code, j'ai juste échangé z et w et modifié l'insertion
-	
-	#Initialisation 
-	x:=ShallowCopy(z![1]);
-	y:=ShallowCopy(w![1]);
-	ny:=Length(y);
-	ng:=Length(FamilyObj(w)!.names);
-	n:=0;
-	l:=[];
-	r:=[];
-			
-	#On ajoute les générateurs 
-	for i in [1..ng] do
-		Add(r,[i,1]);
-	od;
-	
-	n:=ng;
-	
-	#Comme x est un générateur 
-	k:=x[1][1];
-	
-	
-	for i in [1..ny] do
-	#a terme il faudra penser à enlever les ng premiers
-		l:=ShallowCopy(y[i]);
-		for j in [1,3..Length(l)-1] do
-			if l[j]>ng then 
-				l[j]:=l[j]+n;
-			fi;
-		od;
-		Add(r,l);
-	od;
-	
-	n:=Length(r);
-	Add(r[n],k);
-	Add(r[n],1);
-	r:=NewSLP(FamilyObj(w),r);
-	r:=RacPuis(r);
-	return r;
- 
-    end;
-
-	
 ##Passage à la puissance (fonctionne)
 InstallMethod( \^,
     "for an assoc. word with inverse in syllable rep, and an integer",
@@ -493,7 +338,7 @@ InstallMethod( \^,
 		fi;
 		if a<0 then 
 			for i in [1..-a] do
-				for j in [l-1,-3..1] do 
+				for j in [l-1,l-3..1] do 
 					Add(r,x[j]);
 					Add(r,-x[j+1]);
 				od;
@@ -501,53 +346,13 @@ InstallMethod( \^,
 		fi;
 	 fi;
 	
-	r:=NewSLP(FamilyObj(w),[r]);
-	r:=RacPuis(r);
+	r:=AssocWordBySLPRep(FamilyObj(w),[r]);
+	r:=Simplify(r);
 	return r;
  
     end);
 	 
 
-
-
-##Puissance de chaque éléments un par un (fonctionne) lié à une erreur ...
-	if false then
-	
-PuisElt := function(w,a)	
-	local i, #indice qui parcours 
-		   r, #résultat
-		   x, #SLP sous forme de liste
-		   l; #Longeur x[1]
-	 x:=w![1];
-	 r:=[];
-	 if x<>[] and x<>[[]] then 
-		l:=Length(x[1]);
-		
-		#Cas exposant positif
-		if a>0 then 
-			r:=ShallowCopy(x[1]);
-			for i in [1..l] do 
-				if i mod 2 = 0 then 
-					r[i]:=r[i]*a;
-				fi;
-			od;	
-		fi;
-	 
-		#Cas exposant négatif 
-		if a<0 then 
-			for i in [l,l-2..2] do
-				Add(r,x[1][i-1]);
-				Add(r,x[1][i]*a);
-			od;
-		fi;
-	 fi;
-	 r:=[r];
-	 return(ObjByExtRep(FamilyObj(w),1,1,r));
-	 
-	 end;
-	 
-	fi;
-	 
 ##Longueur d'un mot (fonctionne)
 InstallMethod(Length,"assoc word in SLP rep",true,
   [IsAssocWord and IsSLPAssocWordRep],0,
@@ -583,8 +388,8 @@ InstallOtherMethod( ReversedOp, "for an assoc. word in SLP rep", true,
 		Add(r,x[1][i]);
 		Add(r,x[1][i+1]);
 	od;
-	r:=r; 
-	return(ObjByExtRep(FamilyObj(w),1,1,r));
+	r:=[r]; 
+	return(AssocWordBySLPRep(FamilyObj(w),r));
 	
 	end);
 
@@ -635,34 +440,5 @@ InstallOtherMethod( Subword,"for SLP associative word and two positions",
 	else
 		r:=ShallowCopy(x);
 	fi;
-	return (ObjByExtRep(FamilyObj(w),1,1,r));
-	end);
-	
-
-## On a ensuite 2 méthodes spécifiques aux Syllables : PositionWord et SubSyllables
-
-##Remplacer un générateur par un autre (ne fonctionne pas)
-
-InstallMethod( EliminatedWord,
-  "for three associative words, SLP rep.",IsFamFamFam,
-    [ IsAssocWord and IsSLPAssocWordRep, 
-	IsAssocWord and IsSLPAssocWordRep, 
-	IsAssocWord and IsSLPAssocWordRep ],0,
-	function( w, gen, by )
-	local x, #Liste SLP résultat
-		  i, # Parcourt la liste 
-		  g1,#Liste ancien générateur
-		  g2;#Liste nouveau générateur
-	
-	x:=ShallowCopy(w![1][1]);
-	g1:=gen![1][1];
-	g2:=by![1][1];
-	
-	for i in [1,3..Length(x)-1] do
-		if x[i]=g1[1] then 
-			x[i]:=g2[1];
-			x[i+1]:=x[i+1]*g2[2];
-		fi;
-	od;
-	return (ObjByExtRep(FamilyObj(w),1,1,x));
+	return (AssocWordBySLPRep(FamilyObj(w),1,1,r));
 	end);
