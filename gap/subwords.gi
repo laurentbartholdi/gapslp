@@ -409,7 +409,7 @@ BindGlobal("prefixe", function(w,z)
 				fi;
 				a:=c;
 			else
-				b:=b-Int((b-a)/2);
+				b:=b-Int((b-a+1)/2);
 			fi;
 	od;
 	
@@ -456,19 +456,19 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 		  f,
 		  ps,
 		  s;
-	Print("OKx");
+
 	#Initialisation
-	t:=z![1];
+	t:=ShallowCopy(z![1]);
 	r:=[];
 	l:=[];
 	n:=Length(t);
 	ng:=FamilyObj(w)!.SLPrank;
-	
 	#Attention il faut prendre l'inverse....
+	Display(w);
+	Display(z);
 	for k in [1..n-1] do 
 		Add(r,t[k]);
 	od;
-	Print("OKx");
 	for k in [Length(t[n])-1,Length(t[n])-3..1] do 
 		Add(l,t[n][k]);
 		Add(l,-1*t[n][k+1]);
@@ -480,7 +480,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	m:=Length(r);
 	
 	p:=prefixe(w,r);
-	Print(p);
 	u := Subword(w,1,n-p);
 	v := Subword(z,p+1,m);
 	d:=NewDictionary(1,true);
@@ -494,7 +493,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	m:=Length(y);
 	
 	for i in [1,3..Length(x[n])-1] do 
-		Print("OK");
 		AddDictionary(d,x[n][i],true);
 	od;
 	
@@ -504,11 +502,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	od;
 	
 	for k in [n,n-1..1] do
-	Print("LA");
 		if LookupDictionary(d,k+ng)<>fail then 
-			Print("OKvrai");
 			for i in [1,3..Length(x[k])-1] do 
-				Print("OK");
 				if LookupDictionary(d,x[k][i])=fail then 
 					AddDictionary(d,x[k][i],true);
 				fi;
@@ -518,7 +513,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	
 	c:=ng+1;
 	for k in [1..n-1] do
-	Print(k+ng);
 		if LookupDictionary(d,k+ng)<>fail then 
 			AddDictionary(e,k+ng,c);
 			c:=c+1;
@@ -536,22 +530,20 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	###########Renumérotation....
 	
 	f:=LookupDictionary(e,x[n][1]);
-	ps:=x[n][2];
+	ps:=0;
+	k:=1;
 	while k<=Length(x[n])-1 do 
 		if f=LookupDictionary(e,x[n][k]) then 
 			ps:=ps+x[n][k+1];
 			k:=k+2;
-			Print("oooooo");
 		else 
 			Add(s,f);
 			Add(s,ps);
 			f:=LookupDictionary(e,x[n][k]);
 			ps:=x[n][k+1];
 			k:=k+2;
-			Print("aaaaaaaaaaaaa");
 		fi;
 	od;
-	Print(f,ps);
 	d:=NewDictionary(1,true);
 	e:=NewDictionary(1,true);
 	
@@ -560,9 +552,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 		AddDictionary(e,k,k);
 	od;
 	
-	for i in [1,3..Length(x[m])-1] do 
-			Print("OK");
-			AddDictionary(d,x[m][i],true);
+	for i in [1,3..Length(y[m])-1] do 
+			AddDictionary(d,y[m][i],true);
 	od;
 	
 	for k in [m,m-1..1] do
@@ -590,17 +581,13 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 			Add(r,l);
 		fi;
 	od;
-	Print(r);
 	#finir de remplir intelligent
 	k:=1;
-	Print(f,y);
 	while k<=Length(y[m])-1 do 
 		if f=LookupDictionary(e,y[m][k]) then 
-			Print("OKnul");
 			ps:=ps+y[m][k+1];
 			k:=k+2;
 		else 
-			Print("OKOK");
 			Add(s,f);
 			Add(s,ps);
 			f:=LookupDictionary(e,y[m][k]);
@@ -608,11 +595,94 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 			k:=k+2;
 		fi;
 	od;
-	Print(f,ps);
 	Add(s,f);
 	Add(s,ps);
 	Add(r,s);
-	Print(r);
 	return(AssocWordBySLPRep(FamilyObj(w),r));
 	end);
 	
+##################################################################################
+##Produit
+	
+InstallMethod( \^,
+    "for an assoc. word with inverse in syllable rep, and an integer",
+    true,
+    [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
+    
+	local  	l,
+			k,
+			ng,
+			u,
+			x,
+			v,
+			z,
+			p,
+			n,
+			m,
+			r;
+	#Initialisation
+	r:=[];
+	ng:=FamilyObj(w)!.SLPrank;
+	x:=ShallowCopy(w![1]);
+	n:=Length(x);
+	
+	#Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
+	if EstVide(w) then 
+		return(w);
+	fi;
+	
+	r:=[];
+	l:=[];
+	
+	for k in [1..n-1] do 
+		Add(r,x[k]);
+	od;
+	for k in [Length(x[n])-1,Length(x[n])-3..1] do 
+		Add(l,x[n][k]);
+		Add(l,-1*x[n][k+1]);
+	od;
+	Add(r,l);
+	r:=AssocWordBySLPRep(FamilyObj(w),r);
+	m:=Length(w);
+	
+	p:=prefixe(r,w);
+	if p<>0 and p<>m then 
+		u:=Subword(w, 1+p,m-p);
+		v:=Subword(w,1,p);
+		z:=Subword(w,p+1,m);
+	
+		u:=ShallowCopy(u![1][Length(u![1])]);
+		v:=ShallowCopy(v![1][Length(v![1])]);
+		z:=ShallowCopy(z![1][Length(z![1])]);
+		r:=[];
+		n:=Length(x);
+		for k in [1..n] do 
+			Add(r,x[k]);
+		od;
+		Add(r,v);
+		l:=[];
+		for k in [1..Length(u)] do 
+			Add(l,u[k]);
+		od;
+		Add(l,Length(r)+ng);
+		Add(l,a);
+		l:=[];
+	
+		for k in [1..Length(z)] do 
+			Add(l,z[k]);
+		od;
+	
+		Add(r,l);	
+	elif p=m then
+		return([[]]);
+	else 
+		r:=[];
+		n:=Length(x);
+		for k in [1..n] do 
+			Add(r,x[k]);
+		od;
+		Add(r,[Length(r)+ng,a]);
+	fi;
+	return AssocWordBySLPRep(FamilyObj(w),r);
+    end);
+	 
