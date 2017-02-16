@@ -263,18 +263,7 @@ InstallMethod( \^, "for an assoc. word with inverse in syllable rep, and an inte
         return(w);
     fi;
 
-    r:=[];
-    l:=[];
-
-    for k in [1..n-1] do 
-        Add(r,x[k]);
-    od;
-    for k in [Length(x[n])-1,Length(x[n])-3..1] do 
-        Add(l,x[n][k]);
-        Add(l,-x[n][k+1]);
-    od;
-    Add(r,l);
-    r:=AssocWordBySLPRep(FamilyObj(w),r);
+    r:=INV(w);
     if a=-1 then
         return r;
     fi;
@@ -330,7 +319,17 @@ InstallMethod(\=, "for SLP words", IsIdenticalObj,
 end);
 
 InstallMethod(INV,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep],
-        x->x^-1);
+        function(w)
+    local l, ln, n, x;
+    x:=ShallowCopy(w![1]);
+    n:=Length(x);
+    l:=ShallowCopy(x[n]);
+    ln:=Length(l);
+    l{[ln-1,ln-3..1]} := l{[1,3..ln-1]};
+    l{[ln,ln-2..2]} := -l{[2,4..ln]};
+    x[n] := l;
+    return AssocWordBySLPRep(FamilyObj(w),x);
+end);
 
 InstallMethod(INV_MUT,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep],
-        x->x^-1);
+        INV);
