@@ -4,7 +4,7 @@
 # Declarations
 #
 
-## On cherche a reproduire ce qui a été fait avec les Représentation SyllableFamily//LeeterFamily 
+## On cherche a reproduire ce qui a été fait avec les Représentation SyllableFamily//LetterFamily 
 
 ## On déclare une catégorie qui hérite de IsAssocWordFamily:
 
@@ -28,5 +28,6 @@ DeclareAttribute( "LetterRepOfAssocWord", IsAssocWord );
 
 #On déclare l'attribut qui garde la taille de toutes les listes
 DeclareAttribute("SubLengths",IsAssocWord and IsSLPAssocWordRep);
+DeclareOperation("LengthOfMaximalCommonPrefix",[IsAssocWord and IsSLPAssocWordRep,IsAssocWord and IsSLPAssocWordRep]);
 
 DeclareAttribute("IsReducedWord",  IsAssocWord );
