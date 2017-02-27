@@ -37,7 +37,7 @@ end,[]);
 #Fonctions 
 
 #Regarde si la liste est vide 	
-BindGlobal("EstVide", function( w )
+InstallOtherMethod(IsOne, "for an assoc. word in SLP rep", true, [ IsAssocWord and IsSLPAssocWordRep],0, function( w )
 	local x, #liste de SLPObj
 		  i, #parcourt la liste 
 		  n,
@@ -59,7 +59,7 @@ BindGlobal("EstVide", function( w )
 	fi;
 	
 	end);
-##ATTENTION ne dit pas si c'est l'identité 			
+			
 
 ################################################################
 # methodes d'impression
@@ -80,7 +80,7 @@ InstallOtherMethod( PrintString, "for an assoc. word in SLP rep", true,
 	l:=[];
 	x:=w![1];
 	#Tester si la liste est vide
-	if EstVide(w) then 
+	if IsOne(w) then 
 		return ("<identity ...>");
 	fi;
 	
@@ -164,7 +164,7 @@ InstallOtherMethod( ViewString, "for an assoc. word in SLP rep", true,
 	l:=[];
 	x:=w![1];
 	#Tester si la liste est vide
-	if EstVide(w) then 
+	if IsOne(w) then 
 		return ("<identity ...>");
 	fi;
 	
@@ -347,7 +347,7 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 	n:=Length(x);
 	ng:= FamilyObj(w)!.SLPrank;
 	
-	if EstVide(w) then 
+	if IsOne(w) then 
 		return([]);
 	fi;
 	for i in [1..n] do

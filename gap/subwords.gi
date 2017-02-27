@@ -36,7 +36,7 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
     if o>l then 
         return(AssocWordBySLPRep(FamilyObj(w),[[]]));
     fi;
-    if EstVide(w) then 
+    if IsOne(w) then 
         return(AssocWordBySLPRep(FamilyObj(w),[]));
     fi;
     
@@ -351,7 +351,6 @@ InstallMethod(LengthOfMaximalCommonPrefix, [ IsAssocWord and IsSLPAssocWordRep, 
     u:=Subword(w,a,b);
     v:=Subword(z,a,b);
     B:=EQ_SLP@(u,v,D,0);
-
     if B then 
         return(b);
     else 

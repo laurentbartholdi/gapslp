@@ -34,6 +34,10 @@ EQ_SLP@ := function(x,y,D,s)
         ly:=LetterRepAssocWord(y);
         AddDictionary(D,[1+s,1+s],lx[1]=ly[1]);
         return lx=ly;
+	elif n=0 then 
+		return(n=m);
+	elif m=0 then 
+		return (n=m);
     else 
         x1 := Subword(x,1,Int(n/2));
         x2 := Subword(x,Int(n/2)+1,n);
@@ -93,7 +97,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
           s;
 
     #Initialisation
-    t:=ShallowCopy(z![1]);
+    t:=ShallowCopy(w![1]);
     r:=[];
     l:=[];
     n:=Length(t);
@@ -110,10 +114,14 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
     Add(r,l);
     r:=AssocWordBySLPRep(FamilyObj(w),r);
     n:=Length(w);
-    m:=Length(r);
-
-    p:=LengthOfMaximalCommonPrefix(w,r);
-    u := Subword(w,1,n-p);
+    m:=Length(z);
+	
+	if w=r then 
+		return(AssocWordBySLPRep(FamilyObj(w),[[]]));
+	fi;
+    
+	p:=LengthOfMaximalCommonPrefix(r,z);
+	u := Subword(w,1,n-p);
     v := Subword(z,p+1,m);
     d:=NewDictionary(1,true);
     e:=NewDictionary(1,true);
@@ -170,9 +178,9 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
             ps:=ps+x[n][k+1];
             k:=k+2;
         else 
-            Add(s,f);
-            Add(s,ps);
-            f:=LookupDictionary(e,x[n][k]);
+           	Add(s,f);
+			Add(s,ps);
+			f:=LookupDictionary(e,x[n][k]);
             ps:=x[n][k+1];
             k:=k+2;
         fi;
@@ -221,8 +229,8 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
             ps:=ps+y[m][k+1];
             k:=k+2;
         else 
-            Add(s,f);
-            Add(s,ps);
+           	Add(s,f);
+			Add(s,ps);
             f:=LookupDictionary(e,y[m][k]);
             ps:=y[m][k+1];
             k:=k+2;
@@ -259,7 +267,11 @@ InstallMethod( \^, "for an assoc. word with inverse in syllable rep, and an inte
     n:=Length(x);
 
     #Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
-    if EstVide(w) or a=1 then 
+    if a=0 then 
+		return(AssocWordBySLPRep(FamilyObj(w),[[]]));
+	fi;
+	
+	if IsOne(w) or a=1 then 
         return(w);
     fi;
 
@@ -333,3 +345,8 @@ end);
 
 InstallMethod(INV_MUT,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep],
         INV);
+
+InstallMethod(One, "for a SLP word", [IsAssocWordWithInverse and IsSLPAssocWordRep],
+		function(w)
+		return AssocWordBySLPRep(FamilyObj(w),[[]]);
+		end);
