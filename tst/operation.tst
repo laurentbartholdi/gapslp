@@ -19,3 +19,13 @@ gap> g.1*g.1^-1;
 gap> x := g.1*g.2;; y := g.2^-1*g.1;;
 gap> x*y; 
 f1^2
+gap>x<y;
+false
+gap>x<x;
+false
+gap> x:=g.1*g.2;; y=g.1;;
+gap> x<y;
+false 
+gap> x:=g.1^-1*g.2;; y=g.2^-2;;
+gap>x<y;
+true

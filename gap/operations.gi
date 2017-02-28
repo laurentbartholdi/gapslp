@@ -350,3 +350,44 @@ InstallMethod(One, "for a SLP word", [IsAssocWordWithInverse and IsSLPAssocWordR
 		function(w)
 		return AssocWordBySLPRep(FamilyObj(w),[[]]);
 		end);
+		
+		
+InstallMethod(\<,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep,
+									IsAssocWordWithInverse and IsSLPAssocWordRep],
+        function(w,z)
+		
+		local 	n,
+				m,
+				a,
+				b,
+				p;
+		
+		#Initialisation
+		n:=Length(w);
+		m:=Length(z);
+		p:=LengthOfMaximalCommonPrefix(w,z);
+		
+		if p<n and p<m then 
+			a:=Subword(w,p+1,p+1);
+			b:=Subword(z,p+1,p+1);
+			a:=a![1][Length(a![1])];
+			b:=b![1][Length(b![1])];
+			return(a[2]<b[2] or (a[2]=b[2] and a[1]<b[1]));
+		elif p=n then 
+			if p<m then 
+				return(true);
+			else 
+				return(false);
+			fi;
+		elif p=m then 
+			if p<n then 
+				return(false);
+			else 
+				return(true);
+			fi;
+		fi;
+		
+		
+		
+		
+		end);
