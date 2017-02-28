@@ -7,7 +7,7 @@ f1*f2*f1^-1
 gap> g.1^0; 
 <identity ...>
 gap> One(g.1);
-<identity ...> 
+<identity ...>
 gap> IsOne(g.1^0);
 true
 gap> one := AssocWordBySLPRep(FamilyObj(g.1),[[]]);
@@ -17,15 +17,15 @@ true
 gap> g.1*g.1^-1;
 <identity ...>
 gap> x := g.1*g.2;; y := g.2^-1*g.1;;
-gap> x*y; 
+gap> x*y;
 f1^2
-gap>x<y;
+gap> x<y;
 false
-gap>x<x;
+gap> x<x;
 false
 gap> x:=g.1*g.2;; y=g.1;;
 gap> x<y;
-false 
+false
 gap> x:=g.1^-1*g.2;; y=g.2^-2;;
-gap>x<y;
+gap> x<y;
 true

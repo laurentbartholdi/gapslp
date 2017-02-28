@@ -381,6 +381,9 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
             w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
+InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+            w->SyllableRep(LetterRepOfAssocWord(w))); # should be improved!
+
 	
 ###################################################################################
 ##Test d'un mot réduit 
