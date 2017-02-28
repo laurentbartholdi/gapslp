@@ -387,7 +387,4 @@ InstallMethod(\<,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep,
 			fi;
 		fi;
 		
-		
-		
-		
 		end);
