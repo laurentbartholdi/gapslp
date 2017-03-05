@@ -220,7 +220,6 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
             od;
         fi;
     od;
-    c:=ng+1;
     for k in [1..m-1] do 
         if LookupDictionary(d,k+ng)<>fail then 
             AddDictionary(e,k+ng,c);

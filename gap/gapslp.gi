@@ -362,7 +362,6 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 				for t in [1..AbsInt(l[j+1])] do
 					if SignInt(l[j+1])<0 then
 						for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
-							
 							Add(r,-1*f[l[j]-ng][k]);
 						od;
 					else 
@@ -377,7 +376,7 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 	od;
 	return f[Length(f)];
     end);
-	
+
 InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
             w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
@@ -438,9 +437,6 @@ InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssoc
 	return SyllableWordObjByExtRep(FamilyObj(w),f[Length(f)]);
     end);
 	
-InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
-            w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
-
 	
 ###################################################################################
 ##Test d'un mot réduit 
