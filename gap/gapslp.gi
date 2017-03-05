@@ -381,8 +381,65 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
             w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
+
+#######################################################################
+#Conversion en format syllabe 
+
 InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
-            w->SyllableRep(LetterRepOfAssocWord(w))); # should be improved!
+        function(w)
+	
+	local x, #Liste SLP
+		  r, #résultat 
+		  f,
+		  l, #liste de travail 
+		  n, #longueur de x
+		  i,
+		  j,
+		  t,
+		  k,
+		  ng;#Nb de générateurs 
+		  
+	#Initialisation 
+	x:=w![1];
+	r:=[];
+	f:=[];
+	n:=Length(x);
+	ng:= FamilyObj(w)!.SLPrank;
+	
+	if IsOne(w) then 
+		return([]);
+	fi;
+	for i in [1..n] do
+		l:=x[i];
+		r:=[];
+		for j in [1,3..Length(l)-1] do
+			if l[j]<=ng then 
+				Add(r,l[j]);
+				Add(r,l[j+1]);
+			else 
+				for t in [1..AbsInt(l[j+1])] do
+					if SignInt(l[j+1])<0 then
+						for k in [Length(f[l[j]-ng])-1,Length(f[l[j]-ng])-3..1] do
+							Add(r,f[l[j]-ng][k]);
+							Add(r,-1*f[l[j]-ng][k+1]);
+						od;
+					else 
+						for k in [1,3..Length(f[l[j]-ng])-1] do
+							Add(r,f[l[j]-ng][k]);
+							Add(r,f[l[j]-ng][k+1]);
+						od;
+					fi;
+				od;
+			fi;
+		od;
+		Add(f,r);
+	od;
+	#ATTENTION IL FAUDRA REDUIRE LA LISTE 
+	return SyllableWordObjByExtRep(FamilyObj(w),f[Length(f)]);
+    end);
+	
+InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+            w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
 	
 ###################################################################################

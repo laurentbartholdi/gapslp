@@ -102,7 +102,14 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
     l:=[];
     n:=Length(t);
     ng:=FamilyObj(w)!.SLPrank;
-    #Attention il faut prendre l'inverse....
+    if IsOne(w) then 
+		return(z);
+	fi;
+	if IsOne(z) then 
+		return(w);
+	fi;
+	
+	#Attention il faut prendre l'inverse....
     for k in [1..n-1] do 
         Add(r,t[k]);
     od;
@@ -121,6 +128,13 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 	fi;
     
 	p:=LengthOfMaximalCommonPrefix(r,z);
+	if p=n then 
+	return (Subword(z,p+1,m));
+	fi;
+	if p=m then 
+		return (Subword(z,p+1,m));
+	fi;
+	
 	u := Subword(w,1,n-p);
     v := Subword(z,p+1,m);
     d:=NewDictionary(1,true);
@@ -206,7 +220,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
             od;
         fi;
     od;
-    c:=1;
+    c:=ng+1;
     for k in [1..m-1] do 
         if LookupDictionary(d,k+ng)<>fail then 
             AddDictionary(e,k+ng,c);
@@ -365,26 +379,24 @@ InstallMethod(\<,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep,
 		#Initialisation
 		n:=Length(w);
 		m:=Length(z);
-		p:=LengthOfMaximalCommonPrefix(w,z);
-		
-		if p<n and p<m then 
-			a:=Subword(w,p+1,p+1);
-			b:=Subword(z,p+1,p+1);
-			a:=a![1][Length(a![1])];
-			b:=b![1][Length(b![1])];
-			return(a[2]<b[2] or (a[2]=b[2] and a[1]<b[1]));
-		elif p=n then 
-			if p<m then 
-				return(true);
-			else 
-				return(false);
+		if n=m then 
+			p:=LengthOfMaximalCommonPrefix(w,z);
+			if p<n and p<m then 
+				a:=Subword(w,p+1,p+1);
+				b:=Subword(z,p+1,p+1);
+				a:=a![1][Length(a![1])];
+				b:=b![1][Length(b![1])];
+				return(a[1]<b[1] or (a[1]=b[1] and a[2]<b[2]));
+			elif p=n then 
+				if p<m then 
+					return(true);
+				else 
+					return(false);
+				fi;
 			fi;
-		elif p=m then 
-			if p<n then 
-				return(false);
-			else 
-				return(true);
-			fi;
+		elif n>m then 
+			return(false);
+		elif n<m then 
+			return(true);
 		fi;
-		
 		end);

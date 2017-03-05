@@ -316,7 +316,11 @@ InstallMethod(LengthOfMaximalCommonPrefix, [ IsAssocWord and IsSLPAssocWordRep, 
     n:=Length(w);
     m:=Length(z);
     B:=EQ_SLP@(w,z,D,0);
-
+	
+	if n=0 or m=0 then 
+		return(0);
+	fi;
+	
     if B then 
         return(n);
     fi;
