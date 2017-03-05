@@ -46,7 +46,6 @@ gap> test1 := function(w)
 > for i in [1..Length(w)] do 
 > 	for j in [1..Length(w)]do 
 > 		r:=Subword(w,i,j);
-> 		Print(1);
 > 		if LetterRepOfAssocWord(r*r)<>LetterRepOfAssocWord(r)*LetterRepOfAssocWord(r) then
 > 			return false;
 > 		fi;
@@ -60,13 +59,12 @@ gap> LengthOfMaximalCommonPrefix(g.1^0,f5);
 0
 gap> test2 := function(w)
 > 		local r,s,i,j,k,l;
-> 		for i in [1..Length(w)] do 
-> 			for j in [1..Length(w)]do 
-> 				for k in [1..Length(w)] do 
-> 					for l in [1..Length(w)]do
+> 		for i in [1..3] do 
+> 			for j in [1..3]do 
+> 				for k in [1..3] do 
+> 					for l in [1..3]do
 > 						r:=Subword(w,i,j);
 > 						s:=Subword(w,k,l);
-> 						Print(2);
 > 						if LetterRepOfAssocWord(r*s)<>LetterRepOfAssocWord(r)*LetterRepOfAssocWord(s) then
 > 							Display(r);
 > 							Display(s);
@@ -102,7 +100,6 @@ gap> test3 := function(w)
 > 		for j in [1..Length(w)]do 
 >       	for a in [-3..3] do 
 > 				r:=Subword(w,i,j);
-> 				Print(3);
 > 				if LetterRepOfAssocWord(r^a)<>LetterRepOfAssocWord(r)^a then
 > 					return false;
 > 				fi;
@@ -117,14 +114,13 @@ gap> test3(l3);
 true
 gap> test4 := function(w)
 > 	local r,s,i,j,k,l,A,B;
-> 	for i in [1..Length(w)] do 
-> 		for j in [1..Length(w)]do 
-> 			for k in [1..Length(w)] do 
-> 				for l in [1..Length(w)]do
+> 	for i in [1..3] do 
+> 		for j in [1..3]do 
+> 			for k in [1..3] do 
+> 				for l in [1..3]do
 > 					r:=Subword(w,i,j);
 > 					s:=Subword(w,k,l);
 > 					A:=(r<s);
-> 					Print(4);
 > 					B:=(LetterRepOfAssocWord(r)<LetterRepOfAssocWord(s));
 > 					if A<>B then
 > 						Print(r,s);
@@ -136,7 +132,6 @@ gap> test4 := function(w)
 > 	 od;
 > 	return(true);
 > 	end;;
-
 gap> test4(f5);
 true
 gap> test4(l3);
