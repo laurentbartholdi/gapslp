@@ -1,3 +1,5 @@
+gap> g := FreeGroup(IsSLPWordsFamily,2);
+<free group on the generators [ f1, f2 ]>
 gap> g.1*g.1^-1;
 <identity ...>
 gap> x := g.1*g.2;; y := g.2^-1*g.1;;
@@ -23,8 +25,6 @@ gap> LetterRepOfAssocWord(w12*w12);
 (f1*f2)^2
 gap> LetterRepOfAssocWord(w12)*LetterRepOfAssocWord(w12);
 (f1*f2)^2
-gap> g := FreeGroup(IsSLPWordsFamily,2);
-<free group on the generators [ f1, f2 ]>
 gap> LengthOfMaximalCommonPrefix(g.1^0,f5);
 0
 gap> test2 := function(w)

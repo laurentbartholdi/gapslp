@@ -135,4 +135,4 @@ gap> test4 := function(w)
 gap> test4(f5);
 true
 gap> test4(l3);
-true 
+true
