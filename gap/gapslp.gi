@@ -396,6 +396,8 @@ InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssoc
 		  j,
 		  t,
 		  k,
+		  a,
+		  b,
 		  ng;#Nb de générateurs 
 		  
 	#Initialisation 
@@ -434,7 +436,24 @@ InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssoc
 		Add(f,r);
 	od;
 	#ATTENTION IL FAUDRA REDUIRE LA LISTE 
-	return SyllableWordObjByExtRep(FamilyObj(w),f[Length(f)]);
+	r:=[];
+	i:=3;
+	f:=f[Length(f)];
+	a:=f[1];
+	b:=f[2];
+	while i<=Length(f) do # il ne peut pas y avoir de simplification à 0
+		if a=f[i] then 
+			b:=b+f[i+1];
+			i:=i+2;
+		else 
+			Add(r,a);
+			Add(r,b);
+			i:=i+2;
+		fi;
+	od;
+	Add(r,a);
+	Add(r,b);
+	return (r);
     end);
 	
 	
