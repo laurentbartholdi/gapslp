@@ -18,6 +18,9 @@ gap> long := function(f,n)
 > 	return AssocWordBySLPRep(f,p); 
 > 	end;;
 gap> l3 := long(FamilyObj(g.1),3);;
+
+
+
 gap> test3 := function(w)
 > 	local r,i,j;
 > 	for i in [1..Length(w)] do 
