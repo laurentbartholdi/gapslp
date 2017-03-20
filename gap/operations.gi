@@ -109,6 +109,11 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
 		return(w);
 	fi;
 	
+	#On pourrait rajouter un test si les mots sont égaux 
+	if z=w then 
+		return (z^2);
+	fi;
+	
 	#Attention il faut prendre l'inverse....
     for k in [1..n-1] do 
         Add(r,t[k]);
@@ -399,3 +404,4 @@ InstallMethod(\<,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep,
 			return(true);
 		fi;
 		end);
+		

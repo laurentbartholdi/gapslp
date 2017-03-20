@@ -22,7 +22,7 @@ gap> l3 := long(FamilyObj(g.1),3);;
 
 
 gap> test3 := function(w)
-> 	local r,i,j;
+> 	local r,i,j,A,B;
 > 	for i in [1..Length(w)] do 
 > 		for j in [1..Length(w)]do 
 > 			r:=Subword(w,i,j);
@@ -37,3 +37,22 @@ gap> test3(f5);
 true
 gap> test3(l3);
 true
+
+gap> test4 := function(w)
+> 	local r,i,j;
+> 	for i in [1..Length(w)] do 
+> 		for j in [1..Length(w)]do 
+> 			A:=CyclicallyReducedWord(Subword(w,i,j));
+> 			B:=CyclicallyReducedWord(SyllableRepAssocWord(Subword(w,i,j)));
+> 			if A<>B then
+> 				return false;
+> 			fi;
+> 		od;
+> 	od;
+> 	return(true);
+> 	end;;
+gap> test3(f5);
+true
+gap> test3(l3);
+true
+
