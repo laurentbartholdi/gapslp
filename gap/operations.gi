@@ -405,3 +405,13 @@ InstallMethod(\<,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep,
 		fi;
 		end);
 		
+InstallMethod(CyclicallyReducedWord,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep],
+        function(w)
+		local r,
+			  n,
+			  p;
+		r:=INV(w);
+		n:=Length(w);
+		p:=LengthOfMaximalCommonPrefix(w,r);
+		return(Subword(w,p+1,n-p));
+		end);

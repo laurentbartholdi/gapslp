@@ -377,7 +377,14 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
 	return f[Length(f)];
     end);
 
-InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+InstallOtherMethod(AssocWordByLetterRep, "SLP words family", true,
+    [ IsSLPWordsFamily, IsHomogeneousList ], 0,
+	function( F, l )
+	return(Objectify(F!.letterWordType,[l]));
+	end);
+	
+	
+InstallOtherMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
             w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
 
 
@@ -457,7 +464,50 @@ InstallMethod(SyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssoc
 	Add(r,b);
 	return (SyllableWordObjByExtRep(FamilyObj(w),r));
     end);
+
+######################################################################################
+
+InstallMethod(SLPRepOfAssocWord,"for a syllabe word", [IsAssocWord and IsSyllableAssocWordRep],
+        function(w)
 	
+	local x,
+		  t,
+		  f,
+		  e,
+		  r,
+		  i,
+		  l,
+		  n;
+	
+	#Initialisation 
+	r:=[];
+	l:=[];
+	n:=Length(FamilyObj(w)!.names);
+	x:=ExtRepOfObj(w);
+	t:=FindSubstringPowers(x,n);
+	for i in [1..Length(t[2])] do
+		Add(r,t[2][i]);
+	od;
+	i:=1;
+	f:=t[1][1];
+	e:=1;
+	while i<Length(t[1]) do 
+		if t[1][i+1]=f then 
+			e:=e+1;
+			i:=i+1;
+		else 
+			Add(l,f);
+			Add(l,e);
+			i:=i+1;
+			e:=1;
+			f:=t[1][i];
+		fi;
+	od;
+	Add(l,f);
+	Add(l,e);
+	Add(r,l);
+	return(ObjByExtRep(FamilyObj(w),r));
+	end);
 	
 ###################################################################################
 ##Test d'un mot réduit 

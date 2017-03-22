@@ -1119,3 +1119,36 @@ i:= NewSLP(FamilyObj(f.1),[[1,1,2,1],[1,1,3,1]]);
 i:=[[1,1,2,1,4],[1,-1,1,1,6],[1,1,2,1,4]];
 
 
+#
+# Declarations
+#
+
+## On cherche a reproduire ce qui a été fait avec les Représentation SyllableFamily//LetterFamily 
+
+## On déclare une catégorie qui hérite de IsAssocWordFamily:
+
+#! @Description
+#!   The family of SLP words
+DeclareCategory( "IsSLPWordsFamily", IsAssocWordFamily );
+
+DeclareInfoClass( "InfoSLP" );
+
+##On déclare une représentation associée: 
+#! @Description
+#!   The representation of SLP words. It is by a list of lists of integers.
+#!   Each list is an instruction in the SLP, and follows the format of
+#!   associative words in syllable representation.
+DeclareRepresentation( "IsSLPAssocWordRep", IsAssocWord, [] );
+
+##Déclarations des attributs 
+
+#On déclare une fonction qui convertit en SLP :
+DeclareAttribute( "LetterRepOfAssocWord", IsAssocWord );
+
+#On déclare l'attribut qui garde la taille de toutes les listes
+DeclareAttribute("SubLengths",IsAssocWord and IsSLPAssocWordRep);
+DeclareOperation("LengthOfMaximalCommonPrefix",[IsAssocWord and IsSLPAssocWordRep,IsAssocWord and IsSLPAssocWordRep]);
+
+DeclareAttribute("IsReducedWord",  IsAssocWord );
+
+
