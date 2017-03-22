@@ -122,14 +122,14 @@ DeclareAttribute("SubLengths",IsAssocWord and IsSLPAssocWordRep);
 #!
 #! <Mark><A>D</A></Mark>
 #! <Item>
-#!     D is a lookup dictionary that is mandatory to work with the function EQ_SLP@(). 
+#!     D is a lookup dictionary that is mandatory to work with the function EQ_SLP"at"(). 
 #!     For each call of this function it will stock the information regarding the equality 
 #!     of the subword and then avoid the algorithm to do twice exaclty the same call. 
 #! </Item>
 #!
 #! <Mark><A>B</A></Mark>
 #! <Item>
-#!     B is a boleen that takes the value of the fonction EQ_SLP@ for different subword 
+#!     B is a boleen that takes the value of the fonction EQ_SLP"at" for different subword 
 #!     of w and z, in order to find the prefixe of those two word.
 #! </Item>
 #!

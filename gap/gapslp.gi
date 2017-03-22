@@ -24,11 +24,11 @@ CallFuncList(function()
     Unbind(StoreInfoFreeMagma);
     StoreInfoFreeMagma := function(F,names,req)
 	sifm(F,names,req);
-        if IsSLPWordsFamily(F) then
+#        if IsSLPWordsFamily(F) then # always do it, from now on.
 	# ajouter un type pour les SLP
 	    F!.SLPtype := NewType(F,IsSLPAssocWordRep and req);
             F!.SLPrank := Length(F!.names);
-	fi;
+#	fi;
     end;
     MakeReadOnlyGlobal("StoreInfoFreeMagma");
 end,[]);
