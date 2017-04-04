@@ -9,7 +9,18 @@ This package adds a third representation for free group elements: as
 straight line programs.
 
 <Example><![CDATA[
-gap> LoadPackage("gapdoc");
+gap> LoadPackage("gapslp");
+gap> f := FreeGroup(2);
+gap> x := SLPRepOfAssocWord(f.1);; y := SLPRepOfAssocWord(f.2);;
+gap> (x*y)^1000;
+(_1:=f1*f2;_1^1000)
 ]]></Example>
+
+If a free group is created with the argument <C>IsSLPWordsFamily</C>,
+then all generators of the free group are automatically created in SLP
+representation.<P/>
+
+All standard commands manipulating words (<C>SubWord</C>,
+<C>Length</C>, etc.) are implemented for SLP words.
 
 </Chapter>

@@ -1,4 +1,7 @@
 *~
+/doc/gapslp.xml
+/doc/title.xml
+/doc/_*
 /doc/chap*.html
 /doc/chap*.txt
 /doc/*.css
