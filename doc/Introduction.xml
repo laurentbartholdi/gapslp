@@ -1,0 +1,15 @@
+<Chapter Label="intro">
+<Heading>Introduction</Heading>
+
+Free group elements are associative words. Currently, they can be
+represented in letter and in syllable form; the syllable form is more
+efficient if the word has large exponents.<P/>
+
+This package adds a third representation for free group elements: as
+straight line programs.
+
+<Example><![CDATA[
+gap> LoadPackage("gapdoc");
+]]></Example>
+
+</Chapter>
