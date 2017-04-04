@@ -1,0 +1,13 @@
+  
+  
+  [1XIndex[101X
+  
+  [2XInfoSLP[102X  2.1-1
+  [2XLengthOfMaximalCommonPrefix[102X (for IsAssocWord,IsAssocWord)  2.1-6
+  [2XLetterRepOfAssocWord[102X (for IsAssocWord)  2.1-2
+  [2XSLPRepOfAssocWord[102X (for IsAssocWord)  2.1-3
+  [2XSubLengths[102X (for IsAssocWord and IsSLPAssocWordRep)  2.1-5
+  [2XSyllableRepOfAssocWord[102X (for IsAssocWord)  2.1-4
+  
+  
+  -------------------------------------------------------

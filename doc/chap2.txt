@@ -1,0 +1,53 @@
+  
+  [1X2 [33X[0;0YGAP code[133X[101X
+  
+  [33X[0;0YSLP  words  are  represented  as lists of lists of integers. Each list is an
+  instruction  in  the  SLP,  and  follows  the format of associative words in
+  syllable representation. The result of the SLP is the last list.[133X
+  
+  
+  [1X2.1 [33X[0;0YSLP declarations and operations[133X[101X
+  
+  [1X2.1-1 InfoSLP[101X
+  
+  [29X[2XInfoSLP[102X[32X info class
+  
+  [33X[0;0YThe info class, for messaging[133X
+  
+  [1X2.1-2 LetterRepOfAssocWord[101X
+  
+  [29X[2XLetterRepOfAssocWord[102X( [[3Xw[103X] ) [32X attribute
+  [6XReturns:[106X  [33X[0;10Ya word in letter representation[133X
+  
+  [33X[0;0YConvert a word from any (e.g. slp) representation to letter representation.[133X
+  
+  [1X2.1-3 SLPRepOfAssocWord[101X
+  
+  [29X[2XSLPRepOfAssocWord[102X( [[3Xw[103X] ) [32X attribute
+  [6XReturns:[106X  [33X[0;10Ya word in SLP representation[133X
+  
+  [33X[0;0YConvert a word from any (e.g. slp) representation to SLP representation.[133X
+  
+  [1X2.1-4 SyllableRepOfAssocWord[101X
+  
+  [29X[2XSyllableRepOfAssocWord[102X( [[3Xw[103X] ) [32X attribute
+  [6XReturns:[106X  [33X[0;10Ya word in syllable representation[133X
+  
+  [33X[0;0YConvert   a   word   from   any   (e.g.   slp)  representation  to  syllable
+  representation.[133X
+  
+  [1X2.1-5 SubLengths[101X
+  
+  [29X[2XSubLengths[102X( [[3Xw[103X] ) [32X attribute
+  [6XReturns:[106X  [33X[0;10YA list of integers.[133X
+  
+  [33X[0;0YCompute the lengths of every instruction in an SLP.[133X
+  
+  [1X2.1-6 LengthOfMaximalCommonPrefix[101X
+  
+  [29X[2XLengthOfMaximalCommonPrefix[102X( [[3Xw[103X, [3Xz[103X] ) [32X operation
+  [6XReturns:[106X  [33X[0;10YA non-negative integer.[133X
+  
+  [33X[0;0YCompute  the  length  of  the maximal common prefix (initial subword) of two
+  associative words.[133X
+  

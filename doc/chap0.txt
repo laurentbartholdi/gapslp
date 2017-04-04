@@ -1,1 +1,47 @@
-Placeholder
+  
+  
+                                    [1X gapslp [101X
+  
+  
+                             [1X SLP for free groups [101X
+  
+  
+                                      0.1
+  
+  
+                                   02/04/2017
+  
+  
+                               Laurent Bartholdi
+  
+                               Juliette Ortholand
+  
+  
+  
+  Laurent Bartholdi
+      Email:    [7Xmailto:laurent.bartholdi@gmail.com[107X
+      Homepage: [7Xhttp://www.uni-math.gwdg.de/laurent[107X
+      Address:  [33X[0;14YMathematisches Institut[133X
+                [33X[0;14YBunsenstraße 3-5[133X
+                [33X[0;14YD-37073 Göttingen[133X
+                [33X[0;14YGermany[133X
+  
+  
+  
+  -------------------------------------------------------
+  
+  
+  [1XContents (gapslp)[101X
+  
+  1 [33X[0;0YIntroduction[133X
+  2 [33X[0;0YGAP code[133X
+    2.1 [33X[0;0YSLP declarations and operations[133X
+      2.1-1 InfoSLP
+      2.1-2 LetterRepOfAssocWord
+      2.1-3 SLPRepOfAssocWord
+      2.1-4 SyllableRepOfAssocWord
+      2.1-5 SubLengths
+      2.1-6 LengthOfMaximalCommonPrefix
+  
+  
+  [32X

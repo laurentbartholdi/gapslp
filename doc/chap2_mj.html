@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<title>GAP (gapslp) - Chapter 2: GAP code</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="GAPDoc2HTML" />
+<link rel="stylesheet" type="text/css" href="manual.css" />
+<script src="manual.js" type="text/javascript"></script>
+<script type="text/javascript">overwriteStyle();</script>
+</head>
+<body class="chap2"  onload="jscontent()">
+
+
+<div class="chlinktop"><span class="chlink1">Goto Chapter: </span><a href="chap0_mj.html">Top</a>  <a href="chap1_mj.html">1</a>  <a href="chap2_mj.html">2</a>  <a href="chapInd_mj.html">Ind</a>  </div>
+
+<div class="chlinkprevnexttop">&nbsp;<a href="chap0_mj.html">[Top of Book]</a>&nbsp;  <a href="chap0_mj.html#contents">[Contents]</a>&nbsp;  &nbsp;<a href="chap1_mj.html">[Previous Chapter]</a>&nbsp;  &nbsp;<a href="chapInd_mj.html">[Next Chapter]</a>&nbsp;  </div>
+
+<p id="mathjaxlink" class="pcenter"><a href="chap2.html">[MathJax off]</a></p>
+<p><a id="X7D126F448214AC8B" name="X7D126F448214AC8B"></a></p>
+<div class="ChapSects"><a href="chap2_mj.html#X7D126F448214AC8B">2 <span class="Heading">GAP code</span></a>
+<div class="ContSect"><span class="tocline"><span class="nocss">&nbsp;</span><a href="chap2_mj.html#X85114B3A848B4AC4">2.1 <span class="Heading">SLP declarations and operations</span></a>
+</span>
+<div class="ContSSBlock">
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X83DFC75C866C2BEF">2.1-1 InfoSLP</a></span>
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X83516F7D8773B44D">2.1-2 LetterRepOfAssocWord</a></span>
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X7EDC4E2D7EFAE2DF">2.1-3 SLPRepOfAssocWord</a></span>
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X7919EE9D87243B90">2.1-4 SyllableRepOfAssocWord</a></span>
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X7FE414937A1B02BE">2.1-5 SubLengths</a></span>
+<span class="ContSS"><br /><span class="nocss">&nbsp;&nbsp;</span><a href="chap2_mj.html#X812AE61D7F6C73BF">2.1-6 LengthOfMaximalCommonPrefix</a></span>
+</div></div>
+</div>
+
+<h3>2 <span class="Heading">GAP code</span></h3>
+
+<p>SLP words are represented as lists of lists of integers. Each list is an instruction in the SLP, and follows the format of associative words in syllable representation. The result of the SLP is the last list.</p>
+
+<p><a id="X85114B3A848B4AC4" name="X85114B3A848B4AC4"></a></p>
+
+<h4>2.1 <span class="Heading">SLP declarations and operations</span></h4>
+
+<p><a id="X83DFC75C866C2BEF" name="X83DFC75C866C2BEF"></a></p>
+
+<h5>2.1-1 InfoSLP</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; InfoSLP</code></td><td class="tdright">( info class )</td></tr></table></div>
+<p>The info class, for messaging</p>
+
+<p><a id="X83516F7D8773B44D" name="X83516F7D8773B44D"></a></p>
+
+<h5>2.1-2 LetterRepOfAssocWord</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; LetterRepOfAssocWord</code>( [<var class="Arg">w</var>] )</td><td class="tdright">( attribute )</td></tr></table></div>
+<p>Returns: a word in letter representation</p>
+
+<p>Convert a word from any (e.g. slp) representation to letter representation.</p>
+
+<p><a id="X7EDC4E2D7EFAE2DF" name="X7EDC4E2D7EFAE2DF"></a></p>
+
+<h5>2.1-3 SLPRepOfAssocWord</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; SLPRepOfAssocWord</code>( [<var class="Arg">w</var>] )</td><td class="tdright">( attribute )</td></tr></table></div>
+<p>Returns: a word in SLP representation</p>
+
+<p>Convert a word from any (e.g. slp) representation to SLP representation.</p>
+
+<p><a id="X7919EE9D87243B90" name="X7919EE9D87243B90"></a></p>
+
+<h5>2.1-4 SyllableRepOfAssocWord</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; SyllableRepOfAssocWord</code>( [<var class="Arg">w</var>] )</td><td class="tdright">( attribute )</td></tr></table></div>
+<p>Returns: a word in syllable representation</p>
+
+<p>Convert a word from any (e.g. slp) representation to syllable representation.</p>
+
+<p><a id="X7FE414937A1B02BE" name="X7FE414937A1B02BE"></a></p>
+
+<h5>2.1-5 SubLengths</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; SubLengths</code>( [<var class="Arg">w</var>] )</td><td class="tdright">( attribute )</td></tr></table></div>
+<p>Returns: A list of integers.</p>
+
+<p>Compute the lengths of every instruction in an SLP.</p>
+
+<p><a id="X812AE61D7F6C73BF" name="X812AE61D7F6C73BF"></a></p>
+
+<h5>2.1-6 LengthOfMaximalCommonPrefix</h5>
+
+<div class="func"><table class="func" width="100%"><tr><td class="tdleft"><code class="func">&#8227; LengthOfMaximalCommonPrefix</code>( [<var class="Arg">w</var>, <var class="Arg">z</var>] )</td><td class="tdright">( operation )</td></tr></table></div>
+<p>Returns: A non-negative integer.</p>
+
+<p>Compute the length of the maximal common prefix (initial subword) of two associative words.</p>
+
+
+<div class="chlinkprevnextbot">&nbsp;<a href="chap0_mj.html">[Top of Book]</a>&nbsp;  <a href="chap0_mj.html#contents">[Contents]</a>&nbsp;  &nbsp;<a href="chap1_mj.html">[Previous Chapter]</a>&nbsp;  &nbsp;<a href="chapInd_mj.html">[Next Chapter]</a>&nbsp;  </div>
+
+
+<div class="chlinkbot"><span class="chlink1">Goto Chapter: </span><a href="chap0_mj.html">Top</a>  <a href="chap1_mj.html">1</a>  <a href="chap2_mj.html">2</a>  <a href="chapInd_mj.html">Ind</a>  </div>
+
+<hr />
+<p class="foot">generated by <a href="http://www.math.rwth-aachen.de/~Frank.Luebeck/GAPDoc">GAPDoc2HTML</a></p>
+</body>
+</html>

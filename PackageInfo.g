@@ -11,7 +11,7 @@ SetPackageInfo( rec(
 PackageName := "gapslp",
 Subtitle := "SLP for free groups",
 Version := "0.1",
-Date := "02/11/2016", # dd/mm/yyyy format
+Date := "02/04/2017", # dd/mm/yyyy format
 
 Persons := [
   rec(
@@ -34,11 +34,7 @@ Persons := [
     IsMaintainer := false,
     FirstNames := "Juliette",
     LastName := "Ortholand",
-    WWWHome := "http://xxxx",
-    Email := "juliette@xxx.com",
-    PostalAddress := "TODO",
-    Place := "TODO",
-    Institution := "TODO",
+    Institution := "Mines Paristech",
   ),
 ],
 

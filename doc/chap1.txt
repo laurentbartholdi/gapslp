@@ -1,0 +1,25 @@
+  
+  [1X1 [33X[0;0YIntroduction[133X[101X
+  
+  [33X[0;0YFree   group   elements  are  associative  words.  Currently,  they  can  be
+  represented  in  letter  and  in  syllable  form;  the syllable form is more
+  efficient if the word has large exponents.[133X
+  
+  [33X[0;0YThis  package  adds  a  third  representation  for  free  group elements: as
+  straight line programs.[133X
+  
+  [4X[32X  Example  [32X[104X
+    [4X[25Xgap>[125X [27XLoadPackage("gapslp");[127X[104X
+    [4X[25Xgap>[125X [27Xf := FreeGroup(2);[127X[104X
+    [4X[25Xgap>[125X [27Xx := SLPRepOfAssocWord(f.1);; y := SLPRepOfAssocWord(f.2);;[127X[104X
+    [4X[25Xgap>[125X [27X(x*y)^1000;[127X[104X
+    [4X[28X(_1:=f1*f2;_1^1000)[128X[104X
+  [4X[32X[104X
+  
+  [33X[0;0YIf  a  free  group  is  created with the argument [10XIsSLPWordsFamily[110X, then all
+  generators   of   the   free   group   are   automatically  created  in  SLP
+  representation.[133X
+  
+  [33X[0;0YAll  standard  commands  manipulating  words  ([10XSubWord[110X,  [10XLength[110X,  etc.)  are
+  implemented for SLP words.[133X
+  
