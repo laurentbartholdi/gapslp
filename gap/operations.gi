@@ -263,7 +263,7 @@ end);
 ##################################################################################
 ##Puissance
 	
-InstallMethod( \^, "for an assoc. word with inverse in syllable rep, and an integer",
+InstallMethod( \^, "for an assoc. word with inverse in SLP rep, and an integer",
         true,
         [ IsAssocWordWithInverse and IsSLPAssocWordRep, IsInt ], 0, function(w,a)
 
