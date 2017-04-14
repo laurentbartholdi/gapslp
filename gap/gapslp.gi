@@ -502,7 +502,7 @@ end);
 ###################################################################################
 ##Test d'un mot réduit. Devrait toujours retourner "true"
 
-IS_REDUCED_WORD@ := function(w)
+BindGlobal("IS_REDUCED_WORD@", function(w)
     
     local x,
           ng,
@@ -539,4 +539,4 @@ IS_REDUCED_WORD@ := function(w)
         
     od;
     return(true);
-end;
+end);

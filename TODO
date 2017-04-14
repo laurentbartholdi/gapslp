@@ -1,0 +1,23 @@
+Missing commands:
+----------------
+ShortLexOrdering
+BasicWreathProductOrdering
+MappedWord
+ExponentSumWord
+PositionWord
+SubstitutedWord (2 forms)
+EliminatedWord
+NumberSyllables
+ExponentSyllable
+GeneratorSyllable
+SubSyllables
+
+Missing algorithms:
+-------------------
+* A good conversion from letter or syllable representation to SLP representation, based on LZW compression and suffix trees (https://en.wikipedia.org/wiki/Suffix_tree)
+
+* SLPs with infinite number of generators. Currently "FreeGroup(IsSLPWordsFamily,infinity)" returns an unusable object.
+
+* \^(g,h) which computes only once h
+
+* SLPs for free monoids and semigroups

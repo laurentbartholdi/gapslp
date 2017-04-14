@@ -56,4 +56,9 @@ DeclareAttribute("SubLengths",IsAssocWord and IsSLPAssocWordRep);
 #! @Arguments [w,z]
 DeclareOperation("LengthOfMaximalCommonPrefix",[IsAssocWord,IsAssocWord]);
 
+# this is in FGA, we just redeclare it
+if not IsBound(CyclicallyReducedWord) then
+    DeclareOperation("CyclicallyReducedWord", [IsAssocWord]);
+fi;
+
 #! @EndSection
