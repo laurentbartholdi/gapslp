@@ -6,14 +6,14 @@
 #############################################################################
 ##Création des SLP
 
-BindGlobal("AssocWordBySLPRep", function( F, elt )
+BindGlobal("AssocWordBySLP", function( F, elt )
     return Objectify(F!.SLPtype,[Immutable(elt)]);
 end);
 
 InstallOtherMethod( ObjByExtRep, "SLP rep family", true,
         [ IsAssocWordFamily and IsSLPWordsFamily, IsCyclotomic, IsInt, IsHomogeneousList ], 0,
         function( F, exp, maxcand, elt )
-    return AssocWordBySLPRep(F,[elt]);
+    return AssocWordBySLP(F,[elt]);
 end );
 
 # Prend le controle de StoreInfoFreeMagma
@@ -38,7 +38,9 @@ end,[]);
 
 #Regarde si la liste est vide 	
 InstallOtherMethod(IsOne, "for an assoc. word in SLP rep", true, [ IsAssocWord and IsSLPAssocWordRep],0, function( w )
-    return w![1]=[];
+    local p;
+    p := w![1];
+    return p[Length(p)]=[];
 end);
 
 
@@ -307,7 +309,7 @@ end);
 #######################################################################
 #Conversion en format lettre 
 
-InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+InstallMethod(LettersOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
         function(w)
     
     local x, #Liste SLP
@@ -343,7 +345,7 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
                 for t in [1..AbsInt(l[j+1])] do
                     if SignInt(l[j+1])<0 then
                         for k in [Length(f[l[j]-ng]),Length(f[l[j]-ng])-1..1] do
-                            Add(r,-1*f[l[j]-ng][k]);
+                            Add(r,-f[l[j]-ng][k]);
                         od;
                     else 
                         for k in [1..Length(f[l[j]-ng])] do
@@ -358,19 +360,23 @@ InstallMethod(LetterRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWo
     return f[Length(f)];
 end);
 
-InstallMethod(LetterRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
-        w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
+# if the default family isn't letter rep, then we use W type letterrep
+InstallMethod(AssocWordByLetterRep, "for a non-letter rep family", [IsAssocWordFamily,IsHomogeneousList],
+        function(f,l)
+    return Objectify(f!.letterWordType, [l]);
+end);
 
-InstallMethod(LetterRepOfAssocWord,"for a syllable word", [IsAssocWord and IsSyllableAssocWordRep],
-        w->Objectify(FamilyObj(w)!.letterWordType,[LetterRepAssocWord(w)]));
+InstallMethod(AsLetterRepAssocWord,"for an assoc word", [IsAssocWord],
+        w->AssocWordByLetterRep(FamilyObj(w),LettersOfAssocWord(w)));
 
-InstallMethod(LetterRepOfAssocWord,"for a letter word", [IsAssocWord and IsLetterAssocWordRep],
+InstallMethod(AsLetterRepAssocWord,"for a word in letter rep", [IsAssocWord and IsLetterAssocWordRep],
         w->w);
+
 
 #######################################################################
 #Conversion en format syllabe 
 
-InstallMethod(ExtRepOfObj,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
+InstallMethod(SyllablesOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
         function(w)
     
     local x, #Liste SLP
@@ -444,21 +450,17 @@ InstallMethod(ExtRepOfObj,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep],
     return r;
 end);
 
-InstallMethod(SyllableRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], w->SyllableWordObjByExtRep(FamilyObj(w),ExtRepOfObj(w)));
-
-InstallMethod(SyllableRepOfAssocWord, "for a syllable word", [IsAssocWord and IsSyllableAssocWordRep], w->w);
-
-InstallMethod(SyllableRepOfAssocWord, "for a letter word", [IsAssocWord and IsLetterAssocWordRep], SyllableRepAssocWord);
+InstallMethod(AsSyllableRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], w->SyllableWordObjByExtRep(FamilyObj(w),SyllablesOfAssocWord(w)));
 
 ######################################################################################
 
-InstallMethod(SLPRepOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], w->w);
+InstallMethod(SLPOfAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], w->w![1]);
 
 # obviously could be improved by not converting first to letter rep!
-InstallMethod(SLPRepOfAssocWord,"for a syllable word", [IsAssocWord and IsSyllableAssocWordRep],
-        w->SLPRepOfAssocWord(LetterRepOfAssocWord(w)));
+InstallMethod(SLPOfAssocWord,"for a syllable word", [IsAssocWord and IsSyllableAssocWordRep],
+        w->SyllablesOfAssocWord(AsLetterRepAssocWord(w)));
 
-InstallMethod(SLPRepOfAssocWord,"for a letter word", [IsAssocWord and IsLetterAssocWordRep], 
+InstallMethod(SLPOfAssocWord,"for a letter word", [IsAssocWord and IsLetterAssocWordRep], 
         function(letterw)    
     local t,
           e,
@@ -496,9 +498,18 @@ InstallMethod(SLPRepOfAssocWord,"for a letter word", [IsAssocWord and IsLetterAs
         fi;
         Add(r,l);
     od;
-    return AssocWordBySLPRep(FamilyObj(letterw),r);
+    return r;
 end);
 
+InstallMethod(AsSLPRepAssocWord,"for a SLP word", [IsAssocWord and IsSLPAssocWordRep], w->w);
+
+# obviously could be improved by not converting first to letter rep!
+InstallMethod(AsSLPRepAssocWord,"for a syllable word", [IsAssocWord and IsSyllableAssocWordRep],
+        w->AsSLPRepAssocWord(AsLetterRepAssocWord(w)));
+
+InstallMethod(AsSLPRepAssocWord,"for a letter word", [IsAssocWord and IsLetterAssocWordRep], 
+        w->AssocWordBySLP(FamilyObj(w),SLPOfAssocWord(w)));
+        
 ###################################################################################
 ##Test d'un mot réduit. Devrait toujours retourner "true"
 

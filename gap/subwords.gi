@@ -33,11 +33,8 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
     s:=1;
     ng:= FamilyObj(w)!.SLPrank;
     T:=SubLengths(w);
-    if o>l then 
-        return(AssocWordBySLPRep(FamilyObj(w),[[]]));
-    fi;
-    if IsOne(w) then 
-        return(AssocWordBySLPRep(FamilyObj(w),[]));
+    if o>l or IsOne(w) then 
+        return(AssocWordBySLP(FamilyObj(w),[[]]));
     fi;
     
     #Si on commence à 0 
@@ -289,7 +286,7 @@ InstallOtherMethod(Subword, [ IsAssocWord and IsSLPAssocWordRep, IsPosInt, IsInt
         Add(fin,debut);
     fi;
 
-    return(AssocWordBySLPRep(FamilyObj(w),fin));	
+    return(AssocWordBySLP(FamilyObj(w),fin));	
 end);
 
 #################################################################################

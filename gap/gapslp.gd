@@ -29,19 +29,37 @@ DeclareInfoClass( "InfoSLP" );
 #!   Convert a word from any (e.g. slp) representation to letter representation.
 #! @Returns a word in letter representation
 #! @Arguments [w]
-DeclareAttribute( "LetterRepOfAssocWord", IsAssocWord );
+DeclareAttribute( "AsLetterRepAssocWord", IsAssocWord );
+
+#! @Description
+#!   Convert a word from any (e.g. slp) representation to letter / syllable / SLP representation. 
+#! @Returns a word in syllable representation
+#! @Arguments [w]
+DeclareSynonym( "AsSyllableRepAssocWord", SyllableRepAssocWord );
 
 #! @Description
 #!   Convert a word from any (e.g. slp) representation to SLP representation. 
 #! @Returns a word in SLP representation
 #! @Arguments [w]
-DeclareAttribute( "SLPRepOfAssocWord", IsAssocWord );
+DeclareAttribute( "AsSLPRepAssocWord", IsAssocWord );
 
 #! @Description
-#!   Convert a word from any (e.g. slp) representation to syllable representation. 
-#! @Returns a word in syllable representation
+#!   Extract the individual letters of an associative word
+#! @Returns a list of integers
 #! @Arguments [w]
-DeclareAttribute( "SyllableRepOfAssocWord", IsAssocWord );
+DeclareSynonym( "LettersOfAssocWord", LetterRepAssocWord );
+
+#! @Description
+#!   Extract the individual syllables of an associative word
+#! @Returns a list of integers
+#! @Arguments [w]
+DeclareSynonym( "SyllablesOfAssocWord", ExtRepOfObj );
+
+#! @Description
+#!   Extract the straight line program of an associative word
+#! @Returns a list of integers
+#! @Arguments [w]
+DeclareAttribute( "SLPOfAssocWord", IsAssocWord );
 
 #! @Description
 #!   Compute the lengths of every instruction in an SLP.

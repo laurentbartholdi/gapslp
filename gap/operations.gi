@@ -124,12 +124,12 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
     od;
 
     Add(r,l);
-    r:=AssocWordBySLPRep(FamilyObj(w),r);
+    r:=AssocWordBySLP(FamilyObj(w),r);
     n:=Length(w);
     m:=Length(z);
 
     if w=r then 
-        return(AssocWordBySLPRep(FamilyObj(w),[[]]));
+        return(AssocWordBySLP(FamilyObj(w),[[]]));
     fi;
 
     p:=LengthOfMaximalCommonPrefix(r,z);
@@ -257,7 +257,7 @@ InstallMethod( \*, "for two assoc. words in SLP rep",
     Add(s,f);
     Add(s,ps);
     Add(r,s);
-    return(AssocWordBySLPRep(FamilyObj(w),r));
+    return(AssocWordBySLP(FamilyObj(w),r));
 end);
 
 ##################################################################################
@@ -286,7 +286,7 @@ InstallMethod( \^, "for an assoc. word with inverse in SLP rep, and an integer",
 
     #Si la liste est vide ATTENTION CETTE CONDITION NE SUFFIT PAS 
     if a=0 then 
-        return(AssocWordBySLPRep(FamilyObj(w),[[]]));
+        return(AssocWordBySLP(FamilyObj(w),[[]]));
     fi;
 
     if IsOne(w) or a=1 then 
@@ -339,7 +339,7 @@ InstallMethod( \^, "for an assoc. word with inverse in SLP rep, and an integer",
             Add(r,[Length(r)+ng,a]);
         fi;
     fi;
-    return AssocWordBySLPRep(FamilyObj(w),r);
+    return AssocWordBySLP(FamilyObj(w),r);
 end);
 
 InstallMethod(\=, "for SLP words", IsIdenticalObj,
@@ -358,7 +358,7 @@ InstallMethod(INV,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep
     l{[ln-1,ln-3..1]} := l{[1,3..ln-1]};
     l{[ln,ln-2..2]} := -l{[2,4..ln]};
     x[n] := l;
-    return AssocWordBySLPRep(FamilyObj(w),x);
+    return AssocWordBySLP(FamilyObj(w),x);
 end);
 
 InstallMethod(INV_MUT,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWordRep],
@@ -366,7 +366,7 @@ InstallMethod(INV_MUT,"for a SLP word",[IsAssocWordWithInverse and IsSLPAssocWor
 
 InstallMethod(One, "for a SLP word", [IsAssocWordWithInverse and IsSLPAssocWordRep],
         function(w)
-    return AssocWordBySLPRep(FamilyObj(w),[[]]);
+    return AssocWordBySLP(FamilyObj(w),[[]]);
 end);
 
 

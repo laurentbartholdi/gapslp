@@ -1,5 +1,5 @@
 gap> g := FreeGroup(IsSLPWordsFamily,2);;
-gap> fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLPRep(f,p); end;;
+gap> fibo := function(f,n) local p, i; p := []; for i in [1..n] do Add(p,[i,1,i+1,1]); od; return AssocWordBySLP(f,p); end;;
 gap> f5 := fibo(FamilyObj(g.1),5);;
 gap> long := function(f,n)
 > 	local p,q,j,i; 
@@ -12,7 +12,7 @@ gap> long := function(f,n)
 > 		od;
 > 		Add(p,q); 
 > 	od; 
-> 	return AssocWordBySLPRep(f,p); 
+> 	return AssocWordBySLP(f,p); 
 > 	end;;
 gap> l3 := long(FamilyObj(g.1),3);;
 gap> test3 := function(w)
@@ -20,7 +20,7 @@ gap> test3 := function(w)
 > 	for i in [1..Length(w)] do 
 > 		for j in [1..Length(w)]do 
 > 			r:=Subword(w,i,j);
-> 			if SyllableRepAssocWord(r)<>LetterRepOfAssocWord(r) then
+> 			if AsSyllableRepAssocWord(r)<>AsLetterRepAssocWord(r) then
 > 				return false;
 > 			fi;
 > 		od;
