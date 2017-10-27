@@ -2,4 +2,6 @@
 #
 # Reading the declaration part of the package.
 #
-ReadPackage( "gapslp", "gap/gapslp.gd");
+ReadPackage("gapslp", "lib/gapslp.gd");
+
+ReadPackage("gapslp", "lib/compression.gd");
