@@ -7,3 +7,4 @@ ReadPackage("gapslp", "lib/operations.gi");
 ReadPackage("gapslp", "lib/subwords.gi");
 
 ReadPackage("gapslp", "lib/compression.gi");
+ReadPackage("gapslp", "lib/patternmatching.gi");

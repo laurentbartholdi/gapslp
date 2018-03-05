@@ -5,3 +5,4 @@
 ReadPackage("gapslp", "lib/gapslp.gd");
 
 ReadPackage("gapslp", "lib/compression.gd");
+ReadPackage("gapslp", "lib/patternmatching.gd");
