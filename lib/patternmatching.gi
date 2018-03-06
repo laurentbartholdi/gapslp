@@ -1,6 +1,6 @@
 #############################################################################
 ##
-#F  Occurences( <text> , <pattern> ) . . . . . . . . . . . . . . . . . . . . 
+#F  Occurrences( <text> , <pattern> ) . . . . . . . . . . . . . . . . . . . . 
 #F  . . . . . . . . Returns the list of occurences of the pattern in the text
 ##
 
@@ -8,8 +8,9 @@
 # "An improved pattern matching algorithm for strings in terms of straight-line programs"
 # by Masamichi Miyazaki and Ayumi Shinohara
 
-InstallGlobalFunction( Occurences, function( textSLP, patternSLP )
-    local   Match,                  #tests text_i[start..start+len(pattern_j)-1] = pattern_j
+InstallGlobalFunction( Occurrences, function( textSLP, patternSLP )
+    local   ConvertToList,           #converts the SLP into a list
+            Match,                  #tests text_i[start..start+len(pattern_j)-1] = pattern_j
             FirstMismatch,          #finds first Mismatch of text_i[start:] and pattern_j
             LastMismatch,           #finds last Mismatch of text_i[:start] and pattern_j
             ArithmeticUnion,        #creates one arithmetic progression from three given arithmetic progression
@@ -27,6 +28,35 @@ InstallGlobalFunction( Occurences, function( textSLP, patternSLP )
             occList,
             i, j;
             
+    ConvertToList := function(input)
+        local   output;
+        
+        output := List([1..Length(FamilyObj(input)!.names)],  i->[i]);
+        for i in [1..Length(input![1])] do
+            if Length(input![1][i]) = 2 then
+                if input![1][i][2]*input![1][i][2] = 1 then
+                    Append(output, [[input![1][i][1]*input![1][i][2]]]);
+                elif input![1][i][2] = 2 then
+                    Append(output, [[input![1][i][1],input![1][i][1]]]);
+                else
+                    Error("Input is not in Chomsky normal form.\n");
+                fi;
+            elif Length(input![1][i]) = 4 then
+                if input![1][i][2] <> 1 then
+                    Error("Input is not in Chomsky normal form.\n");
+                elif input![1][i][4] <> 1 then
+                    Error("Input is not in Chomsky normal form.\n");
+                else
+                    Append(output, [[input![1][i][1],input![1][i][3]]]);
+                fi;
+            else
+                Error("Input is not in Chomsky normal form.\n");
+            fi;
+        od;
+        
+        return output;
+    end;
+    
     # Returns true if text[start..start+len(pattern)-1] = pattern
     Match := function(textIndex, patternIndex, start)
         local   progression,
@@ -384,47 +414,8 @@ InstallGlobalFunction( Occurences, function( textSLP, patternSLP )
     fi;
     
     # convert inputs to lists
-    text := List([1..Length(FamilyObj(textSLP)!.names)],  i->[i]);
-    for i in [1..Length(textSLP![1])] do
-        if Length(textSLP![1][i]) = 2 then
-            if textSLP![1][i][2]*textSLP![1][i][2] <> 1 then
-                Error("Text is not in Chomsky normal form.\n");
-            else
-                Append(text, [[textSLP![1][i][1]*textSLP![1][i][2]]]);
-            fi;
-        elif Length(textSLP![1][i]) = 4 then
-            if textSLP![1][i][2] <> 1 then
-                Error("Text is not in Chomsky normal form.\n");
-            elif textSLP![1][i][4] <> 1 then
-                Error("Text is not in Chomsky normal form.\n");
-            else
-                Append(text, [[textSLP![1][i][1],textSLP![1][i][3]]]);
-            fi;
-        else
-            Error("Text is not in Chomsky normal form.\n");
-        fi;
-    od;
-    
-    pattern := List([1..Length(FamilyObj(patternSLP)!.names)],  i->[i]);
-    for i in [1..Length(patternSLP![1])] do
-        if Length(patternSLP![1][i]) = 2 then
-            if patternSLP![1][i][2]*patternSLP![1][i][2] <> 1 then
-                Error("Pattern is not in Chomsky normal form.\n");
-            else
-                Append(pattern, [[patternSLP![1][i][1]*patternSLP![1][i][2]]]);
-            fi;
-        elif Length(patternSLP![1][i]) = 4 then
-            if patternSLP![1][i][2] <> 1 then
-                Error("Pattern is not in Chomsky normal form.\n");
-            elif patternSLP![1][i][4] <> 1 then
-                Error("Pattern is not in Chomsky normal form.\n");
-            else
-                Append(pattern, [[patternSLP![1][i][1],patternSLP![1][i][3]]]);
-            fi;
-        else
-            Error("Pattern is not in Chomsky normal form.\n");
-        fi;
-    od;
+    text := ConvertToList(textSLP);
+    pattern := ConvertToList(patternSLP);
     
     dSizeText := Length(text);
     dSizePattern := Length(pattern);

@@ -5,7 +5,7 @@
 ##
 ##  <#GAPDoc Label="SLPOfAssocWord_LZ78">
 ##  <ManSection>
-##  <Func Name="Occurences" Arg="text, pattern"/>
+##  <Func Name="Occurrences" Arg="text, pattern"/>
 ##
 ##  <Description>
 ##  Returns the list with the property that the i-th entry is the arithmetic
@@ -20,4 +20,4 @@
 ##  </ManSection>
 ##  <#/GAPDoc>
 
-DeclareGlobalFunction( "Occurences" );
+DeclareGlobalFunction( "Occurrences" );
